@@ -1,0 +1,215 @@
+
+ui.png
+size: 2048, 2048
+format: RGBA8888
+filter: Linear, Linear
+repeat: none
+Crystal
+  rotate: false
+  xy: 998, 848
+  size: 98, 167
+  orig: 98, 167
+  offset: 0, 0
+  index: -1
+addButton2
+  rotate: false
+  xy: 1593, 1783
+  size: 264, 264
+  orig: 264, 264
+  offset: 0, 0
+  index: -1
+addCoinButton
+  rotate: false
+  xy: 1593, 1518
+  size: 263, 263
+  orig: 263, 263
+  offset: 0, 0
+  index: -1
+cancelBtn
+  rotate: false
+  xy: 1138, 759
+  size: 256, 256
+  orig: 256, 256
+  offset: 0, 0
+  index: -1
+cancelBtn2
+  rotate: false
+  xy: 1396, 759
+  size: 256, 256
+  orig: 256, 256
+  offset: 0, 0
+  index: -1
+coin
+  rotate: false
+  xy: 1654, 565
+  size: 252, 248
+  orig: 252, 248
+  offset: 0, 0
+  index: -1
+dialog_box
+  rotate: false
+  xy: 1, 187
+  size: 512, 512
+  orig: 512, 512
+  offset: 0, 0
+  index: -1
+dialog_box_hd
+  rotate: false
+  xy: 1, 1023
+  size: 1024, 1024
+  orig: 1024, 1024
+  offset: 0, 0
+  index: -1
+heart
+  rotate: false
+  xy: 1859, 1757
+  size: 133, 115
+  orig: 133, 115
+  offset: 0, 0
+  index: -1
+heartHeath
+  rotate: false
+  xy: 433, 1
+  size: 129, 116
+  orig: 129, 116
+  offset: 0, 0
+  index: -1
+heartOutline
+  rotate: false
+  xy: 1912, 954
+  size: 135, 117
+  orig: 135, 117
+  offset: 0, 0
+  index: -1
+homeButtonHD
+  rotate: false
+  xy: 515, 187
+  size: 512, 512
+  orig: 512, 512
+  offset: 0, 0
+  index: -1
+innerLoader
+  rotate: false
+  xy: 1, 56
+  size: 430, 61
+  orig: 430, 61
+  offset: 0, 0
+  index: -1
+lineBG
+  rotate: false
+  xy: 1027, 1531
+  size: 564, 516
+  orig: 564, 516
+  offset: 0, 0
+  index: -1
+logo2
+  rotate: false
+  xy: 1, 845
+  size: 995, 176
+  orig: 995, 176
+  offset: 0, 0
+  index: -1
+outerLoader
+  rotate: false
+  xy: 1, 701
+  size: 1135, 142
+  orig: 1135, 142
+  offset: 0, 0
+  index: -1
+pauseBtn
+  rotate: false
+  xy: 1912, 824
+  size: 128, 128
+  orig: 128, 128
+  offset: 0, 0
+  index: -1
+play_enter
+  rotate: false
+  xy: 1027, 1017
+  size: 512, 512
+  orig: 512, 512
+  offset: 0, 0
+  index: -1
+restartButtonHD
+  rotate: false
+  xy: 1029, 187
+  size: 512, 512
+  orig: 512, 512
+  offset: 0, 0
+  index: -1
+reviveWithHealth
+  rotate: false
+  xy: 1541, 1073
+  size: 504, 217
+  orig: 504, 217
+  offset: 0, 0
+  index: -1
+skin24
+  rotate: false
+  xy: 1654, 815
+  size: 256, 256
+  orig: 256, 256
+  offset: 0, 0
+  index: -1
+skinBuyOutline
+  rotate: false
+  xy: 1859, 1874
+  size: 173, 173
+  orig: 173, 173
+  offset: 0, 0
+  index: -1
+tapToContinue
+  rotate: false
+  xy: 1, 119
+  size: 605, 66
+  orig: 605, 66
+  offset: 0, 0
+  index: -1
+watchAds
+  rotate: false
+  xy: 1541, 1292
+  size: 503, 224
+  orig: 503, 224
+  offset: 0, 0
+  index: -1
+
+ui2.png
+size: 2048, 2048
+format: RGBA8888
+filter: Linear, Linear
+repeat: none
+resumeButtonHD
+  rotate: false
+  xy: 1, 1029
+  size: 512, 512
+  orig: 512, 512
+  offset: 0, 0
+  index: -1
+settingsIcon2
+  rotate: false
+  xy: 1, 515
+  size: 512, 512
+  orig: 512, 512
+  offset: 0, 0
+  index: -1
+shareAppIcon
+  rotate: false
+  xy: 515, 1029
+  size: 512, 512
+  orig: 512, 512
+  offset: 0, 0
+  index: -1
+skinIcon
+  rotate: false
+  xy: 1, 1
+  size: 512, 512
+  orig: 512, 512
+  offset: 0, 0
+  index: -1
+uiskin
+  rotate: false
+  xy: 515, 515
+  size: 512, 512
+  orig: 512, 512
+  offset: 0, 0
+  index: -1
