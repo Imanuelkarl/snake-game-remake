@@ -3,17 +3,26 @@ package com.darealfungames.snakevsblock.entities;
 import static com.darealfungames.snakevsblock.utils.RandomEngine.getRandom;
 
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
+import com.darealfungames.snakevsblock.enumaretors.PowerUp;
 
 public class Block {
     private Rectangle bounds;
 
     private Rectangle leftCollision;
+    private boolean powerUp =false;
+    private PowerUp powerUpType;
 
+    public void setPowerUp(boolean yes, PowerUp powerUpType){
+        powerUp=yes;
+        this.powerUpType=powerUpType;
+    }
     public void setRightCollision(Rectangle rightCollision) {
         this.rightCollision = rightCollision;
+    }
+    public PowerUp getPowerUp(){
+        return powerUpType;
     }
 
 
@@ -65,7 +74,7 @@ public class Block {
 
 
     public boolean hasPowerUp() {
-        return false;
+        return powerUp;
     }
 
     public Rectangle getRight() {

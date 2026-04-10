@@ -5,8 +5,13 @@ import java.util.List;
 
 public abstract class BaseAdapter<T, V extends BaseView> {
     protected List<T> items = new ArrayList<>();
+    private final List<V> views = new ArrayList<>();
     protected OnItemClickListener<T> itemClickListener;
     protected OnItemLongClickListener<T> itemLongClickListener;
+
+    public List<V> getViews() {
+        return views;
+    }
 
     public interface OnItemClickListener<T> {
         void onItemClick(T item, int position);
@@ -15,13 +20,49 @@ public abstract class BaseAdapter<T, V extends BaseView> {
     public interface OnItemLongClickListener<T> {
         boolean onItemLongClick(T item, int position);
     }
+    public interface DataChangeListener {
+        void onDataChanged();
+    }
 
-    public void setData(List<T> items) {
+    public V getView(int position) {
+        return views.get(position);
+    }
+
+    private DataChangeListener dataChangeListener;
+    public void setDataChangeListener(DataChangeListener listener) {
+        this.dataChangeListener = listener;
+    }
+
+    /*public void setData(List<T> items) {
         this.items.clear();
         if (items != null) {
             this.items.addAll(items);
+
+        }
+        if (dataChangeListener != null) {
+            dataChangeListener.onDataChanged();
         }
         notifyDataSetChanged();
+    }*/
+    public void setData(List<T> newItems) {
+        this.items.clear();
+        this.items.addAll(newItems);
+
+        // Clear existing views
+        views.clear();
+
+        // Create view for every item
+        for (int i = 0; i < items.size(); i++) {
+            V view = this.createView(i);
+            bindView(view, i); // bind initial data
+            views.add(view);
+
+            // Track creation (logging, analytics, etc.)
+            System.out.println("Created view for item " + i);
+        }
+
+        // Notify listener
+        if (dataChangeListener != null) dataChangeListener.onDataChanged();
     }
 
     public void addItem(T item) {

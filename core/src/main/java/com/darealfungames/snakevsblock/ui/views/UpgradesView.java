@@ -3,6 +3,7 @@ package com.darealfungames.snakevsblock.ui.views;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.utils.Align;
 import com.darealfungames.snakevsblock.ui.adapters.UpgradeAdapter;
 import com.darealfungames.snakevsblock.ui.cards.UpgradeCard;
 import com.darealfungames.snakevsblock.ui.core.ListManager;
@@ -25,8 +26,27 @@ public class UpgradesView extends BaseActorView {
         this.height=group.getHeight();
         setupUI();
         setupList();
-        loadData();
         setupTransform();
+
+        Gdx.app.postRunnable(this::loadData);
+    }
+    private Group loadingGroup;
+
+    private void showLoading() {
+        loadingGroup = new Group();
+
+        Label loadingText = ActorFactory.createTextLabel(20, 0, 0);
+        loadingText.setText("Loading skins...");
+        loadingText.setPosition(width / 2f, height / 2f, Align.center);
+
+        loadingGroup.addActor(loadingText);
+        addActor(loadingGroup);
+    }
+
+    private void hideLoading() {
+        if (loadingGroup != null) {
+            loadingGroup.remove();
+        }
     }
 
     private void setupUI() {
@@ -47,7 +67,7 @@ public class UpgradesView extends BaseActorView {
 
         listManager.setSize(width,height);
         listManager.setPosition(0, 0);
-        listManager.setLayout(ListManager.ListLayout.VERTICAL, 1, 100);
+        listManager.setLayout( 1, 300);
     }
     private void setupList() {
         adapter = new UpgradeAdapter();
@@ -55,8 +75,7 @@ public class UpgradesView extends BaseActorView {
 
 
         // Vertical layout: 1 column, each card 300x100
-        listManager.setLayout(ListManager.ListLayout.VERTICAL, 1, 300, 100);
-        listManager.setAdapter(adapter);
+        listManager.setLayout( 1, 300, 100);
         listManager.setSize(Gdx.graphics.getWidth() - 40, Gdx.graphics.getHeight() - 100);
         listManager.setPosition(20, 20);
 
@@ -106,11 +125,19 @@ public class UpgradesView extends BaseActorView {
 
     @Override
     public void resize(float width, float height) {
-        listManager.onResize(width - 40, height - 100);
+        this.width = width;
+        this.height = height;
+        setupTransform();
+        listManager.renderAllItems();
     }
 
     @Override
     public boolean backPressed() {
         return false;
+    }
+
+    @Override
+    public void buildIfNeeded() {
+
     }
 }

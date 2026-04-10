@@ -14,6 +14,10 @@ public interface BaseView {
 
     boolean backPressed();
 
+    void buildIfNeeded();
+
+
+
     // Optional: Add lifecycle constants
     enum ViewState {
         CREATED, SHOWING, HIDDEN, DESTROYED

@@ -1,11 +1,8 @@
 package com.darealfungames.snakevsblock.systems;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Rectangle;
 import com.darealfungames.snakevsblock.entities.*;
 import com.darealfungames.snakevsblock.world.WorldState;
-
-import java.util.ArrayList;
 
 public class CollisionSystem extends GlobalSystems {
 
@@ -117,7 +114,13 @@ public class CollisionSystem extends GlobalSystems {
 
                     // If block destroyed
                     if (block.getValue() <= 0) {
+
+                        if(block.hasPowerUp()){
+                            worldState.setPowerUp(block.getPowerUp());
+                            worldState.setPowerUpIsActive(true);
+                        }
                         block.setActive(false);
+
                     }
                 }
             }
@@ -146,7 +149,6 @@ public class CollisionSystem extends GlobalSystems {
                 if (snake.getBounds().overlaps(winBody.getBounds())) {
                     winBody.setActive(false);
                     snake.addSegments(winBody.getValue());
-                    worldState.setScore(worldState.getScore() + winBody.getValue());
                 }
             }
         }

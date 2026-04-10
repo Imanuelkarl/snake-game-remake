@@ -15,12 +15,15 @@ import com.darealfungames.snakevsblock.screens.MainGame;
 import com.darealfungames.snakevsblock.screens.TransitionScreen;
 import com.darealfungames.snakevsblock.service.SaveService;
 
+import java.util.Stack;
+
 /** {@link com.badlogic.gdx.ApplicationListener} implementation shared by all platforms. */
 public class MyGame extends Game {
     private SpriteBatch batch;
     private Texture image;
 
     private AssetManager assetManager;
+    private Stack<Screen> screenStack;
 
     private SaveService saveService;
 
@@ -29,6 +32,7 @@ public class MyGame extends Game {
         batch = new SpriteBatch();
         assetManager = new AssetManager();
         saveService = new SaveService();
+        screenStack= new Stack<>();
 
         // Set up game configuration
         Constants.initialize();
@@ -37,6 +41,14 @@ public class MyGame extends Game {
         // Start with loading screen
         setScreen(new LoadingScreen(this));
     }
+    public Screen getFormerScreen() {
+        if (screenStack.size() > 1) {
+            screenStack.pop();
+            return screenStack.get(screenStack.size() - 1);
+        }
+        return null;
+    }
+
 
     @Override
     public void render() {
@@ -49,6 +61,13 @@ public class MyGame extends Game {
         assetManager.dispose();
         saveService.saveGameData();
     }
+
+    @Override
+    public void setScreen(Screen screen) {
+        screenStack.add(screen);
+        super.setScreen(screen);
+    }
+
     public void setScreenWithFade(Screen screen, float duration) {
         setScreen(new TransitionScreen(this, screen, duration));
     }

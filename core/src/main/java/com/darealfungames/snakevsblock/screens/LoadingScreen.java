@@ -10,22 +10,38 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.darealfungames.snakevsblock.MyGame;
 import com.darealfungames.snakevsblock.assets.Assets;
+import com.darealfungames.snakevsblock.config.GameInstance;
+import com.darealfungames.snakevsblock.utils.SimpleBitmapFont;
 
 public class LoadingScreen extends InputAdapter implements Screen {
 
     private final MyGame game;
     private SpriteBatch batch;
     private OrthographicCamera camera;
-    private BitmapFont font;
-    private Texture loadingTexture;
+    private SimpleBitmapFont font;
+    private Texture background;
+    private Texture logo;
     private float progress;
+    private Texture barBg;
+    private Texture barFill;
+    private Texture knob;
+    float screenWidth = 800;
+    float screenHeight = 480;
 
     public LoadingScreen(MyGame game) {
         this.game = game;
         this.batch = game.getBatch();
         this.camera = new OrthographicCamera();
-        camera.setToOrtho(false, 800, 480);
-        font = new BitmapFont();
+        camera.setToOrtho(false, screenWidth, screenHeight);
+        font = new SimpleBitmapFont(
+            Gdx.files.internal("fonts/ImageFonts/FontsHDTwo.fnt"),
+            Gdx.files.internal("fonts/ImageFonts/FontsHDTwo.png")
+        );
+        logo = new Texture("ui/SnakeBlockLogo.png");
+        background = new Texture("game_bg_light.png");
+        barBg = new Texture("ui/progressBarBg.png");
+        barFill = new Texture("ui/progressBarFill.png");
+        knob = new Texture("ui/progressBarKnob.png");
 
         // Start asset loading
         Assets.getInstance().loadAllAssets();
@@ -42,21 +58,68 @@ public class LoadingScreen extends InputAdapter implements Screen {
 
         // Update asset loading progress
         progress = Assets.getInstance().getProgress();
-
-
-        camera.update();
         batch.setProjectionMatrix(camera.combined);
-        batch.begin();
+        camera.update();
 
-        font.draw(batch, "Loading... " + (int)(progress * 100) + "%", 350, 240);
+
+        float logoWidth = 600;
+        float logoHeight = 140;
+
+        float logoX = (screenWidth - logoWidth) / 2f;
+        float logoY = 450; // padding from top
+        float barWidth = 520;     // bigger (was 400)
+        float barHeight = 28;     // thicker (was 20)
+
+// Centered
+
+
+        float barX = (screenWidth - barWidth) / 2f;
+        float barY = -50; // ← pushed downward (key change)
+
+        float fillWidth = barWidth * progress;
+
+        float knobSize = barHeight * 1.6f; // proportional scaling
+
+// position at end of fill
+        float knobX = barX + fillWidth - knobSize / 2f;
+        float knobY = barY + (barHeight - knobSize) / 2f;
+
+// Clamp so it doesn't go outside
+        knobX = Math.max(barX - knobSize / 2f, knobX);
+        knobX = Math.min(barX + barWidth - knobSize / 2f, knobX);
+        float textY = barY + barHeight + 15;
+
+
+        batch.begin();
+        batch.draw(background, 0, -camera.viewportHeight/2, camera.viewportWidth, camera.viewportHeight*2);
+        // Draw background
+        batch.draw(barBg, barX, barY, barWidth, barHeight);
+
+// Draw fill (based on progress)
+
+        batch.draw(barFill, barX, barY, fillWidth, barHeight);
+
+        batch.draw(knob, knobX, knobY, knobSize, knobSize);
+
+        // ===== LOGO =====
+        batch.draw(logo, logoX, logoY, logoWidth, logoHeight);
+
+// ===== LOADING TEXT =====
+        font.setScale(0.3f,0.15f);
+        font.draw(batch, "LOADING... " + (int)(progress * 100) + "%",
+            screenWidth / 2f - 150, textY);
 
         batch.end();
 
         // When loading is complete, switch to menu screen
         if (Assets.getInstance().isLoaded()) {
             Assets.getInstance().assignAssets(); // REQUIRED
+            GameInstance.getInstance().loadSkinData();
+        }
+        if(Assets.getInstance().isLoaded()&&GameInstance.getInstance().isSkinDataLoaded()){
             game.setScreen(new HomeScreen(game));
         }
+
 
     }
 

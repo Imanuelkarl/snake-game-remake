@@ -9,6 +9,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.darealfungames.snakevsblock.config.Constants;
+import com.darealfungames.snakevsblock.config.GameInstance;
 import com.darealfungames.snakevsblock.elements.BottomNavigation;
 import com.darealfungames.snakevsblock.ui.core.ViewManager;
 import com.darealfungames.snakevsblock.ui.core.ViewPagerAdapter;
@@ -33,7 +34,7 @@ public class MenuUi {
     public MenuUi(MenuUIListener menuUIListener) {
         int gameSize = Constants.SCREEN_SIZE;
         camera=new OrthographicCamera();
-        int WORLD_WIDTH=(gameSize * Gdx.graphics.getWidth()) /Gdx.graphics.getHeight();
+        int WORLD_WIDTH=/*Constants.SCREEN_WIDTH;*/(gameSize * Gdx.graphics.getWidth()) /Gdx.graphics.getHeight();
         FitViewport viewport = new FitViewport(WORLD_WIDTH, gameSize, camera);
         this.stage = new Stage(viewport);
 
@@ -41,12 +42,32 @@ public class MenuUi {
         this.menuUiFactory=new MenuUiFactory(stage.getWidth(),stage.getHeight());
         build();
     }
-    private void build(){
+    private void build() {
+        long totalStart = System.nanoTime();
+
+        long start;
+
+        System.out.println("Building Menu UI...");
+        start = System.nanoTime();
         menuUiFactory.build();
+        logTime("menuUiFactory.build()", start);
+
+        System.out.println("Adding background to stage...");
+        start = System.nanoTime();
         stage.addActor(menuUiFactory.background);
+        logTime("add background", start);
+
+        System.out.println("Setting up ViewPager...");
+        start = System.nanoTime();
         setupViewPager();
+        logTime("setupViewPager()", start);
+
+        System.out.println("Setting up listeners...");
+        start = System.nanoTime();
+
         menuUiFactory.bottomNavigation.addOnItemSelectedListener(menuUIListener::onNavItemSelected);
-        menuUiFactory.cancelButton.addListener(new ClickListener(){
+
+        menuUiFactory.cancelButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 super.clicked(event, x, y);
@@ -57,21 +78,15 @@ public class MenuUi {
         menuUiFactory.bottomNavigation.addOnItemSelectedListener(new BottomNavigation.OnItemSelectedListener() {
             @Override
             public void onItemSelected(int index) {
-                viewPager.setCurrentItem(index,true);
+                viewPager.setCurrentItem(index, true);
             }
         });
-        viewPager.setOnPageChangeListener(new ViewManager.OnPageChangeListener() {
-            @Override
-            public void onPageSelected(int position) {
-                menuUiFactory.bottomNavigation.selectItem(position);
-                System.out.println("Selecting");
-            }
+        menuUiFactory.bottomNavigation.selectItem(viewPager.getCurrentPosition());
 
-            @Override
-            public void onPageChanged(int oldPosition, int newPosition) {
+        logTime("setup listeners", start);
 
-            }
-        });
+        System.out.println("Adding UI elements to stage...");
+        start = System.nanoTime();
 
         stage.addActor(menuUiFactory.headerBackground);
         stage.addActor(menuUiFactory.cancelButton);
@@ -80,22 +95,34 @@ public class MenuUi {
         stage.addActor(menuUiFactory.healthBar);
         stage.addActor(menuUiFactory.bottomNavigation);
 
+        logTime("add UI actors", start);
+
+        logTime("TOTAL build()", totalStart);
+
+        System.out.println("Menu UI built successfully.");
+    }
+    private void logTime(String label, long startNano) {
+        long durationNs = System.nanoTime() - startNano;
+        double ms = durationNs / 1_000_000.0;
+        System.out.println(label + " took: " + ms + " ms");
     }
     private void setupViewPager() {
-        viewPager = new ViewManager();
-        pagerAdapter = new ViewPagerAdapter();
+        viewPager = GameInstance.getInstance().menuViewManager;
+        pagerAdapter = GameInstance.getInstance().menuViewManagerAdapter;
 
 
 
         viewPager.setSize(stage.getWidth(), stage.getHeight()-menuUiFactory.headerBackground.getHeight()-menuUiFactory.bottomNavigation.getHeight());
         viewPager.setPosition(0,menuUiFactory.bottomNavigation.getHeight());
+        //viewPager.resize(stage.getWidth(), stage.getHeight()-menuUiFactory.headerBackground.getHeight()-menuUiFactory.bottomNavigation.getHeight());
 
-        // Add the 4 views
+        /*// Add the 4 views
         pagerAdapter.addView(new SkinsView(viewPager));
         pagerAdapter.addView(new UpgradesView(viewPager));
-        viewPager.setAdapter(pagerAdapter);
-        //pagerAdapter.addView(new AchievementsView());
-        //pagerAdapter.addView(new ShopView());
+        pagerAdapter.addView(new AchievementsView(viewPager));
+        pagerAdapter.addView(new ShopView(viewPager));*/
+        //viewPager.setAdapter(pagerAdapter);
+
 
 
 
@@ -106,13 +133,16 @@ public class MenuUi {
             public void onPageSelected(int position) {
                 String[] titles = {"Skins", "Upgrades", "Achievements", "Shop"};
                 System.out.println("Selected: " + titles[position]);
+                menuUiFactory.bottomNavigation.selectItem(position);
             }
 
             @Override
             public void onPageChanged(int oldPosition, int newPosition) {
                 // Handle page change
+                menuUiFactory.bottomNavigation.selectItem(newPosition);
             }
         });
+
 
         stage.addActor(viewPager);
     }

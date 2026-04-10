@@ -12,15 +12,25 @@ public class ViewManager extends Group {
     private int currentPosition = 0;
     private float dragStartX = 0;
     private boolean dragging = false;
-    private float dragThreshold = 50; // pixels
+    private float dragThreshold = 250; // pixels
     private float initialX;
     private float swipeVelocity = 0;
+    private float dragStartY = 0;
+    private boolean pendingReload = false;
+    private boolean isHorizontalScroll = false;
     private static final float SWIPE_TIME = 0.3f;
     private static final float SWIPE_DISTANCE = 300;
     private float scrollX = 0;
     private float startScrollX = 0;
 
     private OnPageChangeListener pageChangeListener;
+
+    public void resize(float width, float v) {
+        this.setSize(width, v);
+        if (adapter != null && adapter.getCount() > 0) {
+            layoutPages();
+        }
+    }
 
     public interface OnPageChangeListener {
         void onPageSelected(int position);
@@ -39,7 +49,9 @@ public class ViewManager extends Group {
 
                 startScrollX = scrollX;
                 dragStartX = x;
+                dragStartY = y;
                 dragging = true;
+                isHorizontalScroll = false; // Reset
                 return true;
             }
 
@@ -47,18 +59,31 @@ public class ViewManager extends Group {
             public void touchDragged(InputEvent event, float x, float y, int pointer) {
                 if (!dragging) return;
 
-                float delta = x - dragStartX;
+                // Determine scroll direction if not yet determined
+                if (!isHorizontalScroll) {
+                    float dx = Math.abs(x - dragStartX);
+                    float dy = Math.abs(y - dragStartY);
 
-                // Move in opposite direction (natural swipe)
+                    if (dx > dy && dx > 10) { // 10px threshold
+                        isHorizontalScroll = true;
+                    } else if (dy > dx && dy > 10) {
+                        isHorizontalScroll = false;
+                        // If vertical, stop processing horizontal drag
+                        return;
+                    }
+                }
+
+                // Only process horizontal drag if we determined it's horizontal
+                if (!isHorizontalScroll) return;
+
+                float delta = x - dragStartX;
                 scrollX = startScrollX - delta;
 
-                // Clamp
                 float maxScroll = (adapter.getCount() - 1) * getWidth();
                 scrollX = Math.max(0, Math.min(maxScroll, scrollX));
 
                 layoutPages();
             }
-
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
                 if (!dragging) return;
@@ -85,6 +110,7 @@ public class ViewManager extends Group {
             // <<< THIS WAS MISSING >>>
             view.getRoot().setSize(width, height);
             view.getRoot().setPosition(x, 0);
+            view.resize(width,height);
         }
     }
     private void completeSwipe(float delta) {
@@ -134,6 +160,40 @@ public class ViewManager extends Group {
             }
         });
     }
+    public void setSize(float width, float height) {
+        super.setSize(width, height);
+        if (adapter != null && adapter.getCount() > 0) {
+            layoutPages();
+        }
+    }
+    public void reload() {
+        if (adapter == null) return;
+
+        // If size not ready, defer
+        if (getWidth() == 0 || getHeight() == 0) {
+            pendingReload = true;
+            return;
+        }
+
+        pendingReload = false;
+
+        clearChildren();
+
+        scrollX = currentPosition * getWidth();
+
+        for (int i = 0; i < adapter.getCount(); i++) {
+            BaseView view = adapter.getView(i);
+            addActor(view.getRoot());
+        }
+
+        layoutPages();
+
+        adapter.notifyPageSelected(currentPosition);
+
+        if (pageChangeListener != null) {
+            pageChangeListener.onPageChanged(-1, currentPosition);
+        }
+    }
 
     private float getChildX(int position) {
         BaseView view = adapter.getView(position);
@@ -146,6 +206,7 @@ public class ViewManager extends Group {
     public void setAdapter(ViewPagerAdapter adapter) {
         this.adapter = adapter;
         clearChildren();
+        System.out.println("Adapter set with " + adapter.getCount() + " pages.");
         if (adapter.getCount() > 0) {
             currentPosition = 0;
             scrollX = 0;
@@ -157,9 +218,10 @@ public class ViewManager extends Group {
             }
         }
     }
+
     @Override
-    public void setSize(float width, float height) {
-        super.setSize(width, height);
+    public void setPosition(float x, float y) {
+        super.setPosition(x, y);
         if (adapter != null && adapter.getCount() > 0) {
             layoutPages();
         }
@@ -175,9 +237,9 @@ public class ViewManager extends Group {
             currentPosition = position;
             scrollX = position * getWidth();
 
-
             layoutPages();
             adapter.notifyPageSelected(position);
+
         }
     }
 
@@ -210,4 +272,5 @@ public class ViewManager extends Group {
         }
         return false;
     }
+
 }

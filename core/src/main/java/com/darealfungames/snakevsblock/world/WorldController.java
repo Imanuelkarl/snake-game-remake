@@ -24,7 +24,7 @@ public class WorldController implements ScreenController {
     private DifficultySystem difficultySystem;
 
     private OrthographicCamera camera;
-    float speed = 4.0f;
+    float speed = 5f;
     float startSpeed =speed;
     float maxSpeed = 20.0f;
     float lerpSpeed = 0.08f;
@@ -90,6 +90,7 @@ public class WorldController implements ScreenController {
             }
         }
 
+        worldState.setMinScore(Math.max(1, Math.min(worldState.getSnake().getLength()/2+1,worldState.getMaxScore()-10)));
         worldState.setGameSpeed(speed);
         worldState.update(deltaTime);
 

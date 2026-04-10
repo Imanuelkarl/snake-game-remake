@@ -34,6 +34,7 @@ public class SkinAdapter extends BaseAdapter<SkinData, SkinCard> {
                 bindView(view, position);
             }
         }
+
     }
 
     public void updateSkinOwnership(String skinId, boolean isOwned) {

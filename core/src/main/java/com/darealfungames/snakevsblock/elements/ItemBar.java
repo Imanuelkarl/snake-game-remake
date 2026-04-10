@@ -62,11 +62,8 @@ public class ItemBar extends Group {
         addButton = ActorFactory.createButton(addItemTexture,0,0,width,height);
         addActor(addButton);
         if(GameInstance.getInstance().getSimpleBitmapFont()==null){
-            font = new SimpleBitmapFont(
-                Gdx.files.internal("fonts/ImageFonts/FontsHDTwo.fnt"),
-                Assets.getInstance().fontTexture
-            );
-            GameInstance.getInstance().setSimpleBitmapFont(font);
+            font = GameInstance.getInstance().getSimpleBitmapFont();
+            //GameInstance.getInstance().setSimpleBitmapFont(font);
         }
         else{
             font=GameInstance.getInstance().getSimpleBitmapFont();

@@ -9,6 +9,7 @@ import com.darealfungames.snakevsblock.assets.Assets;
 import com.darealfungames.snakevsblock.ui.core.BaseView;
 import com.darealfungames.snakevsblock.ui.core.ListItemView;
 import com.darealfungames.snakevsblock.ui.data.ShopItemData;
+import com.darealfungames.snakevsblock.utils.ActorFactory;
 
 public class ShopCard extends Group implements ListItemView<ShopItemData>, BaseView {
     private Image background;
@@ -38,22 +39,21 @@ public class ShopCard extends Group implements ListItemView<ShopItemData>, BaseV
         // Name
         Label.LabelStyle nameStyle = new Label.LabelStyle();
         nameStyle.fontColor = Color.WHITE;
-        nameLabel = new Label("", nameStyle);
+        nameLabel = ActorFactory.createTextLabel("", nameStyle);
         nameLabel.setPosition(80, 65);
         addActor(nameLabel);
 
         // Description
         Label.LabelStyle descStyle = new Label.LabelStyle();
         descStyle.fontColor = Color.LIGHT_GRAY;
-        descStyle.font.getData().setScale(0.7f);
-        descriptionLabel = new Label("", descStyle);
+        descriptionLabel = ActorFactory.createTextLabel("", descStyle);
         descriptionLabel.setPosition(80, 45);
         addActor(descriptionLabel);
 
         // Price
         Label.LabelStyle priceStyle = new Label.LabelStyle();
         priceStyle.fontColor = Color.YELLOW;
-        priceLabel = new Label("", priceStyle);
+        priceLabel = ActorFactory.createTextLabel("", priceStyle);
         priceLabel.setPosition(80, 20);
         addActor(priceLabel);
     }
@@ -110,6 +110,11 @@ public class ShopCard extends Group implements ListItemView<ShopItemData>, BaseV
     @Override
     public boolean backPressed() {
         return false;
+    }
+
+    @Override
+    public void buildIfNeeded() {
+
     }
 
     @Override

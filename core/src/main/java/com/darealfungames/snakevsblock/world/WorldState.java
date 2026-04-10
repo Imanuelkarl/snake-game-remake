@@ -5,11 +5,9 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.darealfungames.snakevsblock.MyGame;
 import com.darealfungames.snakevsblock.entities.Block;
-import com.darealfungames.snakevsblock.entities.Pickup;
-import com.darealfungames.snakevsblock.entities.Player;
 import com.darealfungames.snakevsblock.entities.Row;
 import com.darealfungames.snakevsblock.entities.Snake;
-import com.darealfungames.snakevsblock.screens.GameOverScreen;
+import com.darealfungames.snakevsblock.enumaretors.PowerUp;
 
 import java.util.ArrayList;
 
@@ -21,7 +19,7 @@ public class WorldState {
     private boolean moving;
 
 
-    private int maxScore=40;
+    private int maxScore=50;
     private int minScore=1;
     private boolean awake =true;
 
@@ -42,6 +40,9 @@ public class WorldState {
 
     private int score;
     private int highScore;
+
+    private boolean powerUpIsActive;
+    private PowerUp powerUp;
     private ArrayList<Row> rows;
 
     public WorldState(OrthographicCamera camera,MyGame game){
@@ -94,6 +95,21 @@ public class WorldState {
 
     public int getMinScore() {
         return minScore;
+    }
+    public boolean isPowerUpIsActive() {
+        return powerUpIsActive;
+    }
+
+    public void setPowerUpIsActive(boolean powerUpIsActive) {
+        this.powerUpIsActive = powerUpIsActive;
+    }
+
+    public PowerUp getPowerUp() {
+        return powerUp;
+    }
+
+    public void setPowerUp(PowerUp powerUp) {
+        this.powerUp = powerUp;
     }
 
     public void setBlockDimension(float blockDimension){

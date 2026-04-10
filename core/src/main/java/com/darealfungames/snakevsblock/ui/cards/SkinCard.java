@@ -4,6 +4,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.darealfungames.snakevsblock.assets.Assets;
@@ -14,11 +15,12 @@ import com.darealfungames.snakevsblock.utils.ActorFactory;
 
 public class SkinCard extends Group implements ListItemView<SkinData>, BaseView {
     private Image background;
-    private Image thumbnail;
-    private Label nameLabel;
+    private Image coins;
+    private ImageButton actionButton;
     private Label priceLabel;
-    private Label statusLabel;
+
     private SkinData currentData;
+    private SnakePreview snakePreview;
     private int currentPosition;
 
     public SkinCard() {
@@ -27,36 +29,31 @@ public class SkinCard extends Group implements ListItemView<SkinData>, BaseView 
 
     private void setupUI() {
         // Background
-        background = new Image(new TextureRegionDrawable(Assets.getInstance().defaultItemTexture));
-        background.setSize(280, 100);
+        background = new Image(new TextureRegionDrawable(Assets.getInstance().cardBackgroundTexture));
+        background.setSize(220, 310);
+        background.setPosition(12.5f,20);
         addActor(background);
 
-        // Thumbnail
-        thumbnail = new Image();
-        thumbnail.setSize(10, 10);
-        thumbnail.setPosition(10, 10);
-        addActor(thumbnail);
+        coins = new Image(new TextureRegionDrawable(Assets.getInstance().coinTexture));
+        coins.setSize(24, 24);
+        coins.setPosition(20, 280);
+        addActor(coins);
+        snakePreview = new SnakePreview();
+        snakePreview.setBounds(100,40,40,240);
+        addActor(snakePreview);
 
-        // Name label
-        Label.LabelStyle nameStyle = new Label.LabelStyle();
-        nameStyle.fontColor = Color.WHITE;
-        nameLabel = ActorFactory.createTextLabel(24,100,60);
-        nameLabel.setPosition(100, 60);
-        addActor(nameLabel);
+        actionButton = ActorFactory.createButton(Assets.getInstance().buyButtonTexture,12.5f,20,220,80);
+        addActor(actionButton);
+
+
 
         // Price label
         Label.LabelStyle priceStyle = new Label.LabelStyle();
         priceStyle.fontColor = Color.YELLOW;
-        priceLabel = ActorFactory.createTextLabel(24,0,0);
-        priceLabel.setPosition(100, 35);
+        priceLabel = ActorFactory.createTextLabel(30,0,0);
+        priceLabel.setPosition(55, 290);
         addActor(priceLabel);
 
-        // Status label (Owned/Equipped)
-        Label.LabelStyle statusStyle = new Label.LabelStyle();
-        statusStyle.fontColor = Color.GREEN;
-        statusLabel = ActorFactory.createTextLabel(24,0,0);
-        statusLabel.setPosition(100, 10);
-        addActor(statusLabel);
     }
 
     @Override
@@ -64,21 +61,26 @@ public class SkinCard extends Group implements ListItemView<SkinData>, BaseView 
         this.currentData = skin;
         this.currentPosition = position;
 
-        thumbnail.setDrawable(new TextureRegionDrawable(skin.thumbnail));
-        nameLabel.setText(skin.name);
+        //nameLabel.setText(skin.name);
+        snakePreview.setSkin(skin.thumbnail);
 
         if (skin.isOwned) {
             priceLabel.setText("");
             if (skin.isEquipped) {
-                statusLabel.setText("EQUIPPED");
-                statusLabel.setColor(Color.GREEN);
+                background.setDrawable(new TextureRegionDrawable(Assets.getInstance().equippedBorderTexture));
+                ActorFactory.updateButtonStyle(actionButton, Assets.getInstance().selectedButtonTexture);
+                snakePreview.setSelected(true);
+                //statusLabel.setText("EQUIPPED");
+                //statusLabel.setColor(Color.GREEN);
             } else {
-                statusLabel.setText("OWNED");
-                statusLabel.setColor(Color.BLUE);
+                ActorFactory.updateButtonStyle(actionButton, Assets.getInstance().selectButtonTexture);
+                snakePreview.setSelected(false);
+                //statusLabel.setText("OWNED");
+                //statusLabel.setColor(Color.BLUE);
             }
         } else {
-            priceLabel.setText(skin.price + " COINS");
-            statusLabel.setText("");
+            priceLabel.setText(skin.price );
+            //statusLabel.setText("");
         }
     }
 
@@ -118,6 +120,11 @@ public class SkinCard extends Group implements ListItemView<SkinData>, BaseView 
     }
 
     @Override
+    public void buildIfNeeded() {
+
+    }
+
+    @Override
     public ViewState getState() {
         return null;
     }
@@ -125,7 +132,6 @@ public class SkinCard extends Group implements ListItemView<SkinData>, BaseView 
     @Override
     public void recycle() {
         // Clean up resources
-        thumbnail.setDrawable(null);
         currentData = null;
     }
 

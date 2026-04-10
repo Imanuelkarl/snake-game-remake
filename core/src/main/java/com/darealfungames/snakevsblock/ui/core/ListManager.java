@@ -1,27 +1,28 @@
 package com.darealfungames.snakevsblock.ui.core;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Pool;
 
 public class ListManager<T, V extends ListItemView<T> & BaseView> extends Group {
     private BaseAdapter<T, V> adapter;
-    private ListLayout layout;
     private Array<V> visibleItems = new Array<>();
+    private Array<V> allItems = new Array<>();
     private Pool<V> viewPool;
     private int firstVisiblePosition = 0;
     private int lastVisiblePosition = -1;
     private float scrollY = 0;
     private float itemHeight = 0;
     private float itemWidth = 0;
-    private boolean isVertical = true;
     private int columns = 1;
+    private float lastTouchY = 0;
+    private boolean isDragging = false;
 
-    public enum ListLayout {
-        VERTICAL, GRID
-    }
+    private float totalContentHeight = 0;
 
     public ListManager(BaseAdapter<T, V> adapter) {
         setAdapter(adapter);
@@ -29,39 +30,30 @@ public class ListManager<T, V extends ListItemView<T> & BaseView> extends Group 
     }
 
     private void setupScrollInput() {
-        addListener(new ClickListener() {
-            private float lastY;
-            private float lastX;
-            private boolean dragging = false;
+        ListManager<T, V> listManager =this;
+        addListener(new InputListener() {
 
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                lastY = y;
-                lastX = x;
-                dragging = true;
-                return true;
+                lastTouchY = y;
+                isDragging = true;
+                return true; // MUST return true to receive drag
             }
 
             @Override
             public void touchDragged(InputEvent event, float x, float y, int pointer) {
-                if (dragging) {
-                    float deltaY = y - lastY;
-                    float deltaX = x - lastX;
+                float deltaY = y - lastTouchY;
 
-                    if (isVertical) {
-                        scrollBy(-deltaY);
-                    } else {
-                        scrollBy(-deltaX);
-                    }
-
-                    lastY = y;
-                    lastX = x;
-                }
+                scrollBy(deltaY);
+                lastTouchY = y;
             }
 
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                dragging = false;
+                isDragging = false;
+                if(listManager.getY()<0){
+                    listManager.setY(0);
+                }
             }
         });
     }
@@ -71,68 +63,112 @@ public class ListManager<T, V extends ListItemView<T> & BaseView> extends Group 
         this.viewPool = new Pool<V>() {
             @Override
             protected V newObject() {
-                return adapter.createView(0);
+                return createItemView(0);
+
             }
         };
+        // or smarter update
+        adapter.setDataChangeListener(this::bindDataAndUpdate);
+
         reload();
     }
 
-    public void setLayout(ListLayout layout, int columns, float itemWidth, float itemHeight) {
-        this.isVertical = layout == ListLayout.VERTICAL;
-        this.columns = layout == ListLayout.GRID ? columns : 1;
+    public void setLayout(int columns, float itemWidth, float itemHeight) {
+        this.columns = Math.max(1, columns);
         this.itemWidth = itemWidth;
         this.itemHeight = itemHeight;
-        reload();
-        if (getWidth() > 0 && getHeight() > 0) {
-            updateVisibleItems();
-        }
+        //reload();
     }
-    public void setLayout(ListLayout layout, int columns, float itemHeight) {
-        this.isVertical = layout == ListLayout.VERTICAL;
-        this.columns = layout == ListLayout.GRID ? columns : 1;
-        this.itemWidth = getWidth()/columns;
+    public void bindDataAndUpdate(){
+        for (int i = 0; i <adapter.getViews().size(); i++){
+            V item = adapter.getView(i);
+            item.bind(adapter.getItem(i), i);
+        }
+        renderAllItems();
+    }
+
+    public void setLayout(int columns, float itemHeight) {
+        this.columns = Math.max(1, columns);
         this.itemHeight = itemHeight;
-        reload();
-        if (getWidth() > 0 && getHeight() > 0) {
-            updateVisibleItems();
+        if (getWidth() > 0) {
+            this.itemWidth = getWidth() / this.columns;
         }
+        //reload();
     }
 
-
-    public void scrollBy(float delta) {
+    /*public void scrollBy(float delta) {
         float maxScroll = getMaxScroll();
-        scrollY = Math.max(0, Math.min(maxScroll, scrollY + delta));
-        updateVisibleItems();
+        float newScrollY = scrollY + delta;
+
+        // Apply bounds checking with smooth limits
+        if (newScrollY < 0) {
+            newScrollY = 0;
+        } else if (newScrollY > maxScroll) {
+            newScrollY = maxScroll;
+        }
+
+        if (Math.abs(scrollY - newScrollY) > 0.01f) {
+            scrollY = newScrollY;
+            updateVisibleItems();
+        }
+    }*/
+    public void scrollBy(float delta) {
+
+        float maxScroll = Math.max(0, getTotalContentHeight() - getHeight());
+        float newY =this.getY()+delta;
+        if (newY > maxScroll) {
+            newY = maxScroll;
+        }
+        this.setY(newY);
+
+
     }
 
     private float getMaxScroll() {
-        int totalItems = adapter.getCount();
-        int totalRows = isVertical ? totalItems : (int) Math.ceil((float) totalItems / columns);
-        float contentHeight = totalRows * itemHeight;
-        return Math.max(0, contentHeight - getHeight());
+        if (adapter.getCount() == 0) return 0;
+
+        int totalRows = (int) Math.ceil((float) adapter.getCount() / columns);
+        totalContentHeight = totalRows * itemHeight;
+
+        float viewHeight = getHeight();
+        if (viewHeight <= 0) return 0;
+
+        return Math.max(0, totalContentHeight - viewHeight);
     }
 
+
     private void updateVisibleItems() {
-        int startRow = (int) (scrollY / itemHeight);
-        int endRow = (int) ((scrollY + getHeight()) / itemHeight) + 1;
+        if (adapter.getCount() == 0 || getHeight() <= 0 || itemHeight <= 0) return;
+
+        int totalRows = (int) Math.ceil((float) adapter.getCount() / columns);
+
+        // calculate visible rows
+        int startRow = Math.max(0, (int) (scrollY / itemHeight));
+        int endRow = Math.min(
+            (int) Math.ceil((scrollY + getHeight()) / itemHeight),
+            totalRows
+        );
 
         int startIndex = startRow * columns;
         int endIndex = Math.min(endRow * columns, adapter.getCount());
 
-        // Recycle views that are no longer visible
-        for (int i = 0; i < visibleItems.size; i++) {
+        // Step 1: mark which positions should stay
+        boolean[] stillVisible = new boolean[adapter.getCount()];
+        for (int i = startIndex; i < endIndex; i++) stillVisible[i] = true;
+
+        // Step 2: recycle items no longer visible
+        for (int i = visibleItems.size - 1; i >= 0; i--) {
             V item = visibleItems.get(i);
-            int position = item.getPosition();
-            if (position < startIndex || position >= endIndex) {
+            int pos = item.getPosition();
+            if (!stillVisible[pos]) {
                 visibleItems.removeIndex(i);
                 removeActor(item.getRoot());
                 item.recycle();
                 viewPool.free(item);
-                i--;
             }
         }
 
-        // Add new visible items
+        // Step 3: add new visible items
         for (int position = startIndex; position < endIndex; position++) {
             if (!isItemVisible(position)) {
                 V item = viewPool.obtain();
@@ -146,31 +182,105 @@ public class ListManager<T, V extends ListItemView<T> & BaseView> extends Group 
                     @Override
                     public void clicked(InputEvent event, float x, float y) {
                         if (adapter.itemClickListener != null) {
-                            adapter.itemClickListener.onItemClick(
-                                adapter.getItem(finalPosition), finalPosition
-                            );
+                            adapter.itemClickListener.onItemClick(adapter.getItem(finalPosition), finalPosition);
                         }
-                    }
-
-
-                    public boolean longPress(float x, float y) {
-                        if (adapter.itemLongClickListener != null) {
-                            return adapter.itemLongClickListener.onItemLongClick(
-                                adapter.getItem(finalPosition), finalPosition
-                            );
-                        }
-                        return false;
                     }
                 });
+            } else {
+                // update existing item positions if scrollY changed
+                for (V item : visibleItems) {
+                    if (item.getPosition() == position) positionItem(item, position);
+                }
             }
         }
+
+        // Step 4: update first/last visible positions
+        firstVisiblePosition = startIndex;
+        lastVisiblePosition = endIndex - 1;
+    }
+    public void renderAllItems() {
+        clearChildren(); // remove from stage
+        for (V item : adapter.getViews()) {
+            positionItem(item, item.getPosition());
+            addActor(item.getRoot());
+        }
+    }
+
+    private void recycleAllItems() {
+        for (int i = visibleItems.size - 1; i >= 0; i--) {
+            V item = visibleItems.get(i);
+            visibleItems.removeIndex(i);
+            removeActor(item.getRoot());
+            item.recycle();
+            viewPool.free(item);
+        }
+    }
+    private float getTotalContentHeight() {
+        int totalRows = (int) Math.ceil((float) adapter.getCount() / columns);
+        return totalRows * itemHeight;
+    }
+    /**
+     * Fast layout: just display the items that fit on screen.
+     * Call this when data is first set or completely changed.
+     */
+    public void layoutVisibleItems() {
+        System.out.println("Starting layoutVisibleItems: adapter count=" + adapter.getCount() + ", view height=" + getHeight() + ", item height=" + itemHeight);
+        if (adapter.getCount() == 0 || getHeight() <= 0 || itemHeight <= 0) return;
+
+        // Clear any existing actors
+        recycleAllItems();
+
+        // Calculate how many rows can fit on screen
+        int rowsOnScreen = (int) Math.ceil(getHeight() / itemHeight) + 1; // +1 for partial row
+        int itemsOnScreen = Math.min(adapter.getCount(), rowsOnScreen * columns);
+
+        visibleItems.clear();
+
+        for (int position = 0; position < itemsOnScreen; position++) {
+            V item = viewPool.obtain();
+            item.bind(adapter.getItem(position), position);
+            positionItem(item, position);
+            visibleItems.add(item);
+            addActor(item.getRoot());
+
+            final int finalPosition = position;
+            item.getRoot().addListener(new ClickListener() {
+                @Override
+                public void clicked(InputEvent event, float x, float y) {
+                    if (adapter.itemClickListener != null) {
+                        adapter.itemClickListener.onItemClick(adapter.getItem(finalPosition), finalPosition);
+                    }
+                }
+            });
+        }
+
+        firstVisiblePosition = 0;
+        lastVisiblePosition = itemsOnScreen - 1;
+        scrollY = 0;
+        System.out.println("Finished layoutVisibleItems: firstVisiblePosition=" + firstVisiblePosition + ", lastVisiblePosition=" + lastVisiblePosition + ", visibleItems=" + visibleItems.size);
+    }
+
+    private int getMinVisiblePosition() {
+        int min = Integer.MAX_VALUE;
+        for (V item : visibleItems) {
+            min = Math.min(min, item.getPosition());
+        }
+        return min == Integer.MAX_VALUE ? 0 : min;
+    }
+
+    private int getMaxVisiblePosition() {
+        int max = -1;
+        for (V item : visibleItems) {
+            max = Math.max(max, item.getPosition());
+        }
+        return max;
     }
 
     private void positionItem(V item, int position) {
         int row = position / columns;
         int col = position % columns;
         float x = col * itemWidth;
-        float y = getHeight() - (row * itemHeight) - itemHeight + scrollY;
+        float y = getHeight() - (row * itemHeight) - itemHeight - scrollY;
 
         item.getRoot().setPosition(x, y);
         item.getRoot().setSize(itemWidth, itemHeight);
@@ -187,9 +297,26 @@ public class ListManager<T, V extends ListItemView<T> & BaseView> extends Group 
 
     public void reload() {
         clearChildren();
-        visibleItems.clear();
+        recycleAllItems();
         scrollY = 0;
-        updateVisibleItems();
+        lastVisiblePosition = -1;
+        firstVisiblePosition = 0;
+        if (getWidth() > 0 && getHeight() > 0 && itemHeight > 0) {
+            updateVisibleItems();
+
+        }
+    }
+    // In your list manager class
+    private V createItemView(int position) {
+        long startTime = System.currentTimeMillis();
+
+        V item = adapter.createView(position); // actually create the view
+        allItems.add(item);                    // track it in allItems
+
+        long endTime = System.currentTimeMillis();
+        Gdx.app.log("ListManager", "Created item at position " + position + " in " + (endTime - startTime) + " ms");
+
+        return item;
     }
 
     public void notifyDataSetChanged() {
@@ -206,6 +333,22 @@ public class ListManager<T, V extends ListItemView<T> & BaseView> extends Group 
 
     public void onResize(float width, float height) {
         setSize(width, height);
-        updateVisibleItems();
+
+        // Recalculate item width if needed
+        if (itemHeight > 0 && itemWidth == 0 && columns > 0) {
+            itemWidth = width / columns;
+        }
+
+        // Force a complete refresh on resize
+        if (adapter != null && adapter.getCount() > 0) {
+            float oldScrollY = scrollY;
+            updateVisibleItems();
+            // Ensure scroll position stays valid after resize
+            //scrollY = Math.min(scrollY, getMaxScroll());
+            if (Math.abs(oldScrollY - scrollY) > 0.01f) {
+                updateVisibleItems();
+            }
+        }
     }
+
 }

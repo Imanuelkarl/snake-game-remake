@@ -20,4 +20,6 @@ public interface HomeUiListener {
     void onDiamondAddClicked();
 
     void onHealthAddClicked();
+
+    void onLevelsClicked();
 }

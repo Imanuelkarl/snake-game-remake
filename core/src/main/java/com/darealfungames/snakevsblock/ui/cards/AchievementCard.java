@@ -9,6 +9,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.darealfungames.snakevsblock.ui.core.BaseView;
 import com.darealfungames.snakevsblock.ui.core.ListItemView;
 import com.darealfungames.snakevsblock.ui.data.AchievementData;
+import com.darealfungames.snakevsblock.utils.ActorFactory;
 
 public class AchievementCard extends Group implements ListItemView<AchievementData>, BaseView {
     private Label titleLabel;
@@ -16,7 +17,7 @@ public class AchievementCard extends Group implements ListItemView<AchievementDa
     private Label progressLabel;
     private Label rewardLabel;
     private ProgressBar progressBar;
-    private TextButton claimButton;
+    private Label claimButton;
     private AchievementData currentData;
     private int currentPosition;
 
@@ -28,41 +29,40 @@ public class AchievementCard extends Group implements ListItemView<AchievementDa
         // Title
         Label.LabelStyle titleStyle = new Label.LabelStyle();
         titleStyle.fontColor = Color.WHITE;
-        titleLabel = new Label("", titleStyle);
+        titleLabel = ActorFactory.createTextLabel("", titleStyle);
         titleLabel.setPosition(10, 70);
         addActor(titleLabel);
 
         // Description
         Label.LabelStyle descStyle = new Label.LabelStyle();
         descStyle.fontColor = Color.LIGHT_GRAY;
-        descStyle.font.getData().setScale(0.8f);
-        descriptionLabel = new Label("", descStyle);
+        descriptionLabel = ActorFactory.createTextLabel("", descStyle);
         descriptionLabel.setPosition(10, 50);
         addActor(descriptionLabel);
 
         // Progress label
         Label.LabelStyle progressStyle = new Label.LabelStyle();
         progressStyle.fontColor = Color.CYAN;
-        progressLabel = new Label("", progressStyle);
+        progressLabel = ActorFactory.createTextLabel("", progressStyle);
         progressLabel.setPosition(10, 30);
         addActor(progressLabel);
 
         // Reward label
         Label.LabelStyle rewardStyle = new Label.LabelStyle();
         rewardStyle.fontColor = Color.YELLOW;
-        rewardLabel = new Label("", rewardStyle);
+        rewardLabel = ActorFactory.createTextLabel( "", rewardStyle);
         rewardLabel.setPosition(200, 30);
         addActor(rewardLabel);
 
         // Progress bar
-        progressBar = new ProgressBar(0, 1, 0.01f, false, new Skin());
+        /*progressBar = new ProgressBar(0, 1, 0.01f, false, new Skin());
         progressBar.setSize(200, 10);
         progressBar.setPosition(10, 15);
-        addActor(progressBar);
+        addActor(progressBar);*/
 
         // Claim button
         TextButton.TextButtonStyle buttonStyle = new TextButton.TextButtonStyle();
-        claimButton = new TextButton("CLAIM", buttonStyle);
+        claimButton = ActorFactory.createTextLabel("CLAIM");
         claimButton.setSize(80, 25);
         claimButton.setPosition(210, 10);
         addActor(claimButton);
@@ -79,7 +79,7 @@ public class AchievementCard extends Group implements ListItemView<AchievementDa
         float percentage = (float) achievement.progress / achievement.target;
         progressLabel.setText(achievement.progress + "/" + achievement.target);
         rewardLabel.setText("+" + achievement.reward);
-        progressBar.setValue(percentage);
+        //progressBar.setValue(percentage);
 
         if (achievement.isCompleted && !achievement.isClaimed) {
             claimButton.setVisible(true);
@@ -128,6 +128,11 @@ public class AchievementCard extends Group implements ListItemView<AchievementDa
     @Override
     public boolean backPressed() {
         return false;
+    }
+
+    @Override
+    public void buildIfNeeded() {
+
     }
 
     @Override

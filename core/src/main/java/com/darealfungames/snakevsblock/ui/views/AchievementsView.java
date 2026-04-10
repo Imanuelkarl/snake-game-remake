@@ -7,28 +7,35 @@ import com.darealfungames.snakevsblock.ui.adapters.AchievementAdapter;
 import com.darealfungames.snakevsblock.ui.cards.AchievementCard;
 import com.darealfungames.snakevsblock.ui.core.ListManager;
 import com.darealfungames.snakevsblock.ui.data.AchievementData;
+import com.darealfungames.snakevsblock.utils.ActorFactory;
 
 public class AchievementsView extends BaseActorView {
     private ListManager<AchievementData, AchievementCard> listManager;
     private AchievementAdapter adapter;
     private Label titleLabel;
     private Label totalRewardsLabel;
-
+    private float width,height;
     public AchievementsView(Group group) {
         super(group);
+        setSize(group.getWidth(),group.getHeight());
+        //setPosition(group.getX(),group.getY());
+        this.width=group.getWidth();
+        this.height=group.getHeight();
+
         setupUI();
         setupList();
-        loadData();
+        setupTransform();
+        Gdx.app.postRunnable(this::loadData);
     }
 
     private void setupUI() {
         // Title
-        titleLabel = new Label("ACHIEVEMENTS", new Label.LabelStyle());
+        titleLabel = ActorFactory.createTextLabel("ACHIEVEMENTS", new Label.LabelStyle());
         titleLabel.setPosition(20, Gdx.graphics.getHeight() - 50);
         addActor(titleLabel);
 
         // Total rewards
-        totalRewardsLabel = new Label("Total Rewards: 0", new Label.LabelStyle());
+        totalRewardsLabel = ActorFactory.createTextLabel("Total Rewards: 0", new Label.LabelStyle());
         totalRewardsLabel.setPosition(Gdx.graphics.getWidth() - 200, Gdx.graphics.getHeight() - 50);
         addActor(totalRewardsLabel);
     }
@@ -39,8 +46,7 @@ public class AchievementsView extends BaseActorView {
         listManager = new ListManager<>(adapter);
 
         // Vertical layout with larger cards for achievements
-        listManager.setLayout(ListManager.ListLayout.VERTICAL, 1, 300, 120);
-        listManager.setAdapter(adapter);
+        listManager.setLayout( 1, 300, 120);
         listManager.setSize(Gdx.graphics.getWidth() - 40, Gdx.graphics.getHeight() - 100);
         listManager.setPosition(20, 20);
 
@@ -66,6 +72,12 @@ public class AchievementsView extends BaseActorView {
 
         adapter.setData(achievements);
         updateTotalRewards();
+    }
+    private void setupTransform(){
+
+        listManager.setSize(width,height);
+        listManager.setPosition(0, 0);
+        listManager.setLayout( 1, 100);
     }
 
     private void claimReward(AchievementData achievement, int position) {
@@ -100,11 +112,19 @@ public class AchievementsView extends BaseActorView {
 
     @Override
     public void resize(float width, float height) {
-        listManager.onResize(width - 40, height - 100);
+        this.width = width;
+        this.height = height;
+        setupTransform();
+        listManager.renderAllItems();
     }
 
     @Override
     public boolean backPressed() {
         return false;
+    }
+
+    @Override
+    public void buildIfNeeded() {
+
     }
 }

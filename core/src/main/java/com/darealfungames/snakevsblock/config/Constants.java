@@ -29,6 +29,7 @@ public class Constants {
     public static final int DIFFICULTY_NORMAL = 1;
     public static final int DIFFICULTY_HARD = 2;
     public static final int SCREEN_SIZE = 1612;
+    public static final int SCREEN_WIDTH = 700;
 
     public static void initialize() {
         // Initialize any constant values

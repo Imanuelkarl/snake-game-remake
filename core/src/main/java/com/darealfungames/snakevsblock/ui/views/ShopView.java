@@ -9,25 +9,34 @@ import com.darealfungames.snakevsblock.ui.adapters.ShopAdapter;
 import com.darealfungames.snakevsblock.ui.cards.ShopCard;
 import com.darealfungames.snakevsblock.ui.core.ListManager;
 import com.darealfungames.snakevsblock.ui.data.ShopItemData;
+import com.darealfungames.snakevsblock.utils.ActorFactory;
 
 public class ShopView extends BaseActorView {
     private ListManager<ShopItemData, ShopCard> listManager;
     private ShopAdapter adapter;
     private Label titleLabel;
+    private float width;
+    private float height;
     private Label coinsLabel;
     private Label diamondsLabel;
     private Table currencyPanel;
 
     public ShopView(Group group) {
         super(group);
+        setSize(group.getWidth(),group.getHeight());
+        //setPosition(group.getX(),group.getY());
+        this.width=group.getWidth();
+        this.height=group.getHeight();
+
         setupUI();
         setupList();
+        setupTransform();
         loadData();
     }
 
     private void setupUI() {
         // Title
-        titleLabel = new Label("SHOP", new Label.LabelStyle());
+        titleLabel = ActorFactory.createTextLabel("SHOP");
         titleLabel.setPosition(20, Gdx.graphics.getHeight() - 50);
         addActor(titleLabel);
 
@@ -36,8 +45,8 @@ public class ShopView extends BaseActorView {
         currencyPanel.setPosition(Gdx.graphics.getWidth() - 200, Gdx.graphics.getHeight() - 50);
         currencyPanel.setSize(180, 40);
 
-        coinsLabel = new Label("🪙 5000", new Label.LabelStyle());
-        diamondsLabel = new Label("💎 100", new Label.LabelStyle());
+        coinsLabel = ActorFactory.createTextLabel("🪙 5000");
+        diamondsLabel = ActorFactory.createTextLabel("💎 100");
 
         currencyPanel.add(coinsLabel).padRight(10);
         currencyPanel.add(diamondsLabel);
@@ -50,8 +59,7 @@ public class ShopView extends BaseActorView {
 
 
         // Grid layout: 2 columns for shop items
-        listManager.setLayout(ListManager.ListLayout.GRID, 2, 280, 100);
-        listManager.setAdapter(adapter);
+        listManager.setLayout( 2, 280, 100);
         listManager.setSize(Gdx.graphics.getWidth() - 40, Gdx.graphics.getHeight() - 100);
         listManager.setPosition(20, 20);
 
@@ -78,6 +86,12 @@ public class ShopView extends BaseActorView {
             ShopItemData.CurrencyType.COINS, 5000, Assets.getInstance().defaultItemTexture, false));
 
         adapter.setData(items);
+    }
+    private void setupTransform(){
+
+        listManager.setSize(width,height);
+        listManager.setPosition(0, 0);
+        listManager.setLayout(3, 100);
     }
 
     private void purchaseItem(ShopItemData item, int position) {
@@ -147,12 +161,20 @@ public class ShopView extends BaseActorView {
 
     @Override
     public void resize(float width, float height) {
-        listManager.onResize(width - 40, height - 100);
+        this.width = width;
+        this.height = height;
+        setupTransform();
+        listManager.renderAllItems();
         currencyPanel.setPosition(width - 200, height - 50);
     }
 
     @Override
     public boolean backPressed() {
         return false;
+    }
+
+    @Override
+    public void buildIfNeeded() {
+
     }
 }

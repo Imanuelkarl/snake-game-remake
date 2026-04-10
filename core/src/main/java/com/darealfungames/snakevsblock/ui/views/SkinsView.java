@@ -4,7 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.utils.Align;
-import com.darealfungames.snakevsblock.assets.Assets;
+import com.darealfungames.snakevsblock.config.GameInstance;
 import com.darealfungames.snakevsblock.ui.adapters.SkinAdapter;
 import com.darealfungames.snakevsblock.ui.cards.SkinCard;
 import com.darealfungames.snakevsblock.ui.core.ListManager;
@@ -20,15 +20,50 @@ public class SkinsView extends BaseActorView {
 
     public SkinsView(Group group) {
         super(group);
-        setSize(group.getWidth(),group.getHeight());
-        //setPosition(group.getX(),group.getY());
-        this.width=group.getWidth();
-        this.height=group.getHeight();
+        setSize(group.getWidth(), group.getHeight());
 
+        this.width = group.getWidth();
+        this.height = group.getHeight();
+
+        // ONLY lightweight setup
         setupUI();
+        buildIfNeeded();
+    }
+    private Group loadingGroup;
+
+    private void showLoading() {
+        loadingGroup = new Group();
+
+        Label loadingText = ActorFactory.createTextLabel(50, 20, 0);
+        loadingText.setText("Loading skins...");
+        loadingText.setPosition(50, height / 2f, Align.center);
+
+        loadingGroup.addActor(loadingText);
+        addActor(loadingGroup);
+    }
+
+    private void hideLoading() {
+        if (loadingGroup != null) {
+            loadingGroup.remove();
+        }
+    }
+    private boolean isBuilt = false;
+
+    @Override
+    public void buildIfNeeded() {
+        if (isBuilt) return;
+        isBuilt = true;
+
         setupList();
-        loadData();
         setupTransform();
+
+        // IMPORTANT: defer data load
+        showLoading();
+
+        Gdx.app.postRunnable(() -> {
+            loadData();
+            hideLoading();
+        });
     }
 
     private void setupUI() {
@@ -42,35 +77,17 @@ public class SkinsView extends BaseActorView {
         adapter = new SkinAdapter();
         listManager = new ListManager<>(adapter);
 
-
-        // Configure grid layout: 2 columns, each card 300x120
-        listManager.setSize(width,height);
-        listManager.setPosition(0, 0);
-        listManager.setLayout(ListManager.ListLayout.GRID, 1, 100);
-
         addActor(listManager);
     }
     private void setupTransform(){
 
         listManager.setSize(width,height);
         listManager.setPosition(0, 0);
-        listManager.setLayout(ListManager.ListLayout.GRID, 1, 100);
+        listManager.setLayout( 3, 350);
     }
 
     private void loadData() {
-        // Load skins from game data
-        java.util.List<SkinData> skins = new java.util.ArrayList<>();
-        skins.add(new SkinData("skin_1", "Default Warrior",
-            Assets.getInstance().defaultItemTexture, 0, true, true));
-        skins.add(new SkinData("skin_2", "Knight Armor",
-            Assets.getInstance().defaultItemTexture, 5000, false, false));
-        skins.add(new SkinData("skin_3", "Shadow Assassin",
-            Assets.getInstance().defaultItemTexture, 10000, false, false));
-        skins.add(new SkinData("skin_4", "Dragon Lord",
-            Assets.getInstance().defaultItemTexture, 25000, false, false));
-
-        adapter.setData(skins);
-
+        adapter.setData(GameInstance.getInstance().getSkins());
         adapter.setOnItemClickListener((skin, position) -> {
             if (!skin.isOwned) {
                 // Show purchase dialog
@@ -97,7 +114,10 @@ public class SkinsView extends BaseActorView {
 
     @Override
     public void resize(float width, float height) {
-        listManager.onResize(width - 40, height - 100);
+        this.width = width;
+        this.height = height;
+        setupTransform();
+        listManager.renderAllItems();
     }
 
     @Override

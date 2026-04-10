@@ -118,4 +118,9 @@ public class HomeScreen implements Screen, HomeUiListener {
     public void onHealthAddClicked() {
 
     }
+
+    @Override
+    public void onLevelsClicked() {
+        game.setScreen(new LevelsScreen(game));
+    }
 }

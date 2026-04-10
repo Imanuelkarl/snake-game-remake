@@ -22,6 +22,7 @@ import com.darealfungames.snakevsblock.entities.Row;
 import com.darealfungames.snakevsblock.entities.Snake;
 import com.darealfungames.snakevsblock.entities.SnakeSection;
 import com.darealfungames.snakevsblock.entities.WinBody;
+import com.darealfungames.snakevsblock.enumaretors.PowerUp;
 import com.darealfungames.snakevsblock.utils.CustomBitmapFont;
 import com.darealfungames.snakevsblock.utils.FontFactory;
 import com.darealfungames.snakevsblock.utils.SimpleBitmapFont;
@@ -50,6 +51,10 @@ public class WorldRenderer {
     private SimpleBitmapFont font;
 
     private final GlyphLayout layout = new GlyphLayout();
+    private TextureRegion magnetPowerUp;
+    private TextureRegion hammerPowerUp;
+    private TextureRegion freezePowerUp;
+    private TextureRegion multiplierPowerUp;
 
     public WorldRenderer(WorldState worldState) {
         this.camera= worldState.getCamera();
@@ -67,27 +72,18 @@ public class WorldRenderer {
         this.blockFont = FontFactory.getRoboto(60, false);   // Block numbers
         this.smallFont = FontFactory.getRoboto(20, false);
 
-        // Enable debug mode to see what's happening
-        //testFont.setDebugMode(false);
+        Texture powerUps= Assets.getInstance().powerUpTexture;;
+        this.magnetPowerUp = resolveRegion(powerUps,2,2,0,1,0);
+        this.hammerPowerUp = resolveRegion(powerUps,2,2,0,0,0);
+        this.freezePowerUp = resolveRegion(powerUps,2,2,1,1,0);
+        this.multiplierPowerUp=resolveRegion(powerUps,2,2,1,0,0);
 
-        // Print all loaded glyphs to see if they're loading correctly
-        //testFont.printGlyphs();
 
-        if(GameInstance.getInstance().getSimpleBitmapFont()==null){
-            font = new SimpleBitmapFont(
-            Gdx.files.internal("fonts/ImageFonts/FontsHDTwo.fnt"),
-            Assets.getInstance().fontTexture
-            );
-            GameInstance.getInstance().setSimpleBitmapFont(font);
-        }else{
-            font=GameInstance.getInstance().getSimpleBitmapFont();
-        }
+        font=GameInstance.getInstance().getSimpleBitmapFont();
+
 
         // Optional: Enable debug to see character boxes
         font.setDebugMode(false);
-
-        // Print all loaded glyphs to verify
-        font.printGlyphs();
 
 
         // Check for missing characters
@@ -103,11 +99,37 @@ public class WorldRenderer {
         batch.begin();
         renderRowItems(batch);
         renderSnake();
+        renderPowerUp();
         batch.end();
+    }
+    private TextureRegion resolveRegion(Texture texture,int rows, int columns, int x,int y,float pad ){
+        return new TextureRegion(texture,x*texture.getWidth()/columns,y*texture.getHeight()/rows,texture.getWidth()/columns,texture.getHeight()/rows);
     }
 
 
     public void resize(int width, int height) {
+
+    }
+    private void renderPowerUp(){
+        if(worldState.isPowerUpIsActive()) {
+            float size = worldState.getBlockDimension() * 1.1f;
+            float powerUpX=worldState.getScreenWidth()/2 - size / 2;
+            float powerUpY=worldState.getScreenHeight() - (worldState.getScreenHeight() / 8);
+            switch (worldState.getPowerUp()) {
+                case MULTIPLIER:
+                    batch.draw(multiplierPowerUp, powerUpX , powerUpY, size, size);
+                    break;
+                case HAMMER:
+                    batch.draw(hammerPowerUp, powerUpX, powerUpY, size, size);
+                    break;
+                case FREEZE:
+                    batch.draw(freezePowerUp, powerUpX, powerUpY,size, size);
+                    break;
+                default:
+                    batch.draw(magnetPowerUp, powerUpX, powerUpY,size, size);
+                    break;
+            }
+        }
 
     }
     private void renderRowItems(Batch batch){
@@ -134,7 +156,7 @@ public class WorldRenderer {
             }else {
                 for (Block block : row.getBlocks()) {
                     float blockX = (block.getPosition()) * camera.viewportWidth / 10 + block.getPosition() * camera.viewportWidth / 10;
-
+                    float blockSize= worldState.getBlockDimension();
                     if (block.isActive()) {
                         batch.draw(
                             block.getRegion(),
@@ -159,6 +181,24 @@ public class WorldRenderer {
                         //font.setFontSize();
 
                         font.draw(batch, value, textX, textY - worldState.getBlockDimension() * 0.55f);
+                        if(block.hasPowerUp()){
+                            float powerUpSize =blockSize/2 -blockSize/8;
+                            switch (block.getPowerUp()){
+                                case HAMMER:
+                                    batch.draw(hammerPowerUp,blockX+blockSize/2 -powerUpSize/2,row.getY()+blockSize/2+powerUpSize/8,powerUpSize,powerUpSize);
+                                    break;
+                                case MULTIPLIER:
+                                    batch.draw(multiplierPowerUp,blockX+blockSize/2 -powerUpSize/2,row.getY()+blockSize/2+powerUpSize/8,powerUpSize,powerUpSize);
+                                    break;
+                                case FREEZE:
+                                    batch.draw(freezePowerUp,blockX+blockSize/2 -powerUpSize/2,row.getY()+blockSize/2+powerUpSize/8,powerUpSize,powerUpSize);
+                                    break;
+                                default:
+                                    batch.draw(magnetPowerUp,blockX+blockSize/2 -powerUpSize/2,row.getY()+blockSize/2+powerUpSize/8,powerUpSize,powerUpSize);
+                                    break;
+                            }
+
+                        }
                         //testFont.draw(batch, String.valueOf(block.getValue()), textX, textY);
                     }
                     //System.out.println("Drawing block at position: " + ((camera.viewportWidth/5)*block.getPosition()) + ", " + row.getY());

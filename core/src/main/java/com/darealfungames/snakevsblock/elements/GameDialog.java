@@ -63,23 +63,11 @@ public class GameDialog extends Group {
         bgTexture = assets.noHeaderDialog;
         titleTexture = assets.noHeaderDialog;
         closeTexture = assets.closeTexture;
-        if(GameInstance.getInstance().getSimpleBitmapFont()==null){
-            simpleBitmapFont = new SimpleBitmapFont(
-                Gdx.files.internal("fonts/ImageFonts/FontsHDTwo.fnt"),
-                Assets.getInstance().fontTexture
-            );
-            GameInstance.getInstance().setSimpleBitmapFont(simpleBitmapFont);
-        }
-        else{
-            simpleBitmapFont=GameInstance.getInstance().getSimpleBitmapFont();
-        }
+
+        simpleBitmapFont=GameInstance.getInstance().getSimpleBitmapFont();
 
         // Optional: Enable debug to see character boxes
         simpleBitmapFont.setDebugMode(false);
-
-        // Print all loaded glyphs to verify
-        simpleBitmapFont.printGlyphs();
-
         initialize();
     }
     public void draw(Batch batch,CharSequence text,float x, float y, float scaleX, float scaleY){

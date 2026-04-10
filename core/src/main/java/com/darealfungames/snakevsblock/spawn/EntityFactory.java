@@ -3,9 +3,12 @@ package com.darealfungames.snakevsblock.spawn;
 import static com.darealfungames.snakevsblock.utils.RandomEngine.getRandom;
 
 import com.darealfungames.snakevsblock.assets.Assets;
+import com.darealfungames.snakevsblock.config.PowerUpDimensions;
 import com.darealfungames.snakevsblock.entities.Block;
 import com.darealfungames.snakevsblock.entities.Line;
 import com.darealfungames.snakevsblock.entities.WinBody;
+import com.darealfungames.snakevsblock.enumaretors.PowerUp;
+import com.darealfungames.snakevsblock.utils.RandomEngine;
 import com.darealfungames.snakevsblock.world.WorldState;
 
 public class EntityFactory {
@@ -14,6 +17,12 @@ public class EntityFactory {
         Block block = new Block(Assets.getInstance().blockTexture,0,0,30,30,score);
         block.setValue(score);
         block.setPosition(pos);
+        int powerDet = RandomEngine.getRandom(0,4);
+        if(powerDet==3){
+            int powerUpType = RandomEngine.getRandom(0,3);
+            block.setPowerUp(true, PowerUpDimensions.intToEnum(powerUpType));
+            block.setValue(20);
+        }
         block.setActive(true);
         //block.setColumn(pos);
         return block;

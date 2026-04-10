@@ -56,7 +56,7 @@ public class MainGame implements Screen {
         worldController = new WorldController(worldState);
         worldRenderer = new WorldRenderer( worldState);
         int gameSize = Constants.SCREEN_SIZE;
-        int WORLD_WIDTH=(gameSize * Gdx.graphics.getWidth()) /Gdx.graphics.getHeight();
+        int WORLD_WIDTH=/*Constants.SCREEN_WIDTH;*/(gameSize * Gdx.graphics.getWidth()) /Gdx.graphics.getHeight();
         FitViewport viewport = new FitViewport(WORLD_WIDTH, gameSize, camera);
         this.stage = new Stage(viewport);
         uiRenderer = new UIRenderer(stage, worldState);

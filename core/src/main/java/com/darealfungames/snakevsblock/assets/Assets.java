@@ -29,6 +29,7 @@ public class Assets {
     public Texture sliderFillTexture;
     public Texture sliderKnobTexture;
     public Texture boxDialogTexture;
+    public Texture snakeSkins;
 
     public Texture pauseHeaderTexture;
     public Texture soundTexture;
@@ -53,6 +54,11 @@ public class Assets {
     public Texture continueTexture;
     public Texture failTexture;
     public Texture upLayout;
+    public Texture selectedButtonTexture;
+    public Texture equippedBorderTexture;
+    public Texture selectButtonTexture;
+    public Texture buyButtonTexture;
+    public Texture levelsButtonTexture;
     private AssetManager assetManager;
 
     // Textures
@@ -70,10 +76,12 @@ public class Assets {
     public Texture dialogHalfSize;
     public Texture dialogQuarterSize;
     public Texture dialogQuarterSizeOpen;
+    public Texture cardBackgroundTexture;
     public Texture noHeaderDialog;
     public Texture keepGoingTexture;
     public Texture defaultButton;
     public Texture settingHeader;
+    public Texture powerUpTexture;
 
     // Fonts
     public BitmapFont font;
@@ -103,6 +111,7 @@ public class Assets {
     public void loadAllAssets() {
         // Load textures
         assetManager.load("snake.png", Texture.class);
+        assetManager.load("snake_multiple_skins.png", Texture.class);
         assetManager.load("blocks.png", Texture.class);
         assetManager.load("lineBG.png",Texture.class);
         assetManager.load("shaderLayer.png", Texture.class);
@@ -118,12 +127,13 @@ public class Assets {
         assetManager.load("ui/skinIcon.png", Texture.class);
         assetManager.load("ui/shareAppIcon.png", Texture.class);
         assetManager.load("ui/addButton2.png", Texture.class);
+        assetManager.load("ui/LevelsButton.png", Texture.class);
         //Static
         assetManager.load("ui/SnakeBlockLogo.png", Texture.class);
         assetManager.load("ui/scoreBoard.png", Texture.class);
-        assetManager.load("ui/coin.png", Texture.class);
-        assetManager.load("ui/heart.png", Texture.class);
-        assetManager.load("ui/Crystal.png", Texture.class);
+        assetManager.load("ui/snakeCoin.png", Texture.class);
+        assetManager.load("ui/snakeHealthPortion.png", Texture.class);
+        assetManager.load("ui/snakeDiamond.png", Texture.class);
         assetManager.load("ui/bottomNavBackground.png", Texture.class);
         assetManager.load("ui/upLayout.png", Texture.class);
 
@@ -135,6 +145,7 @@ public class Assets {
         assetManager.load("ui/home_p_button.png", Texture.class);
         assetManager.load("ui/restart_p_button.png", Texture.class);
         assetManager.load("ui/play_p_button.png", Texture.class);
+        assetManager.load("powerUpTexture.png",Texture.class);
 
         //Text Assets
         assetManager.load("ui/giveUpText.png", Texture.class);
@@ -172,6 +183,12 @@ public class Assets {
         assetManager.load("ui/menuBG.png", Texture.class);
         assetManager.load("ui/defaultButton.png", Texture.class);
 
+        assetManager.load("ui/equippedBorderBg.png", Texture.class);
+        assetManager.load("ui/cardBackground.png", Texture.class);
+        assetManager.load("ui/selectedButton.png", Texture.class);
+        assetManager.load("ui/selectButton.png", Texture.class);
+        assetManager.load("ui/buyButton.png", Texture.class);
+
         //Bottom Nav
         assetManager.load("ui/defaultItemsLook.png", Texture.class);
         assetManager.load("ui/defaultNavItem.png", Texture.class);
@@ -190,6 +207,7 @@ public class Assets {
     public void assignAssets() {
         // Assign loaded assets
         snakeTexture = assetManager.get("snake.png", Texture.class);
+        snakeSkins  = assetManager.get("snake_multiple_skins.png", Texture.class);
         blockTexture = assetManager.get("blocks.png", Texture.class);
         lineTexture= assetManager.get("lineBG.png",Texture.class);
         backgroundTexture = assetManager.get("shaderLayer.png", Texture.class);
@@ -206,10 +224,11 @@ public class Assets {
         addButtonTexture=assetManager.get("ui/addButton2.png", Texture.class);
         logoTexture=assetManager.get("ui/SnakeBlockLogo.png", Texture.class);
         barTexture=assetManager.get("ui/scoreBoard.png", Texture.class);
-        coinTexture=assetManager.get("ui/coin.png",Texture.class);
-        healthTexture=assetManager.get("ui/heart.png", Texture.class);
-        diamondTexture=assetManager.get("ui/Crystal.png", Texture.class);
+        coinTexture=assetManager.get("ui/snakeCoin.png",Texture.class);
+        healthTexture=assetManager.get("ui/snakeHealthPortion.png", Texture.class);
+        diamondTexture=assetManager.get("ui/snakeDiamond.png", Texture.class);
         navBarTexture = assetManager.get("ui/bottomNavBackground.png", Texture.class);
+        levelsButtonTexture = assetManager.get("ui/LevelsButton.png", Texture.class);
 
         // Main Game Textures
         pauseBtnTexture=assetManager.get("ui/pauseBtn.png", Texture.class);
@@ -218,6 +237,7 @@ public class Assets {
         homeButtonTexture=assetManager.get("ui/home_p_button.png", Texture.class);
         restartButtonTexture=assetManager.get("ui/restart_p_button.png", Texture.class);
         resumeButtonTexture=assetManager.get("ui/play_p_button.png", Texture.class);
+        powerUpTexture=assetManager.get("powerUpTexture.png",Texture.class);
 
         pauseHeaderTexture=assetManager.get("ui/pauseDialogHeader.png", Texture.class);
         boxDialogTexture=assetManager.get("ui/Dialog.png", Texture.class);
@@ -254,6 +274,11 @@ public class Assets {
 
         //Menu Screen Textures
         menuBGTexture=assetManager.get("ui/menuBG.png", Texture.class);
+        equippedBorderTexture = assetManager.get("ui/equippedBorderBg.png", Texture.class);
+        cardBackgroundTexture = assetManager.get("ui/cardBackground.png", Texture.class);
+        selectedButtonTexture = assetManager.get("ui/selectedButton.png", Texture.class);
+        selectButtonTexture = assetManager.get("ui/selectButton.png", Texture.class);
+        buyButtonTexture = assetManager.get("ui/buyButton.png", Texture.class);
 
         //Bottom Nav
         bottomNavBg=assetManager.get("ui/downBGBlue.png", Texture.class);

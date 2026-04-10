@@ -26,6 +26,7 @@ import com.darealfungames.snakevsblock.elements.GameDialog;
 import com.darealfungames.snakevsblock.screens.GameOverScreen;
 import com.darealfungames.snakevsblock.screens.HomeScreen;
 import com.darealfungames.snakevsblock.screens.MainGame;
+import com.darealfungames.snakevsblock.utils.ActorFactory;
 import com.darealfungames.snakevsblock.utils.FontFactory;
 import com.darealfungames.snakevsblock.utils.SimpleBitmapFont;
 import com.darealfungames.snakevsblock.world.WorldState;
@@ -81,13 +82,7 @@ public class UIRenderer {
         }
         stage.act(Gdx.graphics.getDeltaTime());
         stage.draw();
-        batch.begin();
-        if(reviveDialog.isOpen()){
-            simpleBitmapFont.setScale(0.2f,0.25f);
-            simpleBitmapFont.drawWrapped(batch,"500 COINS",worldState.getScreenWidth()/8, worldState.getScreenHeight()/2,worldState.getScreenWidth()/6);
-            simpleBitmapFont.drawWrapped(batch,"WATCH AD",worldState.getScreenWidth()/2+worldState.getScreenWidth()/8, worldState.getScreenHeight()/2,worldState.getScreenWidth()/6);
-        }
-        batch.end();
+
     }
     private void build(){
         ImageButton pauseButton = createPauseButton();
@@ -146,12 +141,23 @@ public class UIRenderer {
             reviveBtnWidth,
             reviveBtnHeight
         );
-        ImageButton tapToContinueButton = createButton(
+        Label reviveWithAdsText = ActorFactory.createTextLabel(
+            40
+            ,
+            reviveWithAdsButton.getX()+pad,reviveY+reviveBtnHeight/2
+        );
+        reviveWithAdsText.setText("WATCH AD");
+        Label reviveWithHealthText = ActorFactory.createTextLabel(
+            40, reviveWithHealthButton.getX()+pad,
+            reviveY+reviveBtnHeight/2
+        );
+        reviveWithHealthText.setText("500 COINS");
+        ImageButton tapToContinueButton = ActorFactory.createButton(
             Assets.getInstance().giveUpTexture,
-            stage.getWidth()/2 - stage.getWidth()/4,
+            stage.getWidth()/2 - stage.getWidth()/11,
             stage.getHeight()/2 - stage.getWidth()/5,
-            stage.getWidth()/2,
-            stage.getWidth()/10
+            stage.getWidth()/6,
+            stage.getWidth()/18
         );
         Image keepMovingTitle = createImage(Assets.getInstance().keepGoingTexture,
             stage.getWidth()/2 - stage.getWidth()/4,
@@ -199,7 +205,9 @@ public class UIRenderer {
 
         reviveDialog.addContentActor(keepMovingTitle);
         reviveDialog.addContentActor(reviveWithAdsButton);
+        reviveDialog.addContentActor(reviveWithAdsText);
         reviveDialog.addContentActor(reviveWithHealthButton);
+        reviveDialog.addContentActor(reviveWithHealthText);
         reviveDialog.addContentActor(tapToContinueButton);
 
         //gameOverGroup.addActor(overlay);

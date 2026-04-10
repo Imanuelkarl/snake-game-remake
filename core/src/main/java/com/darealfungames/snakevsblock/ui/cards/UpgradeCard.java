@@ -2,15 +2,22 @@ package com.darealfungames.snakevsblock.ui.cards;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.scenes.scene2d.Group;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.ProgressBar;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
+import com.darealfungames.snakevsblock.assets.Assets;
 import com.darealfungames.snakevsblock.ui.core.BaseView;
 import com.darealfungames.snakevsblock.ui.core.ListItemView;
 import com.darealfungames.snakevsblock.ui.data.UpgradeData;
 import com.darealfungames.snakevsblock.utils.ActorFactory;
 
 public class UpgradeCard extends Group implements ListItemView<UpgradeData>, BaseView {
+
+    private Image background;
+
+    private Image icon;
     private Label nameLabel;
     private Label descriptionLabel;
     private Label levelLabel;
@@ -18,6 +25,8 @@ public class UpgradeCard extends Group implements ListItemView<UpgradeData>, Bas
     private Label valueLabel;
     private ProgressBar progressBar;
     private UpgradeData currentData;
+    private float width =700;
+    private float height=300;
     private int currentPosition;
 
     public UpgradeCard() {
@@ -25,30 +34,40 @@ public class UpgradeCard extends Group implements ListItemView<UpgradeData>, Bas
     }
 
     private void setupUI() {
+
+        background = new Image(new TextureRegionDrawable(Assets.getInstance().cardBackgroundTexture));
+        background.setSize(width-40, 260);
+        background.setPosition(20,20);
+        addActor(background);
+
+        icon = new Image(new TextureRegionDrawable(Assets.getInstance().coinTexture));
+        icon.setSize(height-80, height-80);
+        icon.setPosition(40,40);
+        addActor(icon);
         // Name
         nameLabel = ActorFactory.createTextLabel(24, 280, 80);
-        nameLabel.setPosition(10, 70);
+        nameLabel.setPosition(height-40, height-80);
         addActor(nameLabel);
 
         // Description
 
         descriptionLabel =  ActorFactory.createTextLabel(24, 280, 80);
-        descriptionLabel.setPosition(10, 55);
+        descriptionLabel.setPosition(height-40, height-120);
         addActor(descriptionLabel);
 
 
         levelLabel =  ActorFactory.createTextLabel(24, 280, 80);
-        levelLabel.setPosition(10, 35);
+        levelLabel.setPosition(height-40, height-160);
         addActor(levelLabel);
 
 
         valueLabel =  ActorFactory.createTextLabel(24, 280, 80);
-        valueLabel.setPosition(150, 35);
+        valueLabel.setPosition(height-40, height-200);
         addActor(valueLabel);
 
         // Cost
         costLabel =  ActorFactory.createTextLabel(24, 280, 80);
-        costLabel.setPosition(250, 35);
+        costLabel.setPosition(height+80, height-200);
         addActor(costLabel);
 
         // Progress bar
@@ -112,6 +131,11 @@ public class UpgradeCard extends Group implements ListItemView<UpgradeData>, Bas
     @Override
     public boolean backPressed() {
         return false;
+    }
+
+    @Override
+    public void buildIfNeeded() {
+
     }
 
     @Override
