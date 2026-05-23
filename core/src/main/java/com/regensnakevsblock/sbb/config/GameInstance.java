@@ -3,26 +3,47 @@ package com.regensnakevsblock.sbb.config;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.google.gson.Gson;
 import com.regensnakevsblock.sbb.assets.Assets;
-import com.regensnakevsblock.sbb.service.AdsService;
-import com.regensnakevsblock.sbb.service.PurchaseService;
+import com.regensnakevsblock.sbb.levels.Level;
+import com.regensnakevsblock.sbb.service.SaveService;
+import com.regensnakevsblock.sbb.service.ads.AdsService;
+import com.regensnakevsblock.sbb.service.purchase.PurchaseService;
 import com.regensnakevsblock.sbb.ui.adapters.SkinAdapter;
 import com.regensnakevsblock.sbb.ui.core.ViewManager;
 import com.regensnakevsblock.sbb.ui.core.ViewPagerAdapter;
+import com.regensnakevsblock.sbb.ui.data.LevelData;
 import com.regensnakevsblock.sbb.ui.data.SkinData;
 import com.regensnakevsblock.sbb.ui.views.AchievementsView;
+import com.regensnakevsblock.sbb.ui.views.LevelsView;
 import com.regensnakevsblock.sbb.ui.views.ShopView;
 import com.regensnakevsblock.sbb.ui.views.SkinsView;
 import com.regensnakevsblock.sbb.ui.views.UpgradesView;
 import com.regensnakevsblock.sbb.utils.SimpleBitmapFont;
+import com.regensnakevsblock.sbb.utils.TextureTools;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 public class GameInstance {
 
     private static GameInstance instance;
+    private static SaveService saveService;
+    public LevelsView levelsView;
+
+    public List<LevelData> getLevelData() {
+        List<LevelData> levelDataList = new ArrayList<>();
+        int currentLevel = saveService.getSelectedLevel();
+        int maxLevel = saveService.getMaxLevel();
+        for(int i=0;i<levels.size();i++){
+            Level level = levels.get(i);
+            LevelData data = new LevelData(level.getLevelId(),level.isCleared(),currentLevel==level.getLevelId(),level.getLevelId()<=maxLevel);
+            levelDataList.add(data);
+        }
+        return levelDataList;
+    }
 
     // ===== LOAD STATES =====
     public enum LoadState {
@@ -30,7 +51,7 @@ public class GameInstance {
         LOADING,
         LOADED
     }
-    public SkinAdapter adapter;
+    //public SkinAdapter adapter;
     public AdsService adsService;
     public PurchaseService purchaseService;
 
@@ -53,9 +74,11 @@ public class GameInstance {
     public static GameInstance getInstance() {
         if (instance == null) {
             instance = new GameInstance();
+            saveService = new SaveService();
         }
         return instance;
     }
+
 
 
     // =====================================================
@@ -96,9 +119,6 @@ public class GameInstance {
                 skins = loadedData;
                 setupViewPager();
                 skinDataState = LoadState.LOADED;
-                adapter=loadAdapter();
-
-
                 if (onSkinDataLoaded != null) {
                     onSkinDataLoaded.run();
                 }
@@ -143,11 +163,6 @@ public class GameInstance {
         menuViewManagerAdapter.addView(new AchievementsView(menuViewManager));
         menuViewManagerAdapter.addView(new ShopView(menuViewManager));
         menuViewManager.setAdapter(menuViewManagerAdapter);
-
-
-
-
-
     }
 
     // =====================================================
@@ -164,11 +179,11 @@ public class GameInstance {
         int tileHeight = texture.getHeight() / rows;
         TextureRegion[][] regions = TextureRegion.split(texture, tileWidth, tileHeight);
 
-        for (int i = 0; i < 16; i++) {
+        for (int i = 0; i < (columns*rows); i++) {
             int col = i % columns;
             int row = i / columns;
 
-            TextureRegion region = regions[row][col]; // already top-left aligned
+            TextureRegion region = TextureTools.resolveRegion(texture,rows,columns,col,row,8);
 
             skins.add(new SkinData(
                 "skin_" + i,
@@ -191,22 +206,38 @@ public class GameInstance {
             simpleBitmapFont.dispose();
         }
     }
-    public SkinAdapter loadAdapter() {
-        // Placeholder for future adapter access if needed
-        SkinAdapter adapter =new SkinAdapter();
-        adapter.setData(getSkins());
-        adapter.setOnItemClickListener((skin, position) -> {
-            if (!skin.isOwned) {
-                // Show purchase dialog
-                //purchaseSkin(skin, position);
-            } else if (!skin.isEquipped) {
-                // Equip skin
-                adapter.equipSkin(skin.id);
-            }
-        });
-        return adapter;
-    }
-    private void loadViewPager(){
 
+    private final List<Level> levels = new ArrayList<>();
+
+    public void load() {
+        // from assets (android-safe)
+        String json = Gdx.files.internal("levels.json").readString();
+
+        // Gson example
+        Gson gson = new Gson();
+        Level[] loaded = gson.fromJson(json, Level[].class);
+
+        levels.clear();
+        Collections.addAll(levels, loaded);
+
+        // Optional: sort or index by id
+        levels.sort(Comparator.comparingInt(Level::getLevelId));
+        this.levelsView = new LevelsView();
+    }
+
+    public Level getByIndex(int index) {
+        return levels.get(index);
+    }
+
+    public Level getById(int id) {
+        // if called often, replace with a Map<Integer, Level>
+        for (Level l : levels) {
+            if (l.getLevelId() == id) return l;
+        }
+        return null;
+    }
+
+    public int size() {
+        return levels.size();
     }
 }

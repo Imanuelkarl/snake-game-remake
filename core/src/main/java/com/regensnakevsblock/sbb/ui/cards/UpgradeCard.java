@@ -3,10 +3,12 @@ package com.regensnakevsblock.sbb.ui.cards;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.ProgressBar;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
+import com.badlogic.gdx.utils.Align;
 import com.regensnakevsblock.sbb.assets.Assets;
 import com.regensnakevsblock.sbb.ui.core.BaseView;
 import com.regensnakevsblock.sbb.ui.core.ListItemView;
@@ -19,10 +21,12 @@ public class UpgradeCard extends Group implements ListItemView<UpgradeData>, Bas
 
     private Image icon;
     private Label nameLabel;
-    private Label descriptionLabel;
     private Label levelLabel;
     private Label costLabel;
     private Label valueLabel;
+    private ImageButton upgradeButton;
+    private Image currencyIcon;
+    private Group buttonGroup;
     private ProgressBar progressBar;
     private UpgradeData currentData;
     private float width =700;
@@ -35,46 +39,53 @@ public class UpgradeCard extends Group implements ListItemView<UpgradeData>, Bas
 
     private void setupUI() {
 
-        background = new Image(new TextureRegionDrawable(Assets.getInstance().cardBackgroundTexture));
+        background = new Image(new TextureRegionDrawable(Assets.getInstance().upgradeCardBG));
         background.setSize(width-40, 260);
         background.setPosition(20,20);
         addActor(background);
 
+
         icon = new Image(new TextureRegionDrawable(Assets.getInstance().coinTexture));
-        icon.setSize(height-80, height-80);
-        icon.setPosition(40,40);
+        icon.setSize(height-100, height-100);
+        icon.setPosition(20,20);
         addActor(icon);
         // Name
-        nameLabel = ActorFactory.createTextLabel(24, 280, 80);
-        nameLabel.setPosition(height-40, height-80);
+        nameLabel = ActorFactory.createTextLabel(36, 280, 80);
+        nameLabel.setPosition(55, height-60);
         addActor(nameLabel);
-
-        // Description
-
-        descriptionLabel =  ActorFactory.createTextLabel(24, 280, 80);
-        descriptionLabel.setPosition(height-40, height-120);
-        addActor(descriptionLabel);
 
 
         levelLabel =  ActorFactory.createTextLabel(24, 280, 80);
-        levelLabel.setPosition(height-40, height-160);
+        levelLabel.setPosition(height-40, height-140);
         addActor(levelLabel);
 
 
         valueLabel =  ActorFactory.createTextLabel(24, 280, 80);
-        valueLabel.setPosition(height-40, height-200);
+        valueLabel.setPosition(height-40, height-170);
         addActor(valueLabel);
+        //Upgrade button
+        upgradeButton = ActorFactory.createButton(Assets.getInstance().upgradeItemButton, 0,0,230,90);
+
+        //Currency to purchase with
+        currencyIcon = ActorFactory.createUiImage(Assets.getInstance().coinTexture, 50,5,30,30);
 
         // Cost
-        costLabel =  ActorFactory.createTextLabel(24, 280, 80);
-        costLabel.setPosition(height+80, height-200);
-        addActor(costLabel);
+        costLabel =  ActorFactory.createTextLabel(30, 110, 20);
+        costLabel.setAlignment(Align.center);
+
+
+        buttonGroup=new Group();
+        buttonGroup.addActor(upgradeButton);
+        buttonGroup.addActor(currencyIcon);
+        buttonGroup.addActor(costLabel);
+        buttonGroup.setPosition((width-40)-220,180);
+        addActor(buttonGroup);
 
         // Progress bar
-        /*progressBar = new ProgressBar(0, 1, 0.01f, false, new Skin());
-        progressBar.setSize(280, 15);
-        progressBar.setPosition(10, 10);
-        addActor(progressBar);*/
+        progressBar =ActorFactory.createProgressBar(Assets.getInstance().upgradeProgressBG, Assets.getInstance().upgradeProgressFill,250,40);
+        progressBar.setSize(450, 15);
+        progressBar.setPosition(200, 40);
+        addActor(progressBar);
     }
 
     @Override
@@ -83,19 +94,18 @@ public class UpgradeCard extends Group implements ListItemView<UpgradeData>, Bas
         this.currentPosition = position;
 
         nameLabel.setText(upgrade.name);
-        descriptionLabel.setText(upgrade.description);
         levelLabel.setText("Lv." + upgrade.currentLevel + "/" + upgrade.maxLevel);
         valueLabel.setText(upgrade.currentValue + " → " + upgrade.nextValue);
-
+        icon.setDrawable(new TextureRegionDrawable(upgrade.item));
         if (upgrade.currentLevel < upgrade.maxLevel) {
-            costLabel.setText(upgrade.upgradeCost + " COINS");
-            costLabel.setColor(Color.YELLOW);
+            costLabel.setText(upgrade.upgradeCost);
+            costLabel.setColor(Color.BLACK);
         } else {
             costLabel.setText("MAXED");
             costLabel.setColor(Color.GREEN);
         }
 
-        //progressBar.setValue((float) upgrade.currentLevel / upgrade.maxLevel);
+        progressBar.setValue((float) upgrade.currentLevel / upgrade.maxLevel);
     }
 
     @Override

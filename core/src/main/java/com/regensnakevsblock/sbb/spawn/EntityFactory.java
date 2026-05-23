@@ -20,6 +20,7 @@ public class EntityFactory {
         int powerDet = RandomEngine.getRandom(0,4);
         if(powerDet==3){
             int powerUpType = RandomEngine.getRandom(0,3);
+            System.out.println(powerUpType);
             block.setPowerUp(true, PowerUpDimensions.intToEnum(powerUpType));
             block.setValue(20);
         }
@@ -46,7 +47,9 @@ public class EntityFactory {
         win.setPositionIndex(pos);
         win.setActive(true);
         win.setRadius(worldState.getSnakeRadius());
-        win.setValue(getRandom(1,5));
+        int det = RandomEngine.getRandom(1,30);
+        win.setType(det==1?WinBody.Type.COIN:WinBody.Type.BODY);
+        win.setValue(det==1?8:getRandom(1,5));
         /*win.setX(pos*15);
         win.setY(0);
         win.setWidth(15);

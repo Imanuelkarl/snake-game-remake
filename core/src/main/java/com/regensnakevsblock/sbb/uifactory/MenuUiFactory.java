@@ -33,6 +33,7 @@ public class MenuUiFactory {
         bottomNavigation.setSize(width, height*.1f);
         bottomNavigation.setPosition(0, 0);
         bottomNavigation.selectItem(0);
+
     }
     public void resize(float width, float height){
         this.width=width;

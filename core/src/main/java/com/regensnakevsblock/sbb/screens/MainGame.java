@@ -35,12 +35,6 @@ public class MainGame implements Screen {
     private final int gameSize;
 
     private Stage stage;
-    private float speed =5;
-    private ShapeRenderer shapeRenderer;
-
-    private Group pauseMenuGroup;
-
-    private Group gameOverGroup;
 
     public MainGame(MyGame game) {
         this.game = game;
@@ -52,7 +46,7 @@ public class MainGame implements Screen {
     }
 
     private void initializeWorld() {
-        worldState = new WorldState(camera,game);
+        worldState = new WorldState(camera,game,WorldState.GameMode.ENDLESS);
         worldController = new WorldController(worldState);
         worldRenderer = new WorldRenderer( worldState);
         int gameSize = Constants.SCREEN_SIZE;
@@ -61,7 +55,6 @@ public class MainGame implements Screen {
         this.stage = new Stage(viewport);
         uiRenderer = new UIRenderer(stage, worldState);
         inputController = new InputController(worldController);
-
 
         InputMultiplexer multiplexer = new InputMultiplexer();
         multiplexer.addProcessor(stage);          // UI FIRST
@@ -100,23 +93,9 @@ public class MainGame implements Screen {
         //Render Game UI
         uiRenderer.render();
 
-        // Render pause menu if needed
-        if (isPaused) {
-            renderPauseMenu();
-        }
-
-        // Render game over screen if needed
-        if (gameOver) {
-            renderGameOverScreen();
-        }
     }
-
-    private void renderPauseMenu() {
-        // Implement pause menu rendering
-    }
-
-    private void renderGameOverScreen() {
-        // Implement game over screen rendering
+    public void setGameMode(WorldState.GameMode gameMode){
+        worldState.setGameMode(gameMode);
     }
 
     public void pauseGame() {

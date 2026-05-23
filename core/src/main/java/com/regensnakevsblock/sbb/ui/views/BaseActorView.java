@@ -10,6 +10,9 @@ public abstract class BaseActorView extends Group implements BaseView {
     public BaseActorView(Group parent){
         this.parent=parent;
     }
+    public void setParentView(Group parent){
+        this.parent=parent;
+    }
     public Group getParentView(){
        return parent;
     }

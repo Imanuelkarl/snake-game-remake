@@ -13,7 +13,7 @@ public class SpawnRules {
     private static final int MAX_BLOCKS = 5;
     private static final int MAX_LINES = 3;
     private static final int MAX_WIN_BODIES = 3;
-    private static final int MAX_SCORE_CAP = 10;
+    private static final int MAX_SCORE_CAP = 20;
 
     private final WorldState worldState;
     private final EntityFactory entityFactory;
@@ -57,7 +57,7 @@ public class SpawnRules {
             data.blocks.add(
                 entityFactory.createBlock(
                     pos,
-                    getRandom(worldState.getMinScore(), worldState.getMaxScore())
+                    getRandom(worldState.getMinScore(), Math.max(worldState.getMaxScore(),worldState.getSnake().getLength()/2))
                 )
             );
         }
@@ -108,7 +108,7 @@ public class SpawnRules {
             block = blocks.get(index);
         }
 
-        int maxScore = Math.min(worldState.getSnake().getLength()+4, MAX_SCORE_CAP);
+        int maxScore = Math.min(worldState.getSnake().getLength()+4, Math.max(MAX_SCORE_CAP,worldState.getSnake().getLength()/2)-5);
         block.setValue(getRandom(1, maxScore));
     }
 

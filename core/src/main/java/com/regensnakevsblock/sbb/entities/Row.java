@@ -11,6 +11,7 @@ public class Row {
     private final ArrayList<Line> lines;
 
     private final ArrayList<WinBody> winBodies;
+    private boolean finishLine;
     private float y;
 
     private boolean empty;
@@ -19,6 +20,16 @@ public class Row {
         this.blocks= new ArrayList<>();
         this.lines = new ArrayList<>();
         this.winBodies = new ArrayList<>();
+    }
+    public Row(boolean finishLine){
+        this.blocks= new ArrayList<>();
+        this.lines = new ArrayList<>();
+        this.winBodies = new ArrayList<>();
+        this.finishLine=finishLine;
+    }
+
+    public boolean isFinishLine() {
+        return finishLine;
     }
 
 

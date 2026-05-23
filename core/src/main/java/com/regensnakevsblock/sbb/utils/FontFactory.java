@@ -14,7 +14,7 @@ public class FontFactory {
         if (generator == null) {
             generator = new FreeTypeFontGenerator(
                 Gdx.files.internal("fonts/" +
-                    (medium ? "/Roboto/static/Roboto-Regular.ttf" : "/Smooch_Sans/static/SmoochSans-Thin.ttf")));
+                    (medium ? "/Comic_Neue/ComicNeue-Bold.ttf" : "/Comic_Neue/ComicNeue-Regular.ttf")));
         }
 
         FreeTypeFontGenerator.FreeTypeFontParameter param =

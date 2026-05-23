@@ -6,6 +6,8 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.graphics.g2d.ParticleEffect;
+import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 
 public class Assets {
     public Texture menuBGTexture;
@@ -59,6 +61,17 @@ public class Assets {
     public Texture selectButtonTexture;
     public Texture buyButtonTexture;
     public Texture levelsButtonTexture;
+    public Texture priceBarTexture;
+    public Texture coinPilesTexture;
+    public Texture diamondPilesTexture;
+    public Texture portionPilesTexture;
+    public Texture gameOverHeaderTexture;
+    public Texture scoreTextBoard;
+    public Texture highScoreTextBoard;
+    public Texture upgradeProgressBG;
+    public Texture upgradeProgressFill;
+    public Texture coinsTextBoard;
+    public Texture finishLineTexture;
     private AssetManager assetManager;
 
     // Textures
@@ -82,7 +95,20 @@ public class Assets {
     public Texture defaultButton;
     public Texture settingHeader;
     public Texture powerUpTexture;
+    public Texture acceptTerms;
+    public Texture rejectTerms;
+    public Texture bottomNavItems;
+    public Texture upgradeCardBG;
+    public Texture upgradeItemButton;
+    public Texture levelCardBg;
+    public Texture levelClearedText;
+    public Texture levelLockTexture;
+    public Texture levelMarkedTexture;
 
+    public ParticleEffect bloodEffect;
+
+    public ParticleEffect leftVictoryEffect;
+    public ParticleEffect rightVictoryEffect;
     // Fonts
     public BitmapFont font;
 
@@ -123,9 +149,9 @@ public class Assets {
         //Home Screen Textures
         //Buttons
         assetManager.load("ui/PlayButtonUpdate.png", Texture.class);
-        assetManager.load("ui/settingsIcon2.png", Texture.class);
-        assetManager.load("ui/skinIcon.png", Texture.class);
-        assetManager.load("ui/shareAppIcon.png", Texture.class);
+        assetManager.load("ui/settingsIconNew.png", Texture.class);
+        assetManager.load("ui/skinIconNew.png", Texture.class);
+        assetManager.load("ui/shareIconNew.png", Texture.class);
         assetManager.load("ui/addButton2.png", Texture.class);
         assetManager.load("ui/LevelsButton.png", Texture.class);
         //Static
@@ -137,15 +163,17 @@ public class Assets {
         assetManager.load("ui/bottomNavBackground.png", Texture.class);
         assetManager.load("ui/upLayout.png", Texture.class);
 
+
         //Main Game Textures
         assetManager.load("ui/pauseBtn.png", Texture.class);
         assetManager.load("ui/watchAds.png", Texture.class);
         assetManager.load("ui/reviveWithHealth.png", Texture.class);
         assetManager.load("ui/tapToContinue.png", Texture.class);
-        assetManager.load("ui/home_p_button.png", Texture.class);
-        assetManager.load("ui/restart_p_button.png", Texture.class);
-        assetManager.load("ui/play_p_button.png", Texture.class);
+        assetManager.load("ui/homePIcon.png", Texture.class);
+        assetManager.load("ui/restartPIcon.png", Texture.class);
+        assetManager.load("ui/playPIcon.png", Texture.class);
         assetManager.load("powerUpTexture.png",Texture.class);
+        assetManager.load("game/finishLine.png", Texture.class);
 
         //Text Assets
         assetManager.load("ui/giveUpText.png", Texture.class);
@@ -154,6 +182,8 @@ public class Assets {
         assetManager.load("ui/termsOfService.png", Texture.class);
         assetManager.load("ui/privacyPolicy.png", Texture.class);
         assetManager.load("ui/licenseAndCredits.png", Texture.class);
+        assetManager.load("ui/acceptTerms.png", Texture.class);
+        assetManager.load("ui/rejectTerms.png", Texture.class);
 
         //Pop up dialog box
         assetManager.load("ui/pauseDialogHeader.png", Texture.class);
@@ -175,9 +205,13 @@ public class Assets {
 
 
         //Game Over Screen Textures
-        assetManager.load("ui/replay2.png", Texture.class);
+        assetManager.load("ui/replayGOButton.png", Texture.class);
         assetManager.load("ui/upgradeBtnImg.png", Texture.class);
-        assetManager.load("ui/newHomeBtn.png", Texture.class);
+        assetManager.load("ui/homeGOButton.png", Texture.class);
+        assetManager.load("ui/gameOverTitle.png", Texture.class);
+        assetManager.load("ui/scoreTextBoard.png", Texture.class);
+        assetManager.load("ui/highScoreTextBoard.png", Texture.class);
+        assetManager.load("ui/coinsTextBoard.png", Texture.class);
 
         //Menu Screen Textures
         assetManager.load("ui/menuBG.png", Texture.class);
@@ -189,11 +223,34 @@ public class Assets {
         assetManager.load("ui/selectButton.png", Texture.class);
         assetManager.load("ui/buyButton.png", Texture.class);
 
+        assetManager.load("ui/upgradeCardBg.png", Texture.class);
+        assetManager.load("ui/upgradeItemBtn.png", Texture.class);
+        assetManager.load("ui/upgradeProgressBG.png", Texture.class);
+        assetManager.load("ui/upgradeProgressFill.png", Texture.class);
+
+        //shop
+        assetManager.load("ui/priceBar.png", Texture.class);
+        assetManager.load("ui/coinPiles.png", Texture.class);
+        assetManager.load("ui/diamondPiles.png", Texture.class);
+        assetManager.load("ui/portionPiles.png", Texture.class);
+
         //Bottom Nav
         assetManager.load("ui/defaultItemsLook.png", Texture.class);
         assetManager.load("ui/defaultNavItem.png", Texture.class);
         assetManager.load("ui/selectIndicator.png", Texture.class);
         assetManager.load("ui/downBGBlue.png", Texture.class);
+        assetManager.load("ui/bottomNavItems.png", Texture.class);
+
+        //Level Screen
+        assetManager.load("ui/levelBg.png", Texture.class);
+        assetManager.load("ui/levelClearedText.png", Texture.class);
+        assetManager.load("ui/levelLock.png", Texture.class);
+        assetManager.load("ui/levelMarked.png", Texture.class);
+
+        //Load Particles
+        assetManager.load("particles/snakeBlood.p", ParticleEffect.class);
+        assetManager.load("particles/left_victory_particle.p", ParticleEffect.class);
+        assetManager.load("particles/right_victory_particle.p", ParticleEffect.class);
 
         // Load sounds
         assetManager.load("sounds/collision.mp3", Sound.class);
@@ -217,10 +274,10 @@ public class Assets {
 
         // Home Screen Textures
         playButtonTexture = assetManager.get("ui/PlayButtonUpdate.png", Texture.class);
-        settingsButtonTexture = assetManager.get("ui/settingsIcon2.png", Texture.class);
+        settingsButtonTexture = assetManager.get("ui/settingsIconNew.png", Texture.class);
         tapToContinueTexture = assetManager.get("ui/tapToContinue.png", Texture.class);
-        snakeSkinButtonTexture=assetManager.get("ui/skinIcon.png", Texture.class);
-        shareButtonTexture=assetManager.get("ui/shareAppIcon.png", Texture.class);
+        snakeSkinButtonTexture=assetManager.get("ui/skinIconNew.png", Texture.class);
+        shareButtonTexture=assetManager.get("ui/shareIconNew.png", Texture.class);
         addButtonTexture=assetManager.get("ui/addButton2.png", Texture.class);
         logoTexture=assetManager.get("ui/SnakeBlockLogo.png", Texture.class);
         barTexture=assetManager.get("ui/scoreBoard.png", Texture.class);
@@ -230,14 +287,18 @@ public class Assets {
         navBarTexture = assetManager.get("ui/bottomNavBackground.png", Texture.class);
         levelsButtonTexture = assetManager.get("ui/LevelsButton.png", Texture.class);
 
+        acceptTerms = assetManager.get("ui/acceptTerms.png", Texture.class);
+        rejectTerms =assetManager.get("ui/rejectTerms.png", Texture.class);
+
         // Main Game Textures
         pauseBtnTexture=assetManager.get("ui/pauseBtn.png", Texture.class);
         reviveAdsTexture=assetManager.get("ui/watchAds.png", Texture.class);
         reviveHealthTexture=assetManager.get("ui/reviveWithHealth.png", Texture.class);
-        homeButtonTexture=assetManager.get("ui/home_p_button.png", Texture.class);
-        restartButtonTexture=assetManager.get("ui/restart_p_button.png", Texture.class);
-        resumeButtonTexture=assetManager.get("ui/play_p_button.png", Texture.class);
+        homeButtonTexture=assetManager.get("ui/homePIcon.png", Texture.class);
+        restartButtonTexture=assetManager.get("ui/restartPIcon.png", Texture.class);
+        resumeButtonTexture=assetManager.get("ui/playPIcon.png", Texture.class);
         powerUpTexture=assetManager.get("powerUpTexture.png",Texture.class);
+        finishLineTexture = assetManager.get("game/finishLine.png", Texture.class);
 
         pauseHeaderTexture=assetManager.get("ui/pauseDialogHeader.png", Texture.class);
         boxDialogTexture=assetManager.get("ui/Dialog.png", Texture.class);
@@ -268,9 +329,13 @@ public class Assets {
         sliderKnobTexture= assetManager.get("ui/sliderKnob.png", Texture.class);
 
         //Game Over Textures
-        replayButtonTexture=assetManager.get("ui/replay2.png", Texture.class);
+        replayButtonTexture=assetManager.get("ui/replayGOButton.png", Texture.class);
         upgradeButtonTexture=assetManager.get("ui/upgradeBtnImg.png", Texture.class);
-        home2ButtonTexture=assetManager.get("ui/newHomeBtn.png", Texture.class);
+        home2ButtonTexture=assetManager.get("ui/homeGOButton.png", Texture.class);
+        gameOverHeaderTexture =assetManager.get("ui/gameOverTitle.png", Texture.class);
+        scoreTextBoard = assetManager.get("ui/scoreTextBoard.png", Texture.class);
+        highScoreTextBoard = assetManager.get("ui/highScoreTextBoard.png", Texture.class);
+        coinsTextBoard = assetManager.get("ui/coinsTextBoard.png", Texture.class);
 
         //Menu Screen Textures
         menuBGTexture=assetManager.get("ui/menuBG.png", Texture.class);
@@ -280,12 +345,35 @@ public class Assets {
         selectButtonTexture = assetManager.get("ui/selectButton.png", Texture.class);
         buyButtonTexture = assetManager.get("ui/buyButton.png", Texture.class);
 
+        upgradeCardBG=assetManager.get("ui/upgradeCardBg.png", Texture.class);
+        upgradeItemButton =assetManager.get("ui/upgradeItemBtn.png", Texture.class);
+        upgradeProgressBG = assetManager.get("ui/upgradeProgressBG.png", Texture.class);
+        upgradeProgressFill = assetManager.get("ui/upgradeProgressFill.png", Texture.class);
+
+        //shop
+        priceBarTexture= assetManager.get("ui/priceBar.png", Texture.class);
+        coinPilesTexture =assetManager.get("ui/coinPiles.png", Texture.class);
+        diamondPilesTexture =assetManager.get("ui/diamondPiles.png", Texture.class);
+        portionPilesTexture =assetManager.get("ui/portionPiles.png", Texture.class);
+
         //Bottom Nav
         bottomNavBg=assetManager.get("ui/downBGBlue.png", Texture.class);
         upLayout =assetManager.get("ui/upLayout.png", Texture.class);
         defaultItemTexture=assetManager.get("ui/defaultItemsLook.png", Texture.class);
         selectOverlayTexture=assetManager.get("ui/selectIndicator.png", Texture.class);
         defaultOverlayTexture=assetManager.get("ui/defaultNavItem.png", Texture.class);
+        bottomNavItems=assetManager.get("ui/bottomNavItems.png", Texture.class);
+
+        //Level Screen
+        levelCardBg = assetManager.get("ui/levelBg.png", Texture.class);
+        levelClearedText = assetManager.get("ui/levelClearedText.png", Texture.class);
+        levelLockTexture = assetManager.get("ui/levelLock.png", Texture.class);
+        levelMarkedTexture = assetManager.get("ui/levelMarked.png", Texture.class);
+
+        //Assign Particles
+        bloodEffect = assetManager.get("particles/snakeBlood.p", ParticleEffect.class);
+        leftVictoryEffect = assetManager.get("particles/left_victory_particle.p", ParticleEffect.class);
+        rightVictoryEffect =assetManager.get("particles/right_victory_particle.p", ParticleEffect.class);
 
         collisionSound = assetManager.get("sounds/collision.mp3", Sound.class);
         powerUpSound = assetManager.get("sounds/powerup.mp3", Sound.class);

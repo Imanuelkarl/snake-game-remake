@@ -8,22 +8,39 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.regensnakevsblock.sbb.assets.Assets;
+import com.regensnakevsblock.sbb.elements.GameDialog;
 import com.regensnakevsblock.sbb.utils.FontFactory;
 
 public class HomeUiFactory {
     private float width;
     private float height;
-
-    // Font size will be calculated dynamically
-
-
+    private float playButtonSize;
+    private float actionButtonSize;
+    private float logoWidth , logoHeight;
+    private float smallBtnW;
+    private float largeBtnW;
+    private float mediumBtnH;
+    private float largeBtnH;
+    private float defaultSpacing;
+    private float rejectSpacing;
+    private float topRowY;
+    private float bottomRowY;
+    private float topRowStartX;
+    private float bottomRowStartX;
+    private float bottomRowRejectStartX;
 
     public HomeUiFactory(Stage stage) {
 
         resize(stage.getWidth(), stage.getHeight());
+        playButtonSize=290f;
+        actionButtonSize=120.5f;
+        logoHeight =230f;
+        logoWidth =602f;
+        initButtonLayout();
     }
 
     public void resize(float width, float height) {
@@ -35,23 +52,34 @@ public class HomeUiFactory {
 
     // Button creation methods
     public ImageButton createSettingsButton() {
+        System.out.println("The width here is "+width/6f);
         return createButton(
             Assets.getInstance().settingsButtonTexture,
             width / 3 - width / 4,
             height / 32,
-            width / 6,
-            width / 6
+            actionButtonSize,
+            actionButtonSize
         );
     }
 
     public ImageButton createPlayButton() {
+
         return createButton(
             Assets.getInstance().playButtonTexture,
-            width / 2 - width / 5f,
+            width / 2 - playButtonSize/2,
             height *0.45f,
-            width / 2.5f,
-            width / 2.5f
+            playButtonSize,
+            playButtonSize
         );
+    }
+    public Table createHeaderTable(){
+        float headerHeight = 80f;
+        Table header = new Table();
+
+        header.setSize(width, headerHeight);
+        header.setPosition(0, height - headerHeight);
+
+        return header;
     }
 
     public ImageButton createSnakeSkinButton() {
@@ -59,8 +87,8 @@ public class HomeUiFactory {
             Assets.getInstance().snakeSkinButtonTexture,
             2 * width / 3 - 2 * width / 8,
             height / 32,
-            width / 6,
-            width / 6
+            actionButtonSize,
+            actionButtonSize
         );
     }
 
@@ -69,8 +97,8 @@ public class HomeUiFactory {
             Assets.getInstance().shareButtonTexture,
             3 * width / 3 - 3 * width / 12,
             height / 32,
-            width / 6,
-            width / 6
+            actionButtonSize,
+            actionButtonSize
         );
     }
     private Texture createDarkenedTexture(Texture original) {
@@ -151,13 +179,84 @@ public class HomeUiFactory {
     public Image createLogoImage() {
         return createUiImage(
             Assets.getInstance().logoTexture,
-            width / 12,
+            (width-logoWidth)/2,
             height *0.75f,
-            width -width/6,
-            height / 7
+            logoWidth,
+            logoHeight
+        );
+    }
+    public GameDialog createTermsAndConditionDialog(Stage stage){
+        GameDialog dialog = new GameDialog(stage);
+        dialog.setDialogSize(stage.getWidth(), stage.getHeight()/3);
+        dialog.setTitleEnabled(false);
+        dialog.setCloseButtonEnabled(false);
+        dialog.setBackground(Assets.getInstance().dialogHalfSize);
+        return dialog;
+    }
+
+    // Initialize all calculated values once
+    private void initButtonLayout() {
+        // Widths
+        smallBtnW = width * 0.28f;
+        largeBtnW = width* 0.4f;
+
+
+        // Heights
+        mediumBtnH = (height/3) * 0.07f;  // Privacy button
+        largeBtnH = (height/3) * 0.22f;   // Accept & Reject buttons
+
+        // Spacing
+        defaultSpacing = width * 0.04f;
+        rejectSpacing = width * 0.1f;
+
+        // Y positions
+        topRowY = height * 0.45f;      // Terms & Policy row
+        bottomRowY = height * 0.35f;   // Accept & Reject row
+
+        // X starting positions
+        float topRowTotalWidth = smallBtnW * 2 + defaultSpacing;
+        topRowStartX = (width - topRowTotalWidth) / 2f;
+
+
+        bottomRowStartX = width*0.05f ;
+
+
+        bottomRowRejectStartX = width*0.95f -largeBtnW;
+    }
+
+// Call initButtonLayout() once in your constructor or initialization method
+
+    public ImageButton createTermsAndConditionButton() {
+        return createButton(
+            Assets.getInstance().tosTexture,
+            topRowStartX, topRowY,
+            smallBtnW, mediumBtnH
         );
     }
 
+    public ImageButton createPrivacyPolicyButton() {
+        return createButton(
+            Assets.getInstance().privacyPolicyTexture,
+            topRowStartX + smallBtnW + defaultSpacing, topRowY,
+            smallBtnW, mediumBtnH
+        );
+    }
+
+    public ImageButton createAcceptButton() {
+        return createButton(
+            Assets.getInstance().acceptTerms,
+            bottomRowStartX, bottomRowY,
+            largeBtnW, largeBtnH
+        );
+    }
+
+    public ImageButton createRejectButton() {
+        return createButton(
+            Assets.getInstance().rejectTerms,
+            bottomRowRejectStartX , bottomRowY,
+            largeBtnW, largeBtnH
+        );
+    }
     private Image createUiImage(Texture texture, float x, float y, float width, float height) {
         Image image = new Image(texture);
         image.setPosition(x, y);

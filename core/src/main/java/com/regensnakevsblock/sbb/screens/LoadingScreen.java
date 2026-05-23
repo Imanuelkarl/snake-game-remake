@@ -115,6 +115,7 @@ public class LoadingScreen extends InputAdapter implements Screen {
         if (Assets.getInstance().isLoaded()) {
             Assets.getInstance().assignAssets(); // REQUIRED
             GameInstance.getInstance().loadSkinData();
+            GameInstance.getInstance().load();
         }
         if(Assets.getInstance().isLoaded()&&GameInstance.getInstance().isSkinDataLoaded()){
             game.setScreen(new HomeScreen(game));

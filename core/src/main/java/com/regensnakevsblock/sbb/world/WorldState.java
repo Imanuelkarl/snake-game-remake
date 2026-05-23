@@ -8,8 +8,13 @@ import com.regensnakevsblock.sbb.entities.Block;
 import com.regensnakevsblock.sbb.entities.Row;
 import com.regensnakevsblock.sbb.entities.Snake;
 import com.regensnakevsblock.sbb.enumaretors.PowerUp;
+import com.regensnakevsblock.sbb.levels.Level;
+import com.regensnakevsblock.sbb.levels.TestLevelProvider;
+import com.regensnakevsblock.sbb.service.SaveService;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class WorldState {
 
@@ -27,13 +32,14 @@ public class WorldState {
 
     private float blockDimension;
     private float snakeRadius;
-    private String gameMode;
 
     private Snake snake;
 
+    private Level level;
     private boolean isPaused;
     private boolean isGameOver;
-    private MyGame game;
+    //private boolean isVictory;
+    private final MyGame game;
     private float nextRowY=0f;
 
     private float gameSpeed;
@@ -44,12 +50,42 @@ public class WorldState {
     private boolean powerUpIsActive;
     private PowerUp powerUp;
     private ArrayList<Row> rows;
+    private int coins;
+    private int totalDestroyed = 0;
+    private int totalRowsCreated = 0;
+    private GameMode gameMode;
+    private SaveService saveService;
+    private final Map<Integer , Integer> blocksDestroyedColor;
+    private boolean finishLineSpawned = false;
+    private HitListener hitListener;
 
-    public WorldState(OrthographicCamera camera,MyGame game){
+    public boolean isFinishLineSpawned() {
+        return finishLineSpawned;
+    }
+
+    public void setFinishLineSpawned(boolean value) {
+        this.finishLineSpawned = value;
+    }
+
+    public GameMode getGameMode() {
+        return gameMode;
+    }
+
+    public Level getLevel() {
+        return level;
+    }
+
+    public enum GameMode{
+        ENDLESS,
+        LEVELS
+    }
+
+    public WorldState(OrthographicCamera camera,MyGame game,GameMode gameMode){
         this.game=game;
         this.camera=camera;
         this.isPaused=false;
         this.isGameOver=false;
+        //this.isVictory=false;
         this.moving=true;
         this.moveFactor=1;
         this.gameSpeed=5.0f;
@@ -58,15 +94,40 @@ public class WorldState {
         snakeRadius=blockDimension/7;
         snake = new Snake(camera.viewportWidth / 2-snakeRadius, camera.viewportHeight / 2);
         snake.addSegments(5);
+        this.blocksDestroyedColor=new HashMap<>();
+        this.gameMode = gameMode;
+        saveService = new SaveService();
+        if(gameMode==GameMode.LEVELS){
+            level =  TestLevelProvider.createTestLevels().get(2);
+        }
 
         nextRowY=camera.viewportHeight+blockDimension ;
     }
-
-
-    public void setSnake(Snake snake) {
-        this.snake = snake;
+    public void setOnHitListener(HitListener hitListener){
+        this.hitListener = hitListener;
+    }
+    public void addColorDestroyed(Integer color){
+        if(blocksDestroyedColor.containsKey(color)){
+            blocksDestroyedColor.put(color,blocksDestroyedColor.get(color)+1);
+        }
+        else{
+            blocksDestroyedColor.put(color,1);
+        }
+        totalDestroyed++;
     }
 
+
+    // O(1), no branching
+    public int getBlocksDestroyedForColor(int color) {
+        return blocksDestroyedColor.getOrDefault(color, 0);
+    }
+    public int totalBlocksDestroyed(){
+
+        return totalDestroyed;
+    }
+    public int getTotalRowsCreated(){
+        return totalRowsCreated;
+    }
     public Snake getSnake() {
         return snake;
     }
@@ -129,9 +190,6 @@ public class WorldState {
         this.setMoving(false);
         this.setAwake(false);
         snake.addSegments(length);
-
-
-
     }
 
     public void setSnakeRadius(float snakeRadius) {
@@ -145,11 +203,9 @@ public class WorldState {
         this.minScore = minScore;
     }
 
-    public String getGameMode() {
-        return gameMode;
-    }
 
-    public void setGameMode(String gameMode) {
+
+    public void setGameMode(GameMode gameMode) {
         this.gameMode = gameMode;
     }
 
@@ -208,6 +264,15 @@ public class WorldState {
 
     public void addRows(Row row){
         this.rows.add(row);
+        totalRowsCreated++;
+    }
+    public boolean canCreateRows(){
+        if(gameMode ==GameMode.LEVELS){
+          if(level.getLevelType() == Level.LevelType.FINISH_LINE){
+              return rows.size()<=16&&totalRowsCreated<=level.getNoOfRows();
+          }
+        }
+        return rows.size()<=16;
     }
     public void removeRow(int id){
         this.rows.remove(id);
@@ -274,5 +339,20 @@ public class WorldState {
 
     public float getSpeed() {
         return gameSpeed*this.getMoveFactor() * Gdx.graphics.getDeltaTime() * 100;
+    }
+
+    public int getScoreMultiplier() {
+        return (powerUpIsActive&&powerUp==PowerUp.MULTIPLIER)?2:1;
+    }
+
+    public int getCoins() {
+        return coins;
+    }
+    public void setCoins(int coins){
+        this.coins = coins;
+    }
+
+    public HitListener getHitListener() {
+        return hitListener;
     }
 }

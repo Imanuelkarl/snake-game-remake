@@ -3,6 +3,7 @@ package com.regensnakevsblock.sbb.ui.views;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.utils.Align;
 import com.regensnakevsblock.sbb.ui.adapters.AchievementAdapter;
 import com.regensnakevsblock.sbb.ui.cards.AchievementCard;
 import com.regensnakevsblock.sbb.ui.core.ListManager;
@@ -12,12 +13,11 @@ import com.regensnakevsblock.sbb.utils.ActorFactory;
 public class AchievementsView extends BaseActorView {
     private ListManager<AchievementData, AchievementCard> listManager;
     private AchievementAdapter adapter;
-    private Label titleLabel;
-    private Label totalRewardsLabel;
+    private Label loadingText;
     private float width,height;
     public AchievementsView(Group group) {
         super(group);
-        setSize(group.getWidth(),group.getHeight());
+        setSize(group.getWidth(), group.getHeight());
         //setPosition(group.getX(),group.getY());
         this.width=group.getWidth();
         this.height=group.getHeight();
@@ -27,17 +27,14 @@ public class AchievementsView extends BaseActorView {
         setupTransform();
         Gdx.app.postRunnable(this::loadData);
     }
-
     private void setupUI() {
         // Title
-        titleLabel = ActorFactory.createTextLabel("ACHIEVEMENTS", new Label.LabelStyle());
-        titleLabel.setPosition(20, Gdx.graphics.getHeight() - 50);
-        addActor(titleLabel);
 
-        // Total rewards
-        totalRewardsLabel = ActorFactory.createTextLabel("Total Rewards: 0", new Label.LabelStyle());
-        totalRewardsLabel.setPosition(Gdx.graphics.getWidth() - 200, Gdx.graphics.getHeight() - 50);
-        addActor(totalRewardsLabel);
+        loadingText = ActorFactory.createTextLabel(36, 20, height/2);
+        loadingText.setText("Achievement View Is In Development \\:) ");
+        loadingText.setPosition(50, height / 2f, Align.center);
+
+        addActor(loadingText);
     }
 
     private void setupList() {
@@ -50,7 +47,7 @@ public class AchievementsView extends BaseActorView {
         listManager.setSize(Gdx.graphics.getWidth() - 40, Gdx.graphics.getHeight() - 100);
         listManager.setPosition(20, 20);
 
-        addActor(listManager);
+        //addActor(listManager);
 
         adapter.setOnItemClickListener((achievement, position) -> {
             if (achievement.isCompleted && !achievement.isClaimed) {
@@ -74,7 +71,7 @@ public class AchievementsView extends BaseActorView {
         updateTotalRewards();
     }
     private void setupTransform(){
-
+        loadingText.setPosition(50, height / 2f, Align.center);
         listManager.setSize(width,height);
         listManager.setPosition(0, 0);
         listManager.setLayout( 1, 100);
@@ -102,7 +99,7 @@ public class AchievementsView extends BaseActorView {
                 total += adapter.getItem(i).reward;
             }
         }
-        totalRewardsLabel.setText("Total Rewards: " + total);
+
     }
 
     @Override

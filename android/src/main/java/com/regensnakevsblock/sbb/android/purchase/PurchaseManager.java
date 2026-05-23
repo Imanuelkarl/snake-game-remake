@@ -17,7 +17,6 @@ import com.android.billingclient.api.ProductDetails;
 import com.android.billingclient.api.Purchase;
 import com.android.billingclient.api.PurchasesUpdatedListener;
 import com.android.billingclient.api.QueryProductDetailsParams;
-import com.android.billingclient.api.SkuDetails;
 import com.regensnakevsblock.sbb.enumaretors.StoreID;
 import com.regensnakevsblock.sbb.service.purchase.PurchaseItem;
 import com.regensnakevsblock.sbb.service.purchase.PurchaseListener;
@@ -32,7 +31,7 @@ import java.util.stream.Collectors;
 
 public class PurchaseManager implements PurchaseService {
     private final Map<String,ProductDetails> productDetailsMap;
-    private final BillingClient billingClient;
+    private BillingClient billingClient;
     List<String> productIds;
     Map<String, PurchaseItem> productMap = new HashMap<>();
     private PurchaseListener purchaseListener;
@@ -42,6 +41,12 @@ public class PurchaseManager implements PurchaseService {
         this.activity=activity;
         productDetailsMap=new HashMap<>();
         productIds =new ArrayList<>();
+        initializeBillingService();
+    }
+
+    @Override
+    public void initializeBillingService() {
+        Log.d("BILLING","Initializing billing client ");
         this.billingClient= BillingClient.newBuilder(activity)
             .enablePendingPurchases(PendingPurchasesParams.newBuilder()
                 .enableOneTimeProducts()
@@ -76,6 +81,7 @@ public class PurchaseManager implements PurchaseService {
             }
         });
     }
+
     @Override
     public void initiatePayment(PurchaseItem paymentItem) {
 

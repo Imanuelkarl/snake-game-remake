@@ -11,8 +11,7 @@ public class SnakePreview extends Group {
 
     private final Image[] parts = new Image[SEGMENTS];
 
-    private float segmentSize = 32f;
-    private float spacing = 6f;
+    private final float segmentSize = 40f;
 
     private boolean selected = false;
     private float stateTime = 0f;
@@ -49,11 +48,11 @@ public class SnakePreview extends Group {
 
     // 🔹 Static layout (non-selected)
     private void layoutStraight() {
-        float totalHeight = SEGMENTS * segmentSize + (SEGMENTS - 1) * spacing;
+        float totalHeight = SEGMENTS * segmentSize;
         float startY = totalHeight/2 - segmentSize/2;
 
         for (int i = 0; i < SEGMENTS; i++) {
-            float y = startY + i * (segmentSize + spacing);
+            float y =  i * (segmentSize);
             parts[i].setPosition(0, y);
         }
     }
@@ -67,7 +66,7 @@ public class SnakePreview extends Group {
         stateTime += delta;
 
         for (int i = 0; i < SEGMENTS; i++) {
-            float y = i * (segmentSize + spacing);
+            float y = i * (segmentSize);
 
             // horizontal wave (snake-like motion)
             float x = MathUtils.sin(stateTime * 4f + i * 0.5f) * 8f;

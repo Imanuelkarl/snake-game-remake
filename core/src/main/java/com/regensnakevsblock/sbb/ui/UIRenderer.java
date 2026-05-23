@@ -26,12 +26,13 @@ import com.regensnakevsblock.sbb.elements.GameDialog;
 import com.regensnakevsblock.sbb.screens.GameOverScreen;
 import com.regensnakevsblock.sbb.screens.HomeScreen;
 import com.regensnakevsblock.sbb.screens.MainGame;
+import com.regensnakevsblock.sbb.service.ads.RewardListener;
 import com.regensnakevsblock.sbb.utils.ActorFactory;
 import com.regensnakevsblock.sbb.utils.FontFactory;
 import com.regensnakevsblock.sbb.utils.SimpleBitmapFont;
 import com.regensnakevsblock.sbb.world.WorldState;
 
-public class UIRenderer {
+public class UIRenderer implements RewardListener {
 
     private final Stage stage;
     private final WorldState worldState;
@@ -69,6 +70,9 @@ public class UIRenderer {
             simpleBitmapFont=GameInstance.getInstance().getSimpleBitmapFont();
         }
         build();
+        if(worldState.getGame().getAdsService()!=null){
+            worldState.getGame().getAdsService().setRewardListener(this);
+        }
     }
 
     public void render() {
@@ -93,7 +97,7 @@ public class UIRenderer {
         dialog.setTitleTexture(Assets.getInstance().pauseHeaderTexture);
 
         reviveDialog = new GameDialog(stage);
-        reviveDialog.setDialogSize(stage.getWidth(), stage.getHeight()/4);
+        reviveDialog.setDialogSize(stage.getWidth(), stage.getHeight()/3);
         reviveDialog.setTitleEnabled(false);
         reviveDialog.setCloseButtonEnabled(false);
         reviveDialog.setBackground(Assets.getInstance().dialogHalfSize);
@@ -126,7 +130,6 @@ public class UIRenderer {
         float reviveBtnHeight =stage.getHeight()*0.07f;
         float segmentMiddle = stage.getWidth()/4;
         float reviveY=stage.getHeight()/2-reviveBtnHeight/2;
-
         ImageButton reviveWithAdsButton = createButton(
             Assets.getInstance().defaultButton,
             segmentMiddle-reviveBtnWidth/2,reviveY
@@ -141,6 +144,7 @@ public class UIRenderer {
             reviveBtnWidth,
             reviveBtnHeight
         );
+        Image portion = createImage(Assets.getInstance().healthTexture, stage.getWidth()-segmentMiddle-reviveBtnHeight/4,reviveY+reviveBtnHeight/4,reviveBtnHeight/2,reviveBtnHeight/2);
         Label reviveWithAdsText = ActorFactory.createTextLabel(
             40
             ,
@@ -148,20 +152,20 @@ public class UIRenderer {
         );
         reviveWithAdsText.setText("WATCH AD");
         Label reviveWithHealthText = ActorFactory.createTextLabel(
-            40, reviveWithHealthButton.getX()+pad,
+            40, portion.getX()-pad,
             reviveY+reviveBtnHeight/2
         );
-        reviveWithHealthText.setText("500 COINS");
+        reviveWithHealthText.setText("1 ");
         ImageButton tapToContinueButton = ActorFactory.createButton(
             Assets.getInstance().giveUpTexture,
             stage.getWidth()/2 - stage.getWidth()/11,
-            stage.getHeight()/2 - stage.getWidth()/5,
+            stage.getHeight()/2 - stage.getHeight()/8,
             stage.getWidth()/6,
             stage.getWidth()/18
         );
         Image keepMovingTitle = createImage(Assets.getInstance().keepGoingTexture,
             stage.getWidth()/2 - stage.getWidth()/4,
-            stage.getHeight()/2 +stage.getHeight()/13,
+            stage.getHeight()/2 +stage.getHeight()/10,
             stage.getWidth()/2,
             stage.getHeight()*0.03f
             );
@@ -208,6 +212,7 @@ public class UIRenderer {
         reviveDialog.addContentActor(reviveWithAdsText);
         reviveDialog.addContentActor(reviveWithHealthButton);
         reviveDialog.addContentActor(reviveWithHealthText);
+        reviveDialog.addContentActor(portion);
         reviveDialog.addContentActor(tapToContinueButton);
 
         //gameOverGroup.addActor(overlay);
@@ -237,14 +242,30 @@ public class UIRenderer {
         reviveWithAdsButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                reviveDialog.addCloseListener(new GameDialog.CloseListener() {
+                /*reviveDialog.addCloseListener(new GameDialog.CloseListener() {
                     @Override
                     public void onPopupClosed() {
                         worldState.reviveSnake(10);
                         reviveIsOpen=false;
                     }
                 });
-                reviveDialog.close();
+                reviveDialog.close();*/
+                if(worldState.getGame().getAdsService()!=null){
+                    if(worldState.getGame().getAdsService().isRewardedLoaded()){
+                        worldState.getGame().getAdsService().showRewarded();
+                    }
+                    else{
+                        reviveDialog.addCloseListener(() -> {
+                            GameOverScreen gameOverScreen =new GameOverScreen(worldState.getGame());
+                            gameOverScreen.setScore(worldState.getScore());
+                            gameOverScreen.setCoins(worldState.getCoins());
+                            worldState.getGame().setScreen(gameOverScreen);
+                            reviveIsOpen=false;
+                        });
+
+                        reviveDialog.close();
+                    }
+                }
 
             }
         });
@@ -275,7 +296,10 @@ public class UIRenderer {
                 reviveDialog.addCloseListener(new GameDialog.CloseListener() {
                     @Override
                     public void onPopupClosed() {
-                        worldState.getGame().setScreen(new GameOverScreen(worldState.getGame()));
+                        GameOverScreen gameOverScreen =new GameOverScreen(worldState.getGame());
+                        gameOverScreen.setScore(worldState.getScore());
+                        gameOverScreen.setCoins(worldState.getCoins());
+                        worldState.getGame().setScreen(gameOverScreen);
                         reviveIsOpen=false;
                     }
                 });
@@ -287,6 +311,7 @@ public class UIRenderer {
 
         //Image boxDialog = createImage(Assets.getInstance().boxDialogTexture,stage.getWidth()/16, stage.getHeight()/3.5f, stage.getWidth() -stage.getWidth()/8, stage.getHeight()/2.3f);
         //Image boxDialogHeader = createImage(Assets.getInstance().pauseHeaderTexture,stage.getWidth()/4, stage.getHeight()/1.55f, stage.getWidth()/2f, stage.getHeight()/10);
+
         Image musicIcon=createImage(Assets.getInstance().musicTexture ,width/4,dialog.getHeight()*0.55f,width/12,width/12);
         Image soundIcon = createImage(Assets.getInstance().soundTexture,width/4,dialog.getHeight()*0.43f,width/12, width/12);
         Slider musicVolumeSlider = createCustomSlider(stage.getWidth()/2.5f, dialog.getHeight()*0.55f,stage.getWidth()/3,stage.getHeight()/40);
@@ -304,12 +329,6 @@ public class UIRenderer {
         stage.addActor(scoreLabel);
         stage.addActor(pauseGroup);
         //stage.addActor(gameOverGroup);
-    }
-    private void renderPauseScreen(){
-
-    }
-    private void renderGameOverScreen(){
-
     }
     private Texture createWhiteTexture() {
         Pixmap pixmap = new Pixmap(1, 1, Pixmap.Format.RGBA8888);
@@ -396,5 +415,17 @@ public class UIRenderer {
 
     public void dispose() {
 
+    }
+
+    @Override
+    public void onRewarded() {
+        reviveDialog.addCloseListener(new GameDialog.CloseListener() {
+            @Override
+            public void onPopupClosed() {
+                worldState.reviveSnake(10);
+                reviveIsOpen=false;
+            }
+        });
+        reviveDialog.close();
     }
 }

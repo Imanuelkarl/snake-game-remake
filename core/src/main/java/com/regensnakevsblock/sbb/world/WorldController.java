@@ -2,7 +2,6 @@ package com.regensnakevsblock.sbb.world;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.regensnakevsblock.sbb.controllers.ScreenController;
 import com.regensnakevsblock.sbb.entities.Block;
 import com.regensnakevsblock.sbb.entities.Snake;
 import com.regensnakevsblock.sbb.systems.CollisionSystem;
@@ -14,7 +13,7 @@ import com.regensnakevsblock.sbb.systems.SpawnSystem;
 
 import java.util.ArrayList;
 
-public class WorldController implements ScreenController {
+public class WorldController  {
     private WorldState worldState;
     private MovementSystem movementSystem;
     private CollisionSystem collisionSystem;
@@ -69,13 +68,12 @@ public class WorldController implements ScreenController {
         this.difficultySystem = new DifficultySystem(worldState);
     }
 
-    @Override
     public void update(float deltaTime) {
         // Update all game systems
+        spawnSystem.update(deltaTime);
         movementSystem.update(deltaTime);
         collisionSystem.update(deltaTime);
-        spawnSystem.update(deltaTime);
-        //powerUpSystem.update(deltaTime);
+        powerUpSystem.update(deltaTime);
         scoringSystem.update(deltaTime);
         //difficultySystem.update(deltaTime);
         // Keyboard snake movement

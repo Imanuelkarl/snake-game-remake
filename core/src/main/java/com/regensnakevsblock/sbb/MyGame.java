@@ -1,19 +1,18 @@
 package com.regensnakevsblock.sbb;
 
-import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.utils.ScreenUtils;
 import com.regensnakevsblock.sbb.assets.Assets;
 import com.regensnakevsblock.sbb.config.Constants;
 import com.regensnakevsblock.sbb.screens.CrossFadeTransition;
-import com.regensnakevsblock.sbb.screens.LoadingScreen;
-import com.regensnakevsblock.sbb.screens.MainGame;
+import com.regensnakevsblock.sbb.screens.SplashScreen;
 import com.regensnakevsblock.sbb.screens.TransitionScreen;
 import com.regensnakevsblock.sbb.service.SaveService;
+import com.regensnakevsblock.sbb.service.ads.AdsService;
+import com.regensnakevsblock.sbb.service.purchase.PurchaseService;
 
 import java.util.Stack;
 
@@ -26,6 +25,7 @@ public class MyGame extends Game {
     private Stack<Screen> screenStack;
 
     private SaveService saveService;
+    private AdsService adsService;
 
     @Override
     public void create() {
@@ -39,7 +39,7 @@ public class MyGame extends Game {
         Assets.getInstance().setAssetManager(assetManager);
 
         // Start with loading screen
-        setScreen(new LoadingScreen(this));
+        setScreen(new SplashScreen(this));
     }
     public Screen getFormerScreen() {
         if (screenStack.size() > 1) {
@@ -90,4 +90,16 @@ public class MyGame extends Game {
     public SaveService getSaveService() {
         return saveService;
     }
+
+    public void setPurchaseService(PurchaseService purchaseService) {
+
+    }
+
+    public void setAdsService(AdsService adsService) {
+        this.adsService =adsService;
+    }
+    public AdsService getAdsService(){
+        return adsService;
+    }
+
 }

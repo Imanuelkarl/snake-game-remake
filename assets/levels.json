@@ -1,0 +1,866 @@
+[
+  {
+    "noOfBlocks": 12,
+    "cleared": false,
+    "levelType": "BLOCKS",
+    "noOfRows": 0,
+    "levelId": 1
+  },
+  {
+    "noOfBlocks": 14,
+    "cleared": false,
+    "levelType": "BLOCKS",
+    "noOfRows": 0,
+    "levelId": 2
+  },
+  {
+    "noOfBlocks": 20,
+    "cleared": false,
+    "colorIntegerMap": {
+      "2": 9,
+      "4": 11
+    },
+    "levelType": "COLORED_BLOCKS",
+    "noOfRows": 0,
+    "levelId": 3
+  },
+  {
+    "noOfBlocks": 18,
+    "cleared": false,
+    "levelType": "BLOCKS",
+    "noOfRows": 0,
+    "levelId": 4
+  },
+  {
+    "noOfBlocks": 20,
+    "cleared": false,
+    "levelType": "BLOCKS",
+    "noOfRows": 0,
+    "levelId": 5
+  },
+  {
+    "noOfBlocks": 46,
+    "cleared": false,
+    "colorIntegerMap": {
+      "1": 15,
+      "2": 16,
+      "3": 15
+    },
+    "levelType": "COLORED_BLOCKS",
+    "noOfRows": 0,
+    "levelId": 6
+  },
+  {
+    "noOfBlocks": 24,
+    "cleared": false,
+    "levelType": "BLOCKS",
+    "noOfRows": 0,
+    "levelId": 7
+  },
+  {
+    "noOfBlocks": 26,
+    "cleared": false,
+    "levelType": "BLOCKS",
+    "noOfRows": 0,
+    "levelId": 8
+  },
+  {
+    "noOfBlocks": 82,
+    "cleared": false,
+    "colorIntegerMap": {
+      "1": 19,
+      "2": 14,
+      "3": 14,
+      "4": 16,
+      "5": 19
+    },
+    "levelType": "COLORED_BLOCKS",
+    "noOfRows": 0,
+    "levelId": 9
+  },
+  {
+    "noOfBlocks": 0,
+    "cleared": false,
+    "levelType": "FINISH_LINE",
+    "noOfRows": 100,
+    "levelId": 10
+  },
+  {
+    "noOfBlocks": 32,
+    "cleared": false,
+    "levelType": "BLOCKS",
+    "noOfRows": 0,
+    "levelId": 11
+  },
+  {
+    "noOfBlocks": 98,
+    "cleared": false,
+    "colorIntegerMap": {
+      "1": 17,
+      "2": 22,
+      "3": 21,
+      "4": 18,
+      "5": 20
+    },
+    "levelType": "COLORED_BLOCKS",
+    "noOfRows": 0,
+    "levelId": 12
+  },
+  {
+    "noOfBlocks": 36,
+    "cleared": false,
+    "levelType": "BLOCKS",
+    "noOfRows": 0,
+    "levelId": 13
+  },
+  {
+    "noOfBlocks": 38,
+    "cleared": false,
+    "levelType": "BLOCKS",
+    "noOfRows": 0,
+    "levelId": 14
+  },
+  {
+    "noOfBlocks": 109,
+    "cleared": false,
+    "colorIntegerMap": {
+      "1": 23,
+      "2": 22,
+      "3": 24,
+      "4": 20,
+      "5": 20
+    },
+    "levelType": "COLORED_BLOCKS",
+    "noOfRows": 0,
+    "levelId": 15
+  },
+  {
+    "noOfBlocks": 42,
+    "cleared": false,
+    "levelType": "BLOCKS",
+    "noOfRows": 0,
+    "levelId": 16
+  },
+  {
+    "noOfBlocks": 44,
+    "cleared": false,
+    "levelType": "BLOCKS",
+    "noOfRows": 0,
+    "levelId": 17
+  },
+  {
+    "noOfBlocks": 100,
+    "cleared": false,
+    "colorIntegerMap": {
+      "1": 26,
+      "2": 25,
+      "3": 25,
+      "4": 24
+    },
+    "levelType": "COLORED_BLOCKS",
+    "noOfRows": 0,
+    "levelId": 18
+  },
+  {
+    "noOfBlocks": 48,
+    "cleared": false,
+    "levelType": "BLOCKS",
+    "noOfRows": 0,
+    "levelId": 19
+  },
+  {
+    "noOfBlocks": 0,
+    "cleared": false,
+    "levelType": "FINISH_LINE",
+    "noOfRows": 150,
+    "levelId": 20
+  },
+  {
+    "noOfBlocks": 112,
+    "cleared": false,
+    "colorIntegerMap": {
+      "1": 30,
+      "2": 27,
+      "4": 27,
+      "5": 28
+    },
+    "levelType": "COLORED_BLOCKS",
+    "noOfRows": 0,
+    "levelId": 21
+  },
+  {
+    "noOfBlocks": 54,
+    "cleared": false,
+    "levelType": "BLOCKS",
+    "noOfRows": 0,
+    "levelId": 22
+  },
+  {
+    "noOfBlocks": 56,
+    "cleared": false,
+    "levelType": "BLOCKS",
+    "noOfRows": 0,
+    "levelId": 23
+  },
+  {
+    "noOfBlocks": 94,
+    "cleared": false,
+    "colorIntegerMap": {
+      "1": 30,
+      "4": 34,
+      "5": 30
+    },
+    "levelType": "COLORED_BLOCKS",
+    "noOfRows": 0,
+    "levelId": 24
+  },
+  {
+    "noOfBlocks": 60,
+    "cleared": false,
+    "levelType": "BLOCKS",
+    "noOfRows": 0,
+    "levelId": 25
+  },
+  {
+    "noOfBlocks": 62,
+    "cleared": false,
+    "levelType": "BLOCKS",
+    "noOfRows": 0,
+    "levelId": 26
+  },
+  {
+    "noOfBlocks": 172,
+    "cleared": false,
+    "colorIntegerMap": {
+      "1": 33,
+      "2": 36,
+      "3": 33,
+      "4": 34,
+      "5": 36
+    },
+    "levelType": "COLORED_BLOCKS",
+    "noOfRows": 0,
+    "levelId": 27
+  },
+  {
+    "noOfBlocks": 66,
+    "cleared": false,
+    "levelType": "BLOCKS",
+    "noOfRows": 0,
+    "levelId": 28
+  },
+  {
+    "noOfBlocks": 68,
+    "cleared": false,
+    "levelType": "BLOCKS",
+    "noOfRows": 0,
+    "levelId": 29
+  },
+  {
+    "noOfBlocks": 0,
+    "cleared": false,
+    "levelType": "FINISH_LINE",
+    "noOfRows": 200,
+    "levelId": 30
+  },
+  {
+    "noOfBlocks": 72,
+    "cleared": false,
+    "levelType": "BLOCKS",
+    "noOfRows": 0,
+    "levelId": 31
+  },
+  {
+    "noOfBlocks": 74,
+    "cleared": false,
+    "levelType": "BLOCKS",
+    "noOfRows": 0,
+    "levelId": 32
+  },
+  {
+    "noOfBlocks": 165,
+    "cleared": false,
+    "colorIntegerMap": {
+      "1": 43,
+      "2": 42,
+      "4": 39,
+      "5": 41
+    },
+    "levelType": "COLORED_BLOCKS",
+    "noOfRows": 0,
+    "levelId": 33
+  },
+  {
+    "noOfBlocks": 78,
+    "cleared": false,
+    "levelType": "BLOCKS",
+    "noOfRows": 0,
+    "levelId": 34
+  },
+  {
+    "noOfBlocks": 80,
+    "cleared": false,
+    "levelType": "BLOCKS",
+    "noOfRows": 0,
+    "levelId": 35
+  },
+  {
+    "noOfBlocks": 88,
+    "cleared": false,
+    "colorIntegerMap": {
+      "2": 46,
+      "3": 42
+    },
+    "levelType": "COLORED_BLOCKS",
+    "noOfRows": 0,
+    "levelId": 36
+  },
+  {
+    "noOfBlocks": 84,
+    "cleared": false,
+    "levelType": "BLOCKS",
+    "noOfRows": 0,
+    "levelId": 37
+  },
+  {
+    "noOfBlocks": 86,
+    "cleared": false,
+    "levelType": "BLOCKS",
+    "noOfRows": 0,
+    "levelId": 38
+  },
+  {
+    "noOfBlocks": 94,
+    "cleared": false,
+    "colorIntegerMap": {
+      "2": 48,
+      "3": 46
+    },
+    "levelType": "COLORED_BLOCKS",
+    "noOfRows": 0,
+    "levelId": 39
+  },
+  {
+    "noOfBlocks": 0,
+    "cleared": false,
+    "levelType": "FINISH_LINE",
+    "noOfRows": 250,
+    "levelId": 40
+  },
+  {
+    "noOfBlocks": 92,
+    "cleared": false,
+    "levelType": "BLOCKS",
+    "noOfRows": 0,
+    "levelId": 41
+  },
+  {
+    "noOfBlocks": 252,
+    "cleared": false,
+    "colorIntegerMap": {
+      "1": 52,
+      "2": 52,
+      "3": 47,
+      "4": 49,
+      "5": 52
+    },
+    "levelType": "COLORED_BLOCKS",
+    "noOfRows": 0,
+    "levelId": 42
+  },
+  {
+    "noOfBlocks": 96,
+    "cleared": false,
+    "levelType": "BLOCKS",
+    "noOfRows": 0,
+    "levelId": 43
+  },
+  {
+    "noOfBlocks": 98,
+    "cleared": false,
+    "levelType": "BLOCKS",
+    "noOfRows": 0,
+    "levelId": 44
+  },
+  {
+    "noOfBlocks": 215,
+    "cleared": false,
+    "colorIntegerMap": {
+      "1": 52,
+      "2": 55,
+      "3": 54,
+      "4": 54
+    },
+    "levelType": "COLORED_BLOCKS",
+    "noOfRows": 0,
+    "levelId": 45
+  },
+  {
+    "noOfBlocks": 102,
+    "cleared": false,
+    "levelType": "BLOCKS",
+    "noOfRows": 0,
+    "levelId": 46
+  },
+  {
+    "noOfBlocks": 104,
+    "cleared": false,
+    "levelType": "BLOCKS",
+    "noOfRows": 0,
+    "levelId": 47
+  },
+  {
+    "noOfBlocks": 107,
+    "cleared": false,
+    "colorIntegerMap": {
+      "3": 54,
+      "4": 53
+    },
+    "levelType": "COLORED_BLOCKS",
+    "noOfRows": 0,
+    "levelId": 48
+  },
+  {
+    "noOfBlocks": 108,
+    "cleared": false,
+    "levelType": "BLOCKS",
+    "noOfRows": 0,
+    "levelId": 49
+  },
+  {
+    "noOfBlocks": 0,
+    "cleared": false,
+    "levelType": "FINISH_LINE",
+    "noOfRows": 300,
+    "levelId": 50
+  },
+  {
+    "noOfBlocks": 116,
+    "cleared": false,
+    "colorIntegerMap": {
+      "2": 60,
+      "4": 56
+    },
+    "levelType": "COLORED_BLOCKS",
+    "noOfRows": 0,
+    "levelId": 51
+  },
+  {
+    "noOfBlocks": 114,
+    "cleared": false,
+    "levelType": "BLOCKS",
+    "noOfRows": 0,
+    "levelId": 52
+  },
+  {
+    "noOfBlocks": 116,
+    "cleared": false,
+    "levelType": "BLOCKS",
+    "noOfRows": 0,
+    "levelId": 53
+  },
+  {
+    "noOfBlocks": 186,
+    "cleared": false,
+    "colorIntegerMap": {
+      "1": 64,
+      "3": 62,
+      "4": 60
+    },
+    "levelType": "COLORED_BLOCKS",
+    "noOfRows": 0,
+    "levelId": 54
+  },
+  {
+    "noOfBlocks": 120,
+    "cleared": false,
+    "levelType": "BLOCKS",
+    "noOfRows": 0,
+    "levelId": 55
+  },
+  {
+    "noOfBlocks": 122,
+    "cleared": false,
+    "levelType": "BLOCKS",
+    "noOfRows": 0,
+    "levelId": 56
+  },
+  {
+    "noOfBlocks": 133,
+    "cleared": false,
+    "colorIntegerMap": {
+      "3": 67,
+      "5": 66
+    },
+    "levelType": "COLORED_BLOCKS",
+    "noOfRows": 0,
+    "levelId": 57
+  },
+  {
+    "noOfBlocks": 126,
+    "cleared": false,
+    "levelType": "BLOCKS",
+    "noOfRows": 0,
+    "levelId": 58
+  },
+  {
+    "noOfBlocks": 128,
+    "cleared": false,
+    "levelType": "BLOCKS",
+    "noOfRows": 0,
+    "levelId": 59
+  },
+  {
+    "noOfBlocks": 0,
+    "cleared": false,
+    "levelType": "FINISH_LINE",
+    "noOfRows": 350,
+    "levelId": 60
+  },
+  {
+    "noOfBlocks": 132,
+    "cleared": false,
+    "levelType": "BLOCKS",
+    "noOfRows": 0,
+    "levelId": 61
+  },
+  {
+    "noOfBlocks": 134,
+    "cleared": false,
+    "levelType": "BLOCKS",
+    "noOfRows": 0,
+    "levelId": 62
+  },
+  {
+    "noOfBlocks": 354,
+    "cleared": false,
+    "colorIntegerMap": {
+      "1": 71,
+      "2": 73,
+      "3": 68,
+      "4": 72,
+      "5": 70
+    },
+    "levelType": "COLORED_BLOCKS",
+    "noOfRows": 0,
+    "levelId": 63
+  },
+  {
+    "noOfBlocks": 138,
+    "cleared": false,
+    "levelType": "BLOCKS",
+    "noOfRows": 0,
+    "levelId": 64
+  },
+  {
+    "noOfBlocks": 140,
+    "cleared": false,
+    "levelType": "BLOCKS",
+    "noOfRows": 0,
+    "levelId": 65
+  },
+  {
+    "noOfBlocks": 148,
+    "cleared": false,
+    "colorIntegerMap": {
+      "2": 76,
+      "3": 72
+    },
+    "levelType": "COLORED_BLOCKS",
+    "noOfRows": 0,
+    "levelId": 66
+  },
+  {
+    "noOfBlocks": 144,
+    "cleared": false,
+    "levelType": "BLOCKS",
+    "noOfRows": 0,
+    "levelId": 67
+  },
+  {
+    "noOfBlocks": 146,
+    "cleared": false,
+    "levelType": "BLOCKS",
+    "noOfRows": 0,
+    "levelId": 68
+  },
+  {
+    "noOfBlocks": 223,
+    "cleared": false,
+    "colorIntegerMap": {
+      "1": 74,
+      "4": 75,
+      "5": 74
+    },
+    "levelType": "COLORED_BLOCKS",
+    "noOfRows": 0,
+    "levelId": 69
+  },
+  {
+    "noOfBlocks": 0,
+    "cleared": false,
+    "levelType": "FINISH_LINE",
+    "noOfRows": 400,
+    "levelId": 70
+  },
+  {
+    "noOfBlocks": 152,
+    "cleared": false,
+    "levelType": "BLOCKS",
+    "noOfRows": 0,
+    "levelId": 71
+  },
+  {
+    "noOfBlocks": 238,
+    "cleared": false,
+    "colorIntegerMap": {
+      "2": 82,
+      "3": 77,
+      "5": 79
+    },
+    "levelType": "COLORED_BLOCKS",
+    "noOfRows": 0,
+    "levelId": 72
+  },
+  {
+    "noOfBlocks": 156,
+    "cleared": false,
+    "levelType": "BLOCKS",
+    "noOfRows": 0,
+    "levelId": 73
+  },
+  {
+    "noOfBlocks": 158,
+    "cleared": false,
+    "levelType": "BLOCKS",
+    "noOfRows": 0,
+    "levelId": 74
+  },
+  {
+    "noOfBlocks": 412,
+    "cleared": false,
+    "colorIntegerMap": {
+      "1": 82,
+      "2": 85,
+      "3": 84,
+      "4": 80,
+      "5": 81
+    },
+    "levelType": "COLORED_BLOCKS",
+    "noOfRows": 0,
+    "levelId": 75
+  },
+  {
+    "noOfBlocks": 162,
+    "cleared": false,
+    "levelType": "BLOCKS",
+    "noOfRows": 0,
+    "levelId": 76
+  },
+  {
+    "noOfBlocks": 164,
+    "cleared": false,
+    "levelType": "BLOCKS",
+    "noOfRows": 0,
+    "levelId": 77
+  },
+  {
+    "noOfBlocks": 428,
+    "cleared": false,
+    "colorIntegerMap": {
+      "1": 86,
+      "2": 85,
+      "3": 85,
+      "4": 85,
+      "5": 87
+    },
+    "levelType": "COLORED_BLOCKS",
+    "noOfRows": 0,
+    "levelId": 78
+  },
+  {
+    "noOfBlocks": 168,
+    "cleared": false,
+    "levelType": "BLOCKS",
+    "noOfRows": 0,
+    "levelId": 79
+  },
+  {
+    "noOfBlocks": 0,
+    "cleared": false,
+    "levelType": "FINISH_LINE",
+    "noOfRows": 450,
+    "levelId": 80
+  },
+  {
+    "noOfBlocks": 438,
+    "cleared": false,
+    "colorIntegerMap": {
+      "1": 86,
+      "2": 87,
+      "3": 90,
+      "4": 88,
+      "5": 87
+    },
+    "levelType": "COLORED_BLOCKS",
+    "noOfRows": 0,
+    "levelId": 81
+  },
+  {
+    "noOfBlocks": 174,
+    "cleared": false,
+    "levelType": "BLOCKS",
+    "noOfRows": 0,
+    "levelId": 82
+  },
+  {
+    "noOfBlocks": 176,
+    "cleared": false,
+    "levelType": "BLOCKS",
+    "noOfRows": 0,
+    "levelId": 83
+  },
+  {
+    "noOfBlocks": 274,
+    "cleared": false,
+    "colorIntegerMap": {
+      "1": 91,
+      "2": 94,
+      "5": 89
+    },
+    "levelType": "COLORED_BLOCKS",
+    "noOfRows": 0,
+    "levelId": 84
+  },
+  {
+    "noOfBlocks": 180,
+    "cleared": false,
+    "levelType": "BLOCKS",
+    "noOfRows": 0,
+    "levelId": 85
+  },
+  {
+    "noOfBlocks": 182,
+    "cleared": false,
+    "levelType": "BLOCKS",
+    "noOfRows": 0,
+    "levelId": 86
+  },
+  {
+    "noOfBlocks": 186,
+    "cleared": false,
+    "colorIntegerMap": {
+      "2": 93,
+      "5": 93
+    },
+    "levelType": "COLORED_BLOCKS",
+    "noOfRows": 0,
+    "levelId": 87
+  },
+  {
+    "noOfBlocks": 186,
+    "cleared": false,
+    "levelType": "BLOCKS",
+    "noOfRows": 0,
+    "levelId": 88
+  },
+  {
+    "noOfBlocks": 188,
+    "cleared": false,
+    "levelType": "BLOCKS",
+    "noOfRows": 0,
+    "levelId": 89
+  },
+  {
+    "noOfBlocks": 0,
+    "cleared": false,
+    "levelType": "FINISH_LINE",
+    "noOfRows": 500,
+    "levelId": 90
+  },
+  {
+    "noOfBlocks": 192,
+    "cleared": false,
+    "levelType": "BLOCKS",
+    "noOfRows": 0,
+    "levelId": 91
+  },
+  {
+    "noOfBlocks": 194,
+    "cleared": false,
+    "levelType": "BLOCKS",
+    "noOfRows": 0,
+    "levelId": 92
+  },
+  {
+    "noOfBlocks": 508,
+    "cleared": false,
+    "colorIntegerMap": {
+      "1": 99,
+      "2": 100,
+      "3": 103,
+      "4": 103,
+      "5": 103
+    },
+    "levelType": "COLORED_BLOCKS",
+    "noOfRows": 0,
+    "levelId": 93
+  },
+  {
+    "noOfBlocks": 198,
+    "cleared": false,
+    "levelType": "BLOCKS",
+    "noOfRows": 0,
+    "levelId": 94
+  },
+  {
+    "noOfBlocks": 200,
+    "cleared": false,
+    "levelType": "BLOCKS",
+    "noOfRows": 0,
+    "levelId": 95
+  },
+  {
+    "noOfBlocks": 205,
+    "cleared": false,
+    "colorIntegerMap": {
+      "4": 103,
+      "5": 102
+    },
+    "levelType": "COLORED_BLOCKS",
+    "noOfRows": 0,
+    "levelId": 96
+  },
+  {
+    "noOfBlocks": 204,
+    "cleared": false,
+    "levelType": "BLOCKS",
+    "noOfRows": 0,
+    "levelId": 97
+  },
+  {
+    "noOfBlocks": 206,
+    "cleared": false,
+    "levelType": "BLOCKS",
+    "noOfRows": 0,
+    "levelId": 98
+  },
+  {
+    "noOfBlocks": 211,
+    "cleared": false,
+    "colorIntegerMap": {
+      "3": 107,
+      "5": 104
+    },
+    "levelType": "COLORED_BLOCKS",
+    "noOfRows": 0,
+    "levelId": 99
+  },
+  {
+    "noOfBlocks": 0,
+    "cleared": false,
+    "levelType": "FINISH_LINE",
+    "noOfRows": 550,
+    "levelId": 100
+  }
+]

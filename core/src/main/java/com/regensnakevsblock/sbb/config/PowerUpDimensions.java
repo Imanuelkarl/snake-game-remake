@@ -5,28 +5,44 @@ import com.regensnakevsblock.sbb.enumaretors.PowerUp;
 public class PowerUpDimensions {
 
     public static int enumToPosition(PowerUp powerUp){
+        int value =-1;
         switch (powerUp){
+            case MAGNET:
+                value=0;
+                break;
             case HAMMER:
-                return 1;
-                case FREEZE:
-                return 2;
+                value= 1;
+                break;
             case MULTIPLIER:
-                return 3;
+                value= 2;
+                break;
+            case FREEZE:
+                value= 3;
+                break;
             default:
-                return 0;
+                 break;
 
         }
+        return value;
     }
     public static PowerUp intToEnum(int powerUp){
+        PowerUp powerUp1 = null;
         switch (powerUp){
+            case 0:
+                powerUp1= PowerUp.MAGNET;
+                break;
             case 1:
-                return PowerUp.HAMMER;
+                powerUp1= PowerUp.HAMMER;
+                break;
             case 2:
-                return PowerUp.FREEZE;
+                powerUp1= PowerUp.MULTIPLIER;
+                break;
             case 3:
-                return PowerUp.MULTIPLIER;
+                powerUp1= PowerUp.FREEZE;
+                break;
             default:
-                return PowerUp.MAGNET;
+                break;
         }
+        return powerUp1;
     }
 }

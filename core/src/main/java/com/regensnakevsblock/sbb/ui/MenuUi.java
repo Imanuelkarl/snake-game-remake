@@ -3,11 +3,16 @@ package com.regensnakevsblock.sbb.ui;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
+import com.regensnakevsblock.sbb.assets.Assets;
 import com.regensnakevsblock.sbb.config.Constants;
 import com.regensnakevsblock.sbb.config.GameInstance;
 import com.regensnakevsblock.sbb.elements.BottomNavigation;
@@ -20,6 +25,8 @@ import com.regensnakevsblock.sbb.ui.views.UpgradesView;
 import com.regensnakevsblock.sbb.uiactions.MenuUIListener;
 import com.regensnakevsblock.sbb.uifactory.HomeUiFactory;
 import com.regensnakevsblock.sbb.uifactory.MenuUiFactory;
+import com.regensnakevsblock.sbb.utils.ActorFactory;
+import com.regensnakevsblock.sbb.utils.TextureTools;
 
 public class MenuUi {
     private final Stage stage;
@@ -81,6 +88,7 @@ public class MenuUi {
                 viewPager.setCurrentItem(index, true);
             }
         });
+        menuUiFactory.bottomNavigation.setItemSizeRatio(0.75f);
         menuUiFactory.bottomNavigation.selectItem(viewPager.getCurrentPosition());
 
         logTime("setup listeners", start);
@@ -94,6 +102,14 @@ public class MenuUi {
         stage.addActor(menuUiFactory.diamondBar);
         stage.addActor(menuUiFactory.healthBar);
         stage.addActor(menuUiFactory.bottomNavigation);
+        TextureRegion skinsIcon = TextureTools.resolveRegion(Assets.getInstance().bottomNavItems,2,2,0,0,30);
+        TextureRegion upgradesIcon = TextureTools.resolveRegion(Assets.getInstance().bottomNavItems,2,2,1,0,30);
+        TextureRegion achievementsIcon = TextureTools.resolveRegion(Assets.getInstance().bottomNavItems,2,2,0,1,30);
+        TextureRegion shopIcon = TextureTools.resolveRegion(Assets.getInstance().bottomNavItems,2,2,1,1,30);
+        menuUiFactory.bottomNavigation.setItemTexture(0,skinsIcon);
+        menuUiFactory.bottomNavigation.setItemTexture(1,upgradesIcon);
+        menuUiFactory.bottomNavigation.setItemTexture(2,achievementsIcon);
+        menuUiFactory.bottomNavigation.setItemTexture(3,shopIcon);
 
         logTime("add UI actors", start);
 
@@ -110,7 +126,22 @@ public class MenuUi {
         viewPager = GameInstance.getInstance().menuViewManager;
         pagerAdapter = GameInstance.getInstance().menuViewManagerAdapter;
 
+        // 1. Setup the inner table (the content)
+        Table innerTable = new Table();
+        for (int i = 0; i < 50; i++) {
+            innerTable.add(ActorFactory.createTextLabel("Ops")).pad(10);
+            innerTable.row(); // Move to the next line
+        }
 
+// 2. Wrap it in a ScrollPane
+        //ScrollPane scrollPane = new ScrollPane(innerTable, skin);
+
+// 3. Add to an outer container (essential for sizing)
+        Table rootTable = new Table();
+        rootTable.setFillParent(true);
+        //rootTable.add(scrollPane).width(300).height(400); // Give the "window" a fixed size
+
+        //stage.addActor(rootTable);
 
         viewPager.setSize(stage.getWidth(), stage.getHeight()-menuUiFactory.headerBackground.getHeight()-menuUiFactory.bottomNavigation.getHeight());
         viewPager.setPosition(0,menuUiFactory.bottomNavigation.getHeight());

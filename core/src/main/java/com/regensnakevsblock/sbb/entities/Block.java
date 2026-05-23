@@ -13,6 +13,7 @@ public class Block {
     private Rectangle leftCollision;
     private boolean powerUp =false;
     private PowerUp powerUpType;
+    private String color;
 
     public void setPowerUp(boolean yes, PowerUp powerUpType){
         powerUp=yes;
@@ -108,6 +109,11 @@ public class Block {
             tileWidth - 2,
             tileHeight - 2
         );
+    }
+
+    public int getColor(){
+        return colorY*2 +colorX;
+
     }
     public Rectangle getBounds() { return bounds; }
     public int getValue() { return value; }

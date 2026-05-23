@@ -245,4 +245,8 @@ public class Snake {
             section.getPosition().x+=distance;
         }
     }
+
+    public float getY() {
+        return position.y;
+    }
 }

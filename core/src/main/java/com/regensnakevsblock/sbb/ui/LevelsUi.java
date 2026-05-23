@@ -2,11 +2,14 @@ package com.regensnakevsblock.sbb.ui;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.regensnakevsblock.sbb.config.Constants;
+import com.regensnakevsblock.sbb.config.GameInstance;
+import com.regensnakevsblock.sbb.ui.views.LevelsView;
 import com.regensnakevsblock.sbb.uiactions.LevelUIListener;
 import com.regensnakevsblock.sbb.uifactory.LevelUiFactory;
 
@@ -35,7 +38,16 @@ public class LevelsUi {
 
 
         stage.addActor(levelUiFactory.background);
+        Group levelGroupView = new Group();
+        levelGroupView.setSize(stage.getWidth(), stage.getHeight()-levelUiFactory.headerBackground.getHeight()-levelUiFactory.bottomNavigation.getHeight());
+        levelGroupView.setPosition(0,levelUiFactory.bottomNavigation.getHeight());
+        GameInstance.getInstance().levelsView.setParentView(levelGroupView);
+        levelGroupView.addActor(GameInstance.getInstance().levelsView);
+        GameInstance.getInstance().levelsView.resize(stage.getWidth(),stage.getHeight()-levelUiFactory.headerBackground.getHeight()-levelUiFactory.bottomNavigation.getHeight());
 
+
+
+        stage.addActor(levelGroupView);
 
         //levelUiFactory.bottomNavigation.addOnItemSelectedListener(levelUIListener::onNavItemSelected);
 

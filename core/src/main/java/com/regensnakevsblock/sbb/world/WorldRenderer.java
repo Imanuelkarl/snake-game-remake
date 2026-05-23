@@ -10,11 +10,14 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
+import com.badlogic.gdx.graphics.g2d.ParticleEffect;
+import com.badlogic.gdx.graphics.g2d.ParticleEmitter;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.regensnakevsblock.sbb.assets.Assets;
+import com.regensnakevsblock.sbb.config.Constants;
 import com.regensnakevsblock.sbb.config.GameInstance;
 import com.regensnakevsblock.sbb.entities.Block;
 import com.regensnakevsblock.sbb.entities.Line;
@@ -26,16 +29,18 @@ import com.regensnakevsblock.sbb.enumaretors.PowerUp;
 import com.regensnakevsblock.sbb.utils.CustomBitmapFont;
 import com.regensnakevsblock.sbb.utils.FontFactory;
 import com.regensnakevsblock.sbb.utils.SimpleBitmapFont;
+import com.regensnakevsblock.sbb.utils.TextureTools;
 
 import java.util.ArrayList;
 import java.util.Base64;
 
-public class WorldRenderer {
+public class WorldRenderer implements HitListener {
     public OrthographicCamera camera;
     public WorldState worldState;
     public Snake snake;
     private ArrayList<Row> rows;
     private float textAnimationTime = 0f;
+    private boolean isPlayingBloodEffect =false;
 
     private final SpriteBatch batch;
 
@@ -48,6 +53,8 @@ public class WorldRenderer {
     private BitmapFont blockFont;
     //private CustomBitmapFont testFont;
     private BitmapFont smallFont;
+
+    private ParticleEffect bloodEffect;
     private SimpleBitmapFont font;
 
     private final GlyphLayout layout = new GlyphLayout();
@@ -73,12 +80,15 @@ public class WorldRenderer {
         this.smallFont = FontFactory.getRoboto(20, false);
 
         Texture powerUps= Assets.getInstance().powerUpTexture;;
-        this.magnetPowerUp = resolveRegion(powerUps,2,2,0,1,0);
-        this.hammerPowerUp = resolveRegion(powerUps,2,2,0,0,0);
-        this.freezePowerUp = resolveRegion(powerUps,2,2,1,1,0);
-        this.multiplierPowerUp=resolveRegion(powerUps,2,2,1,0,0);
+        this.magnetPowerUp = TextureTools.resolveRegion(powerUps,2,2,1,0,0);
+        this.hammerPowerUp = TextureTools.resolveRegion(powerUps,2,2,0,0,0);
+        this.freezePowerUp = TextureTools.resolveRegion(powerUps,2,2,1,1,0);
+        this.multiplierPowerUp=TextureTools.resolveRegion(powerUps,2,2,0,1,0);
 
-
+        this.bloodEffect =Assets.getInstance().bloodEffect;
+        ParticleEmitter emitter=bloodEffect.findEmitter(bloodEffect.getEmitters().get(0).getName());
+        emitter.getTint().setColors(Constants.Snake_Texture_Colors[9]);;
+        bloodEffect.setDuration(3000);
         font=GameInstance.getInstance().getSimpleBitmapFont();
 
 
@@ -92,6 +102,7 @@ public class WorldRenderer {
         if (!missing.isEmpty()) {
             Gdx.app.log("Font", "Missing characters: " + missing);
         }
+        worldState.setOnHitListener(this);
     }
 
     public void render() {
@@ -99,11 +110,9 @@ public class WorldRenderer {
         batch.begin();
         renderRowItems(batch);
         renderSnake();
+        renderBloodParticles();
         renderPowerUp();
         batch.end();
-    }
-    private TextureRegion resolveRegion(Texture texture,int rows, int columns, int x,int y,float pad ){
-        return new TextureRegion(texture,x*texture.getWidth()/columns,y*texture.getHeight()/rows,texture.getWidth()/columns,texture.getHeight()/rows);
     }
 
 
@@ -116,17 +125,19 @@ public class WorldRenderer {
             float powerUpX=worldState.getScreenWidth()/2 - size / 2;
             float powerUpY=worldState.getScreenHeight() - (worldState.getScreenHeight() / 8);
             switch (worldState.getPowerUp()) {
-                case MULTIPLIER:
-                    batch.draw(multiplierPowerUp, powerUpX , powerUpY, size, size);
+                case MAGNET:
+                    batch.draw(magnetPowerUp, powerUpX , powerUpY, size, size);
                     break;
                 case HAMMER:
                     batch.draw(hammerPowerUp, powerUpX, powerUpY, size, size);
+                    break;
+                case MULTIPLIER:
+                    batch.draw(multiplierPowerUp, powerUpX, powerUpY,size, size);
                     break;
                 case FREEZE:
                     batch.draw(freezePowerUp, powerUpX, powerUpY,size, size);
                     break;
                 default:
-                    batch.draw(magnetPowerUp, powerUpX, powerUpY,size, size);
                     break;
             }
         }
@@ -174,56 +185,72 @@ public class WorldRenderer {
                         float textX = blockX
                             + (worldState.getBlockDimension() - font.getWidth(value)) / 2f;
 
-                        float textY = row.getY() + font.getHeight(value);
+                        float textY = row.getY() + (worldState.getScreenHeight()/Gdx.graphics.getHeight())*0.7f;
                         //+ (worldState.getBlockDimension() + layout.height) / 2f;
 
                         //blockFont.draw(batch, layout, textX, textY);
                         //font.setFontSize();
 
-                        font.draw(batch, value, textX, textY - worldState.getBlockDimension() * 0.55f);
+                        font.draw(batch, value, textX, textY );
                         if(block.hasPowerUp()){
-                            float powerUpSize =blockSize/2 -blockSize/8;
+                            float powerUpSize =blockSize/2 -blockSize/16;
+                            float powerUpY=row.getY()+blockSize/2+powerUpSize/8-10;
+                            float powerUpX= blockX+blockSize/2 -powerUpSize/2;
                             switch (block.getPowerUp()){
+                                case MAGNET:
+                                    batch.draw(magnetPowerUp,powerUpX,powerUpY,powerUpSize,powerUpSize);
+                                    break;
                                 case HAMMER:
-                                    batch.draw(hammerPowerUp,blockX+blockSize/2 -powerUpSize/2,row.getY()+blockSize/2+powerUpSize/8,powerUpSize,powerUpSize);
+                                    batch.draw(hammerPowerUp,powerUpX,powerUpY,powerUpSize,powerUpSize);
                                     break;
                                 case MULTIPLIER:
-                                    batch.draw(multiplierPowerUp,blockX+blockSize/2 -powerUpSize/2,row.getY()+blockSize/2+powerUpSize/8,powerUpSize,powerUpSize);
+                                    batch.draw(multiplierPowerUp,powerUpX,powerUpY,powerUpSize,powerUpSize);
                                     break;
                                 case FREEZE:
-                                    batch.draw(freezePowerUp,blockX+blockSize/2 -powerUpSize/2,row.getY()+blockSize/2+powerUpSize/8,powerUpSize,powerUpSize);
+                                    batch.draw(freezePowerUp,powerUpX,powerUpY,powerUpSize,powerUpSize);
                                     break;
                                 default:
-                                    batch.draw(magnetPowerUp,blockX+blockSize/2 -powerUpSize/2,row.getY()+blockSize/2+powerUpSize/8,powerUpSize,powerUpSize);
+                                    System.out.println("Drawing multiplier");
+                                    //batch.draw(multiplierPowerUp,powerUpX,powerUpY,powerUpSize,powerUpSize);
                                     break;
                             }
-
                         }
                         //testFont.draw(batch, String.valueOf(block.getValue()), textX, textY);
                     }
                     //System.out.println("Drawing block at position: " + ((camera.viewportWidth/5)*block.getPosition()) + ", " + row.getY());
                 }
                 for (WinBody winBody : row.getWinBodies()) {
-                    float winBodyX = (winBody.getPositionIndex() + 1) * camera.viewportWidth / 10 + winBody.getPositionIndex() * camera.viewportWidth / 10 - radius;
-                    Rectangle bounds = new Rectangle(winBodyX, row.getY() + radius * 2, radius * 2, radius * 2);
-                    winBody.setBounds(bounds);
+
                     if (winBody.isActive()) {
-                        batch.draw(snakeTexture, winBodyX, row.getY() + radius * 2, radius * 2, radius * 2);
                         String value = String.valueOf(winBody.getValue());
 
                         layout.setText(smallFont, value);
+                        if(winBody.isAdjust()){
+                            Rectangle bounds = new Rectangle(winBody.getX(), winBody.getY() + radius * 2, radius * 2, radius * 2);
+                            winBody.setBounds(bounds);
 
-                        float textX = winBodyX + radius - layout.width / 2f;
-                        float textY = row.getY() + radius * 5f + layout.height / 2f;
+                        }
+                        else{
+                            float winBodyX = (winBody.getPositionIndex() + 1) * camera.viewportWidth / 10 + winBody.getPositionIndex() * camera.viewportWidth / 10 - radius;
+                            Rectangle bounds = new Rectangle(winBodyX, row.getY() + radius * 2, radius * 2, radius * 2);
+                            winBody.setBounds(bounds);
+                            winBody.setPosition(winBodyX,row.getY()+radius*2);
 
+                        }
+                        batch.draw(winBody.getType()== WinBody.Type.COIN?Assets.getInstance().coinTexture : snakeTexture, winBody.getX(), winBody.getY(), radius * 2, radius * 2);
+                        float textX = winBody.getX() + radius - layout.width / 2f;
+                        float textY = winBody.getY() + radius * 2f + layout.height *2f;
                         smallFont.draw(batch, layout, textX, textY);
-                    }
 
+                    }
 
                 }
                 for (Line line : row.getLines()) {
                     float lineX = (line.getPosition() + 1) * camera.viewportWidth / 10 + line.getPosition() * camera.viewportWidth / 10 + worldState.getBlockDimension() / 2;
                     batch.draw(lineTexture, lineX, row.getY(), line.getWidth(), worldState.getBlockDimension());
+                }
+                if(row.isFinishLine()){
+                    batch.draw(Assets.getInstance().finishLineTexture,0,row.getY()+worldState.getBlockDimension()*2,camera.viewportWidth,worldState.getBlockDimension());
                 }
             }
         }
@@ -244,10 +271,35 @@ public class WorldRenderer {
         batch.draw(snakeTexture,snake.getPosition().x,snake.getPosition().y,radius*2,radius*2);
 //        System.out.println("Rendering snake head at position: " + snake.getPosition().x + ", " + snake.getPosition().y + " ");
     }
+    private void renderBloodParticles() {
+        bloodEffect.setPosition(
+            snake.getPosition().x + radius,
+            snake.getPosition().y + radius
+        );
+        bloodEffect.draw(batch,Gdx.graphics.getDeltaTime());
+
+        // Check if particle effect has finished
+        if (bloodEffect.isComplete()) {
+            bloodEffect.reset();  // Reset or dispose if no longer needed
+        }
+    }
     public void dispose() {
         batch.dispose();
+        bloodEffect.dispose();
+        font.dispose();
         snakeTexture.dispose();
         lineTexture.dispose();
         blockTexture.dispose();
+    }
+
+    @Override
+    public void onHit() {
+        bloodEffect.start();
+
+    }
+
+    @Override
+    public void onHitStopped() {
+        bloodEffect.reset();
     }
 }

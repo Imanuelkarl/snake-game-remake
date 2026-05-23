@@ -2,10 +2,12 @@ package com.regensnakevsblock.sbb.utils;
 
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.ProgressBar;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 
@@ -40,7 +42,85 @@ public class ActorFactory {
     public static Label createTextLabel(String s,int fontSize, Label.LabelStyle style) {
         return createTextLabel(s,fontSize,0,0,style);
     }
-    private static Texture createDarkenedTexture(Texture original, float overlayAlpha) {
+    public static ProgressBar createProgressBar(
+        Texture bgTexture,
+        Texture fillTexture,
+        Texture knobTexture,     // nullable
+        Texture afterTexture,    // nullable
+        float min,
+        float max,
+        float step,
+        float width,
+        float height,
+        boolean vertical,
+        float fillOffset
+    ) {
+        ProgressBar.ProgressBarStyle style = new ProgressBar.ProgressBarStyle();
+
+        // --- Background ---
+        if (bgTexture != null) {
+            TextureRegionDrawable background =
+                new TextureRegionDrawable(new TextureRegion(bgTexture));
+            background.setMinHeight(height);
+            background.setMinWidth(width);
+            style.background = background;
+        }
+
+        // --- Fill (progress) ---
+        if (fillTexture != null) {
+            TextureRegion fillRegion = new TextureRegion(fillTexture);
+            TextureRegionDrawable originalFill = new TextureRegionDrawable(fillRegion);
+            originalFill.setMinHeight(height - height / 7f);
+
+            // Create a wrapper that shifts the fill to start at the offset
+            style.knobBefore = new TextureRegionDrawable(fillRegion) {
+                @Override
+                public void draw(Batch batch, float x, float y, float width, float height) {
+                    // Draw the fill shifted right by fillOffset, and reduce its width
+                    originalFill.draw(batch, x + fillOffset, y+originalFill.getMinHeight()*2, width , originalFill.getMinHeight());
+                }
+            };
+        }
+
+        //
+
+        // --- Remaining (optional) ---
+        if (afterTexture != null) {
+            TextureRegionDrawable after =
+                new TextureRegionDrawable(new TextureRegion(afterTexture));
+
+            after.setMinHeight(height - height / 6f);
+            after.setMinWidth(0);
+
+            style.knobAfter = after;
+        }
+
+        // --- Knob (handle) ---
+        if (knobTexture != null) {
+            TextureRegionDrawable knob =
+                new TextureRegionDrawable(new TextureRegion(knobTexture));
+
+            // Taller than bar for emphasis
+            knob.setMinHeight(height * 1.5f);
+            knob.setMinWidth(height); // square-ish knob
+
+            style.knob = knob;
+        }
+
+        ProgressBar bar = new ProgressBar(min, max, step, vertical, style);
+
+        // --- CRITICAL: Set actual actor size ---
+        bar.setSize(width, height);
+
+        return bar;
+    }
+    public static ProgressBar createProgressBar(Texture bgTexture, Texture fillTexture, float width, float height) {
+        return createProgressBar(bgTexture, fillTexture, null, null, 0, 1, 0.01f, width,height,false,5);
+    }
+    public static ProgressBar createProgressBar(Texture bgTexture, Texture fillTexture,Texture knobTexture,float width, float height) {
+        return createProgressBar(bgTexture, fillTexture, knobTexture, null, 0, 1, 0.01f,width,height, false,50);
+    }
+    private static Texture createDarkenedTexture(Texture original) {
 
         if (!original.getTextureData().isPrepared()) {
             original.getTextureData().prepare();
@@ -74,7 +154,7 @@ public class ActorFactory {
                 }
 
                 // Apply darkening (blend toward black)
-                float factor = 1f - overlayAlpha;
+                float factor = 1f - (float) 0.4;
 
                 int newR = (int)(r * factor);
                 int newG = (int)(g * factor);
@@ -98,7 +178,7 @@ public class ActorFactory {
 
     public static ImageButton createButton(Texture texture, float x, float y, float width, float height) {
 
-        Texture darkTexture = createDarkenedTexture(texture, 0.4f);
+        Texture darkTexture = createDarkenedTexture(texture);
 
         Drawable up = new TextureRegionDrawable(new TextureRegion(texture));
         Drawable down = new TextureRegionDrawable(new TextureRegion(darkTexture));
@@ -114,7 +194,7 @@ public class ActorFactory {
         return button;
     }
     public static void updateButtonStyle(ImageButton button, Texture newTexture) {
-        Texture darkTexture = createDarkenedTexture(newTexture, 0.4f);
+        Texture darkTexture = createDarkenedTexture(newTexture);
 
         Drawable up = new TextureRegionDrawable(new TextureRegion(newTexture));
         Drawable down = new TextureRegionDrawable(new TextureRegion(darkTexture));

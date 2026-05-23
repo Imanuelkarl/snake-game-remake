@@ -63,6 +63,7 @@ public class SimpleBitmapFont implements Disposable {
             scaledXAdvance = xAdvance * scaleX;
         }
 
+        @SuppressWarnings("DefaultLocale")
         @Override
         public String toString() {
             return String.format("'%c' [%d]: pos=(%d,%d) size=(%dx%d) offset=(%d,%d) advance=%d",

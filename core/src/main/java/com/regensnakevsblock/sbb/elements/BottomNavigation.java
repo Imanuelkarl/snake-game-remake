@@ -236,6 +236,11 @@ public class BottomNavigation extends Group {
             items.get(i).setCustomTexture(textures[i]);
         }
     }
+    public void setItemTexture(int index, TextureRegion textureRegion) {
+        if (index >= 0 && index < items.size) {
+            items.get(index).setCustomTexture((textureRegion));
+        }
+    }
 
     public void addOnItemSelectedListener(OnItemSelectedListener listener) {
         if (!listeners.contains(listener, true)) {
@@ -444,6 +449,31 @@ public class BottomNavigation extends Group {
                 customImage.setPosition(iconX, iconY);
             }
         }
+        public void setCustomTexture(TextureRegion texture) {
+            if (customImage == null) {
+                customImage = new Image(new TextureRegionDrawable(new TextureRegion(texture)));
+                customImage.setOrigin(Align.center);
+                customGroup.addActor(customImage); // ✅ stays inside scalable group
+            } else {
+                customImage.setDrawable(new TextureRegionDrawable(new TextureRegion(texture)));
+            }
+
+            hasCustomTexture = true;
+            defaultImage.setVisible(false);
+
+            if (!isSelected) {
+                customImage.setVisible(true);
+            }
+
+            if (displaySize > 0) {
+                float iconX = (displayWidth - displaySize) / 2f;
+                float iconY = (displayHeight - displaySize) / 2f;
+
+                customImage.setSize(displaySize, displaySize);
+                customImage.setPosition(iconX, iconY);
+            }
+        }
+
 
         public boolean hasCustomTexture() {
             return hasCustomTexture;

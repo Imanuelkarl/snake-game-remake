@@ -24,7 +24,7 @@ public class GameOverScreen implements Screen, GameOverListener {
 
     @Override
     public void render(float delta) {
-        Gdx.gl.glClearColor(1, 0.647f, 0, 1);
+        Gdx.gl.glClearColor(0.00f, 0.0f, 0.08f, 0.5f);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
         gameOverUi.update(delta);
         gameOverUi.render();
@@ -74,5 +74,11 @@ public class GameOverScreen implements Screen, GameOverListener {
     @Override
     public void multiplyButtonClicked() {
 
+    }
+    public void setCoins(int coins){
+        gameOverUi.setCoins(coins);
+    }
+    public void setScore(int score){
+        gameOverUi.setScore(score);
     }
 }

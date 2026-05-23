@@ -1,6 +1,8 @@
 package com.regensnakevsblock.sbb.ui.views;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
@@ -8,8 +10,10 @@ import com.regensnakevsblock.sbb.assets.Assets;
 import com.regensnakevsblock.sbb.ui.adapters.ShopAdapter;
 import com.regensnakevsblock.sbb.ui.cards.ShopCard;
 import com.regensnakevsblock.sbb.ui.core.ListManager;
+import com.regensnakevsblock.sbb.ui.data.ShopCategory;
 import com.regensnakevsblock.sbb.ui.data.ShopItemData;
 import com.regensnakevsblock.sbb.utils.ActorFactory;
+import com.regensnakevsblock.sbb.utils.TextureTools;
 
 public class ShopView extends BaseActorView {
     private ListManager<ShopItemData, ShopCard> listManager;
@@ -17,9 +21,7 @@ public class ShopView extends BaseActorView {
     private Label titleLabel;
     private float width;
     private float height;
-    private Label coinsLabel;
-    private Label diamondsLabel;
-    private Table currencyPanel;
+
 
     public ShopView(Group group) {
         super(group);
@@ -35,33 +37,12 @@ public class ShopView extends BaseActorView {
     }
 
     private void setupUI() {
-        // Title
-        titleLabel = ActorFactory.createTextLabel("SHOP");
-        titleLabel.setPosition(20, Gdx.graphics.getHeight() - 50);
-        addActor(titleLabel);
 
-        // Currency panel
-        currencyPanel = new Table();
-        currencyPanel.setPosition(Gdx.graphics.getWidth() - 200, Gdx.graphics.getHeight() - 50);
-        currencyPanel.setSize(180, 40);
-
-        coinsLabel = ActorFactory.createTextLabel("🪙 5000");
-        diamondsLabel = ActorFactory.createTextLabel("💎 100");
-
-        currencyPanel.add(coinsLabel).padRight(10);
-        currencyPanel.add(diamondsLabel);
-        addActor(currencyPanel);
     }
 
     private void setupList() {
         adapter = new ShopAdapter();
         listManager = new ListManager<>(adapter);
-
-
-        // Grid layout: 2 columns for shop items
-        listManager.setLayout( 2, 280, 100);
-        listManager.setSize(Gdx.graphics.getWidth() - 40, Gdx.graphics.getHeight() - 100);
-        listManager.setPosition(20, 20);
 
         addActor(listManager);
 
@@ -73,17 +54,30 @@ public class ShopView extends BaseActorView {
     }
 
     private void loadData() {
+        Texture coins = Assets.getInstance().coinPilesTexture;
+        Texture diamonds = Assets.getInstance().diamondPilesTexture;
+        Texture portions = Assets.getInstance().portionPilesTexture;
+
+        TextureRegion coinPile1 = TextureTools.resolveRegion(coins,2,2,0,0,0);
+        TextureRegion coinPile2 = TextureTools.resolveRegion(coins,2,2,0,1,0);
+        TextureRegion coinPile3 = TextureTools.resolveRegion(coins,2,2,1,0,0);
+        TextureRegion diamondPile1 = TextureTools.resolveRegion(diamonds, 2, 2, 0, 0, 0);
+        TextureRegion diamondPile2 = TextureTools.resolveRegion(diamonds,2,2,0,1,0);
+        TextureRegion diamondPile3 = TextureTools.resolveRegion(diamonds,2,2,1,0,0);
+        TextureRegion portionPile1 = TextureTools.resolveRegion(portions,2,2,0,0,0);
+        TextureRegion portionPile2 = TextureTools.resolveRegion(portions,2,2,0,1,0);
+        TextureRegion portionPile3 = TextureTools.resolveRegion(portions,2,2,1,0,0);
         java.util.List<ShopItemData> items = new java.util.ArrayList<>();
         items.add(new ShopItemData("item_1", "Health Potion", "Restores 50 HP",
-            ShopItemData.CurrencyType.COINS, 100, Assets.getInstance().defaultItemTexture, false));
+            ShopItemData.CurrencyType.COINS,coinPile1, 100, Assets.getInstance().defaultItemTexture, false,1000, ShopCategory.COIN));
         items.add(new ShopItemData("item_2", "Mana Potion", "Restores 30 MP",
-            ShopItemData.CurrencyType.COINS, 80, Assets.getInstance().defaultItemTexture, false));
+            ShopItemData.CurrencyType.COINS,coinPile2, 80, Assets.getInstance().defaultItemTexture, false,5500,ShopCategory.COIN));
         items.add(new ShopItemData("item_3", "Starter Pack", "2000 Coins + 50 Diamonds",
-            ShopItemData.CurrencyType.DIAMONDS, 10, Assets.getInstance().defaultItemTexture, false));
+            ShopItemData.CurrencyType.DIAMONDS,coinPile3, 10, Assets.getInstance().defaultItemTexture, false,15000,ShopCategory.COIN));
         items.add(new ShopItemData("item_4", "Double Damage", "Permanent 2x damage boost",
-            ShopItemData.CurrencyType.DIAMONDS, 50,Assets.getInstance().defaultItemTexture, false));
+            ShopItemData.CurrencyType.DIAMONDS, diamondPile1,50,Assets.getInstance().defaultItemTexture, false,50,ShopCategory.DIAMOND));
         items.add(new ShopItemData("item_5", "Speed Boost", "Permanent speed increase",
-            ShopItemData.CurrencyType.COINS, 5000, Assets.getInstance().defaultItemTexture, false));
+            ShopItemData.CurrencyType.COINS,diamondPile2, 5000, Assets.getInstance().defaultItemTexture, false,275, ShopCategory.DIAMOND));
 
         adapter.setData(items);
     }
@@ -91,7 +85,7 @@ public class ShopView extends BaseActorView {
 
         listManager.setSize(width,height);
         listManager.setPosition(0, 0);
-        listManager.setLayout(3, 100);
+        listManager.setLayout( 3, 350);
     }
 
     private void purchaseItem(ShopItemData item, int position) {
@@ -140,8 +134,7 @@ public class ShopView extends BaseActorView {
     }
 
     private void updateCurrencyDisplay() {
-        coinsLabel.setText("🪙 " + getPlayerCoins());
-        diamondsLabel.setText("💎 " + getPlayerDiamonds());
+
     }
 
     private void showPurchaseSuccess(String itemName) {
@@ -164,8 +157,9 @@ public class ShopView extends BaseActorView {
         this.width = width;
         this.height = height;
         setupTransform();
+        listManager.onResize(width,height);
         listManager.renderAllItems();
-        currencyPanel.setPosition(width - 200, height - 50);
+
     }
 
     @Override

@@ -1,14 +1,19 @@
 package com.regensnakevsblock.sbb.ui.views;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.utils.Align;
+import com.regensnakevsblock.sbb.assets.Assets;
+import com.regensnakevsblock.sbb.enumaretors.PowerUp;
 import com.regensnakevsblock.sbb.ui.adapters.UpgradeAdapter;
 import com.regensnakevsblock.sbb.ui.cards.UpgradeCard;
 import com.regensnakevsblock.sbb.ui.core.ListManager;
 import com.regensnakevsblock.sbb.ui.data.UpgradeData;
 import com.regensnakevsblock.sbb.utils.ActorFactory;
+import com.regensnakevsblock.sbb.utils.TextureTools;
 
 public class UpgradesView extends BaseActorView {
     private ListManager<UpgradeData, UpgradeCard> listManager;
@@ -95,15 +100,20 @@ public class UpgradesView extends BaseActorView {
     }
 
     private void loadData() {
+        Texture powerUps= Assets.getInstance().powerUpTexture;;
+        TextureRegion magnetPowerUp = TextureTools.resolveRegion(powerUps,2,2,1,0,0);
+        TextureRegion hammerPowerUp = TextureTools.resolveRegion(powerUps,2,2,0,0,0);
+        TextureRegion freezePowerUp = TextureTools.resolveRegion(powerUps,2,2,1,1,0);
+        TextureRegion multiplierPowerUp=TextureTools.resolveRegion(powerUps,2,2,0,1,0);
         java.util.List<UpgradeData> upgrades = new java.util.ArrayList<>();
-        upgrades.add(new UpgradeData("upg_1", "Sword Damage", "Increases sword damage",
-            1, 10, 500, 100, 120));
-        upgrades.add(new UpgradeData("upg_2", "Health Regeneration", "Regenerate health faster",
-            0, 5, 300, 0, 5));
-        upgrades.add(new UpgradeData("upg_3", "Critical Chance", "Increase critical hit chance",
-            2, 10, 800, 15, 18));
-        upgrades.add(new UpgradeData("upg_4", "Movement Speed", "Faster movement",
-            1, 8, 400, 5, 6));
+        upgrades.add(new UpgradeData("upg_1", "MAGNET", "Increases sword damage",
+            1, 10, 500, 100, 120, magnetPowerUp));
+        upgrades.add(new UpgradeData("upg_2", "HAMMER", "Regenerate health faster",
+            0, 5, 300, 0, 5,hammerPowerUp));
+        upgrades.add(new UpgradeData("upg_3", "MULTIPLIER", "Increase critical hit chance",
+            2, 10, 800, 15, 18,multiplierPowerUp));
+        upgrades.add(new UpgradeData("upg_4", "FREEZE", "Faster movement",
+            1, 8, 400, 5, 6,freezePowerUp));
 
         adapter.setData(upgrades);
     }

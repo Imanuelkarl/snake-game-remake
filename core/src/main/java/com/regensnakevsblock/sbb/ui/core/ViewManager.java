@@ -166,35 +166,6 @@ public class ViewManager extends Group {
             layoutPages();
         }
     }
-    public void reload() {
-        if (adapter == null) return;
-
-        // If size not ready, defer
-        if (getWidth() == 0 || getHeight() == 0) {
-            pendingReload = true;
-            return;
-        }
-
-        pendingReload = false;
-
-        clearChildren();
-
-        scrollX = currentPosition * getWidth();
-
-        for (int i = 0; i < adapter.getCount(); i++) {
-            BaseView view = adapter.getView(i);
-            addActor(view.getRoot());
-        }
-
-        layoutPages();
-
-        adapter.notifyPageSelected(currentPosition);
-
-        if (pageChangeListener != null) {
-            pageChangeListener.onPageChanged(-1, currentPosition);
-        }
-    }
-
     private float getChildX(int position) {
         BaseView view = adapter.getView(position);
         if (view != null && view.getRoot().getParent() != null) {
@@ -206,7 +177,6 @@ public class ViewManager extends Group {
     public void setAdapter(ViewPagerAdapter adapter) {
         this.adapter = adapter;
         clearChildren();
-        System.out.println("Adapter set with " + adapter.getCount() + " pages.");
         if (adapter.getCount() > 0) {
             currentPosition = 0;
             scrollX = 0;
@@ -239,7 +209,6 @@ public class ViewManager extends Group {
 
             layoutPages();
             adapter.notifyPageSelected(position);
-
         }
     }
 

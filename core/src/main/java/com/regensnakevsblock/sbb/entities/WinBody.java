@@ -21,6 +21,16 @@ public class WinBody {
     private int positionIndex;
 
     private int value;
+    private boolean adjust =false;
+    private Type type;
+    public enum Type{
+        BODY,COIN
+    }
+    public WinBody(){
+        bounds = new Rectangle();
+        position =new Vector2();
+    }
+
     public int getPositionIndex() {
         return positionIndex;
     }
@@ -85,5 +95,33 @@ public class WinBody {
 
     public void setValue(int value) {
         this.value = value;
+    }
+
+    public void setAdjustable(boolean adjust) {
+        this.adjust=adjust;
+    }
+    public void setX(float x){
+        position.x=x;
+    }
+    public void setY(float y){
+        position.y=y;
+    }
+
+    public float getX() {
+        return position.x;
+    }
+    public float getY(){
+        return position.y;
+    }
+    public void setType(Type type){
+        this.type=type;
+    }
+
+    public Type getType() {
+        return type;
+    }
+
+    public boolean isAdjust() {
+        return adjust;
     }
 }

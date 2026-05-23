@@ -79,6 +79,13 @@ public class FontActor extends Widget {
         batch.setColor(Color.WHITE);
     }
 
+    @Override
+    public float getWidth() {
+
+        return drawStyle?width:font.getWidth(text);
+
+    }
+
     public void setFont(SimpleBitmapFont font) {
         this.font=font;
     }

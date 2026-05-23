@@ -2,6 +2,8 @@ package com.regensnakevsblock.sbb.systems;
 
 import com.badlogic.gdx.math.Rectangle;
 import com.regensnakevsblock.sbb.entities.*;
+import com.regensnakevsblock.sbb.enumaretors.PowerUp;
+import com.regensnakevsblock.sbb.service.SaveService;
 import com.regensnakevsblock.sbb.world.WorldState;
 
 public class CollisionSystem extends GlobalSystems {
@@ -9,6 +11,8 @@ public class CollisionSystem extends GlobalSystems {
     private Block lastCollidedBlock;
     private Line lastLeftBlocker;
     private Line lastRightBlocker;
+    private SaveService saveService;
+    private Rectangle finishLine;
 
     // Fixed timestep for consistent block breaking
     private static final float BLOCK_BREAK_INTERVAL = 0.125f; // 8 times per second
@@ -19,6 +23,8 @@ public class CollisionSystem extends GlobalSystems {
 
     public CollisionSystem(WorldState worldState) {
         super(worldState);
+        saveService =new SaveService();
+        finishLine=new Rectangle(0,0,worldState.getScreenWidth(),worldState.getBlockDimension());
     }
 
     @Override
@@ -44,6 +50,14 @@ public class CollisionSystem extends GlobalSystems {
         boolean rightBlocked = false;
 
         for (Row row : worldState.getRows()) {
+
+            finishLine.y=row.getY()+worldState.getBlockDimension()*2.7f;
+            if(row.isFinishLine()){
+                if(snake.getBounds().overlaps(finishLine)){
+                    worldState.setPaused(true);
+                    return;
+                }
+            }
             // Lines (permanent walls)
             for (Line line : row.getLines()) {
                 // Check left wall collision
@@ -97,13 +111,20 @@ public class CollisionSystem extends GlobalSystems {
                     blockBreakTimer += deltaTime;
                     if(snake.getLength()!=0) {
                         while (blockBreakTimer >= BLOCK_BREAK_INTERVAL) {
-
+                            if(worldState.isPowerUpIsActive()&&worldState.getPowerUp().equals(PowerUp.HAMMER)){
+                                block.setValue(0);
+                                break;
+                            }
+                            worldState.getHitListener().onHit();
                             block.reduceValue();
                             snake.removeSegment();
-                            worldState.setScore(worldState.getScore() + 1);
+                            worldState.setScore(worldState.getScore() + worldState.getScoreMultiplier());
                             blockBreakTimer -= BLOCK_BREAK_INTERVAL;
                         }
                     }else{
+                        if(saveService.getHighScore()<worldState.getScore()){
+                            saveService.saveHighScore(worldState.getScore());
+                        }
                         worldState.setGameOver(true);
                         this.worldState.setMoving(false);
                         block.setActive(false);
@@ -114,7 +135,7 @@ public class CollisionSystem extends GlobalSystems {
 
                     // If block destroyed
                     if (block.getValue() <= 0) {
-
+                        worldState.addColorDestroyed(block.getColor());
                         if(block.hasPowerUp()){
                             worldState.setPowerUp(block.getPowerUp());
                             worldState.setPowerUpIsActive(true);
@@ -136,8 +157,10 @@ public class CollisionSystem extends GlobalSystems {
             // Resume movement
             worldState.setMoving(true);
             snake.setBreaking(false);
+            worldState.getHitListener().onHitStopped();
             blockBreakTimer = 0;
         }
+
 
         // ───────────────────────────────────────────────
         //  D. WinBody collection
@@ -148,7 +171,12 @@ public class CollisionSystem extends GlobalSystems {
 
                 if (snake.getBounds().overlaps(winBody.getBounds())) {
                     winBody.setActive(false);
-                    snake.addSegments(winBody.getValue());
+                    if(winBody.getType()== WinBody.Type.BODY){
+                        snake.addSegments(winBody.getValue()*worldState.getScoreMultiplier());
+                    }
+                    else{
+                        worldState.setCoins(worldState.getCoins()+winBody.getValue()*worldState.getScoreMultiplier());
+                    }
                 }
             }
         }
