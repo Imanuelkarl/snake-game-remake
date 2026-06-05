@@ -6,8 +6,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.utils.Align;
-import com.regensnakevsblock.sbb.assets.Assets;
-import com.regensnakevsblock.sbb.enumaretors.PowerUp;
+import com.regensnakevsblock.sbb.assets.Assets2;
 import com.regensnakevsblock.sbb.ui.adapters.UpgradeAdapter;
 import com.regensnakevsblock.sbb.ui.cards.UpgradeCard;
 import com.regensnakevsblock.sbb.ui.core.ListManager;
@@ -100,7 +99,7 @@ public class UpgradesView extends BaseActorView {
     }
 
     private void loadData() {
-        Texture powerUps= Assets.getInstance().powerUpTexture;;
+        TextureRegion powerUps= Assets2.getInstance().powerUpTexture;;
         TextureRegion magnetPowerUp = TextureTools.resolveRegion(powerUps,2,2,1,0,0);
         TextureRegion hammerPowerUp = TextureTools.resolveRegion(powerUps,2,2,0,0,0);
         TextureRegion freezePowerUp = TextureTools.resolveRegion(powerUps,2,2,1,1,0);

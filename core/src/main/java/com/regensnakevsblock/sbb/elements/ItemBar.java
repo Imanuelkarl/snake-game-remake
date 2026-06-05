@@ -1,14 +1,12 @@
 package com.regensnakevsblock.sbb.elements;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
-import com.regensnakevsblock.sbb.assets.Assets;
+import com.regensnakevsblock.sbb.assets.Assets2;
 import com.regensnakevsblock.sbb.config.GameInstance;
 import com.regensnakevsblock.sbb.utils.ActorFactory;
 import com.regensnakevsblock.sbb.utils.FontActor;
@@ -20,10 +18,10 @@ public class ItemBar extends Group {
     private Image itemIcon;
     private ImageButton addButton;
     private FontActor amountDisplay;
-    private Texture backgroundTexture;
+    private TextureRegion backgroundTexture;
 
-    private Texture itemTexture;
-    private Texture addItemTexture;
+    private TextureRegion itemTexture;
+    private TextureRegion addItemTexture;
     private SimpleBitmapFont font;
 
     private String amount = "0";
@@ -35,7 +33,7 @@ public class ItemBar extends Group {
     private float height;
 
     public ItemBar(float x,float y, float width, float height) {
-        Assets assets = Assets.getInstance();
+        Assets2 assets = Assets2.getInstance();
         this.setPosition(x,y);
         this.setSize(width,height);
         this.width=width;
@@ -108,26 +106,32 @@ public class ItemBar extends Group {
         );
     }
     public void setBackgroundTexture(Texture texture){
-        backgroundTexture=texture;
+        backgroundTexture=new TextureRegion(texture);
         background.setDrawable(new TextureRegionDrawable(new TextureRegion(texture)));
     }
 
     public void setItemTexture(Texture texture) {
-        itemTexture = texture;
+        itemTexture = new TextureRegion(texture);
+        itemIcon.setDrawable(new TextureRegionDrawable(new TextureRegion(texture)));
+        // Re-layout to ensure amount display position updates if needed
+        layout();
+    }
+    public void setItemTexture(TextureRegion texture) {
+        itemTexture = new TextureRegion(texture);
         itemIcon.setDrawable(new TextureRegionDrawable(new TextureRegion(texture)));
         // Re-layout to ensure amount display position updates if needed
         layout();
     }
 
     public void setAddItemTexture(Texture texture){
-        addItemTexture=texture;
+        addItemTexture=new TextureRegion(texture);
         build();
         layout();
         // You might want to update the button texture here if needed
         // addButton.setDrawable(new TextureRegionDrawable(new TextureRegion(texture)));
     }
 
-    public void setAmount(int value) {
+    public void setAmount(Long value) {
         this.amount = String.valueOf(value);
         this.amountDisplay.setWidth(font.getWidth(String.valueOf(value)));
         this.amountDisplay.setText(String.valueOf(value));

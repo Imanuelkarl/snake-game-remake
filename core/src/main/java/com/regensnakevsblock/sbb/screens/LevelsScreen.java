@@ -22,7 +22,7 @@ public class LevelsScreen extends InputAdapter implements Screen, LevelUIListene
 
     @Override
     public void show() {
-
+        dispose();
     }
 
     @Override

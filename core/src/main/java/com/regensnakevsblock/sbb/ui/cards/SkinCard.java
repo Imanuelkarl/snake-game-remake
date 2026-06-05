@@ -1,13 +1,12 @@
 package com.regensnakevsblock.sbb.ui.cards;
 
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
-import com.regensnakevsblock.sbb.assets.Assets;
+import com.regensnakevsblock.sbb.assets.Assets2;
 import com.regensnakevsblock.sbb.ui.core.BaseView;
 import com.regensnakevsblock.sbb.ui.core.ListItemView;
 import com.regensnakevsblock.sbb.ui.data.SkinData;
@@ -16,7 +15,7 @@ import com.regensnakevsblock.sbb.utils.ActorFactory;
 public class SkinCard extends Group implements ListItemView<SkinData>, BaseView {
     private Image background;
     private Image coins;
-    private ImageButton actionButton;
+    public ImageButton actionButton;
     private Label priceLabel;
 
     private SkinData currentData;
@@ -29,12 +28,12 @@ public class SkinCard extends Group implements ListItemView<SkinData>, BaseView 
 
     private void setupUI() {
         // Background
-        background = new Image(new TextureRegionDrawable(Assets.getInstance().cardBackgroundTexture));
+        background = new Image(new TextureRegionDrawable(Assets2.getInstance().cardBackgroundTexture));
         background.setSize(220, 310);
         background.setPosition(12.5f,20);
         addActor(background);
 
-        coins = new Image(new TextureRegionDrawable(Assets.getInstance().coinTexture));
+        coins = new Image(new TextureRegionDrawable(Assets2.getInstance().coinTexture));
         coins.setSize(24, 24);
         coins.setPosition(20, 280);
         addActor(coins);
@@ -42,7 +41,7 @@ public class SkinCard extends Group implements ListItemView<SkinData>, BaseView 
         snakePreview.setBounds(100,40,40,240);
         addActor(snakePreview);
 
-        actionButton = ActorFactory.createButton(Assets.getInstance().buyButtonTexture,12.5f,20,220,80);
+        actionButton = ActorFactory.createButton(Assets2.getInstance().buyButtonTexture,12.5f,20,220,80);
         addActor(actionButton);
 
 
@@ -67,13 +66,13 @@ public class SkinCard extends Group implements ListItemView<SkinData>, BaseView 
         if (skin.isOwned) {
             priceLabel.setText("");
             if (skin.isEquipped) {
-                background.setDrawable(new TextureRegionDrawable(Assets.getInstance().equippedBorderTexture));
-                ActorFactory.updateButtonStyle(actionButton, Assets.getInstance().selectedButtonTexture);
+                background.setDrawable(new TextureRegionDrawable(Assets2.getInstance().equippedBorderTexture));
+                ActorFactory.updateButtonStyle(actionButton, Assets2.getInstance().selectedButtonTexture);
                 snakePreview.setSelected(true);
                 //statusLabel.setText("EQUIPPED");
                 //statusLabel.setColor(Color.GREEN);
             } else {
-                ActorFactory.updateButtonStyle(actionButton, Assets.getInstance().selectButtonTexture);
+                ActorFactory.updateButtonStyle(actionButton, Assets2.getInstance().selectButtonTexture);
                 snakePreview.setSelected(false);
                 //statusLabel.setText("OWNED");
                 //statusLabel.setColor(Color.BLUE);

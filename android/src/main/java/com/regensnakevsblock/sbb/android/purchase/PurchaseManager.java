@@ -23,6 +23,7 @@ import com.regensnakevsblock.sbb.service.purchase.PurchaseListener;
 import com.regensnakevsblock.sbb.service.purchase.PurchaseService;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -36,20 +37,36 @@ public class PurchaseManager implements PurchaseService {
     Map<String, PurchaseItem> productMap = new HashMap<>();
     private PurchaseListener purchaseListener;
     private final Activity activity;
+    private boolean listLoaded=false;
+    private List<PurchaseItem> items;
+    private final String[] ids = {"500_coins","2000_coins","5000_coins","10000_coins","100_diamonds","500_diamonds","2000_diamonds","5000_diamonds","50_potions","250_potions","600_potions","1500_potions"};
+
 
     public PurchaseManager(Activity activity){
         this.activity=activity;
         productDetailsMap=new HashMap<>();
         productIds =new ArrayList<>();
+        productIds.addAll(Arrays.asList(ids));
+        items = new ArrayList<>();
         initializeBillingService();
+    }
+    public interface ItemsLoadedListener {
+        void onItemsLoaded(List<PurchaseItem> items);
+        void onError(String errorMessage);
+    }
+
+    public boolean isListLoaded(){
+        return listLoaded;
     }
 
     @Override
     public void initializeBillingService() {
         Log.d("BILLING","Initializing billing client ");
         this.billingClient= BillingClient.newBuilder(activity)
+            .enableAutoServiceReconnection()
             .enablePendingPurchases(PendingPurchasesParams.newBuilder()
                 .enableOneTimeProducts()
+
                 .build())
             .setListener(new PurchasesUpdatedListener() {
                 @Override
@@ -72,7 +89,7 @@ public class PurchaseManager implements PurchaseService {
         billingClient.startConnection(new BillingClientStateListener() {
             @Override
             public void onBillingServiceDisconnected() {
-
+                Log.d("CONNECTION","Billing Connection is disconnected");
             }
 
             @Override
@@ -83,12 +100,12 @@ public class PurchaseManager implements PurchaseService {
     }
 
     @Override
-    public void initiatePayment(PurchaseItem paymentItem) {
+    public void initiatePayment(String productId) {
 
-        ProductDetails productDetails = productDetailsMap.get(paymentItem.getProductId());
+        ProductDetails productDetails = productDetailsMap.get(productId);
 
         if (productDetails == null) {
-            Log.e("BILLING", "ProductDetails not found for: " + paymentItem.getProductId());
+            Log.e("BILLING", "ProductDetails not found for: " + productId);
             return;
         }
 
@@ -115,11 +132,17 @@ public class PurchaseManager implements PurchaseService {
                 .build();
 
         billingClient.launchBillingFlow(activity, billingFlowParams);
+        loadStoreItems();
+    }
+    @Override
+    public List<PurchaseItem> getPurchaseItems() {
+        return items;
     }
 
     @Override
-    public List<PurchaseItem> loadStoreItems() {
+    public void loadStoreItems() {
         List<PurchaseItem> items = new ArrayList<>();
+        Log.d("ITEM","Getting Items");
         List<QueryProductDetailsParams.Product> productList =
             productIds.stream()
                 .map(id -> QueryProductDetailsParams.Product.newBuilder()
@@ -128,53 +151,61 @@ public class PurchaseManager implements PurchaseService {
                     .build())
                 .collect(Collectors.toList());
 
+        Log.d("ITEM_BILLING","Found "+ productList.size() + " items" );
+
         QueryProductDetailsParams params =
             QueryProductDetailsParams.newBuilder()
                 .setProductList(productList)
                 .build();
+
         billingClient.queryProductDetailsAsync(params, (billingResult, productDetailsList) -> {
             if (billingResult.getResponseCode() == BillingClient.BillingResponseCode.OK
                 && !productDetailsList.getProductDetailsList().isEmpty()) {
 
-                for (ProductDetails productDetails : productDetailsList.getProductDetailsList()) {
+                    for (ProductDetails productDetails : productDetailsList.getProductDetailsList()) {
 
-                    String title = productDetails.getTitle();
-                    String description = productDetails.getDescription();
+                        String title = productDetails.getTitle();
+                        String description = productDetails.getDescription();
 
-                    String price = "";
-                    String currency = "";
-                    double amount = 0;
+                        Log.d("ITEM_BILLING", "Getting Item " + description + " " + productDetailsList.getProductDetailsList().size());
+                        String price = "";
+                        String currency = "";
+                        double amount = 0;
 
-                    if (productDetails.getOneTimePurchaseOfferDetails() != null) {
-                        ProductDetails.OneTimePurchaseOfferDetails offer =
-                            productDetails.getOneTimePurchaseOfferDetails();
+                        if (productDetails.getOneTimePurchaseOfferDetails() != null) {
+                            ProductDetails.OneTimePurchaseOfferDetails offer =
+                                productDetails.getOneTimePurchaseOfferDetails();
 
-                        price = offer.getFormattedPrice();
-                        currency = offer.getPriceCurrencyCode();
-                        amount = offer.getPriceAmountMicros();
+                            price = offer.getFormattedPrice();
+                            currency = offer.getPriceCurrencyCode();
+                            amount = offer.getPriceAmountMicros();
+                        }
+
+                        PurchaseItem paymentItem = new PurchaseItem(
+                            StoreID.GOOGLE_PLAY,
+                            productDetails.getProductId(),
+                            title.split(" ")[0],
+                            description,
+                            amount,
+                            currency
+                        );
+
+                        paymentItem.setCurrency(currency);
+                        paymentItem.setAmount(amount);
+                        productMap.put(productDetails.getProductId(), paymentItem);
+                        productDetailsMap.put(productDetails.getProductId(), productDetails);
+                        items.add(paymentItem);
+
+                        Log.d("ITEM", "Getting Item " + description + " " + productDetailsList.getProductDetailsList().size());
                     }
-
-                    PurchaseItem paymentItem = new PurchaseItem(
-                        StoreID.GOOGLE_PLAY,
-                        productDetails.getProductId(),
-                        title.split(" ")[0],
-                        description,
-                        amount,
-                        currency
-                    );
-
-                    paymentItem.setCurrency(currency);
-                    paymentItem.setAmount(amount);
-                    productMap.put(productDetails.getProductId(), paymentItem);
-                    productDetailsMap.put(productDetails.getProductId(),productDetails);
-                    items.add(paymentItem);
-
-                    Log.d("ITEM", "Getting Item " + description + " " + productDetailsList.getProductDetailsList().size());
-                }
+                    listLoaded=true;
+            }else{
+                Log.d("ITEM_BILLING","Error getting items");
+                Log.e("ITEM_BILLING", billingResult.getDebugMessage());
             }
         });
 
-        return items;
+        this.items=items;
     }
 
     @Override

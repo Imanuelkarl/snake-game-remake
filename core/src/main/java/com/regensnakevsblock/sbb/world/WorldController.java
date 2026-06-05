@@ -2,6 +2,7 @@ package com.regensnakevsblock.sbb.world;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.regensnakevsblock.sbb.config.GameInstance;
 import com.regensnakevsblock.sbb.entities.Block;
 import com.regensnakevsblock.sbb.entities.Snake;
 import com.regensnakevsblock.sbb.systems.CollisionSystem;
@@ -23,7 +24,7 @@ public class WorldController  {
     private DifficultySystem difficultySystem;
 
     private OrthographicCamera camera;
-    float speed = 5f;
+    float speed = 3f;
     float startSpeed =speed;
     float maxSpeed = 20.0f;
     float lerpSpeed = 0.08f;
@@ -66,6 +67,7 @@ public class WorldController  {
         this.powerUpSystem = new PowerUpSystem(worldState);
         this.scoringSystem = new ScoringSystem(worldState);
         this.difficultySystem = new DifficultySystem(worldState);
+        setup();
     }
 
     public void update(float deltaTime) {
@@ -92,6 +94,23 @@ public class WorldController  {
         worldState.setGameSpeed(speed);
         worldState.update(deltaTime);
 
+    }
+    public void setup(){
+        switch (GameInstance.getSaveService().getDifficulty()){
+            case 1:
+                speed = 5f;
+                maxSpeed =25f;
+                break;
+            case 2:
+                speed =7;
+                maxSpeed =32f;
+                break;
+            default:
+                speed =3f;
+                maxSpeed =20f;
+                break;
+
+        }
     }
 
     public void usePowerUp(int powerUpId) {

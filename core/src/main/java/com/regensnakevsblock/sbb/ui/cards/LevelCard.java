@@ -1,12 +1,10 @@
 package com.regensnakevsblock.sbb.ui.cards;
 
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
-import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
-import com.regensnakevsblock.sbb.assets.Assets;
+import com.regensnakevsblock.sbb.assets.Assets2;
 import com.regensnakevsblock.sbb.ui.core.BaseView;
 import com.regensnakevsblock.sbb.ui.core.ListItemView;
 import com.regensnakevsblock.sbb.ui.data.LevelData;
@@ -16,6 +14,7 @@ public class LevelCard extends Group implements ListItemView<LevelData>, BaseVie
     private ImageButton background;
     private Label index;
     private Image locked;
+    private Image selectedBg;
     private Image cleared;
     private Image star1;
     private Image star2;
@@ -27,14 +26,17 @@ public class LevelCard extends Group implements ListItemView<LevelData>, BaseVie
         setupUI();
     }
     private void setupUI() {
+
+        selectedBg = ActorFactory.createUiImage(Assets2.getInstance().levelSelectedBg,12.5f,20,160,160);
+        addActor(selectedBg);
         // Background
-        background = ActorFactory.createButton(Assets.getInstance().levelCardBg, 12.5f,20,160,160);
+        background = ActorFactory.createButton(Assets2.getInstance().levelCardBg, 22.5f,30,140,140);
         addActor(background);
 
         index = ActorFactory.createTextLabel(70,60,90);
         addActor(index);
 
-        locked = ActorFactory.createUiImage(Assets.getInstance().levelLockTexture,70,60,50,60);
+        locked = ActorFactory.createUiImage(Assets2.getInstance().levelLockTexture,70,60,50,60);
         addActor(locked);
 
 
@@ -67,7 +69,7 @@ public class LevelCard extends Group implements ListItemView<LevelData>, BaseVie
     @Override
     public void resize(float width, float height) {
         setSize(width,height);
-        
+
     }
 
     @Override
@@ -98,6 +100,9 @@ public class LevelCard extends Group implements ListItemView<LevelData>, BaseVie
         String text =String.valueOf(levelData.getLevelIndex());
         index.setPosition(-20 *text.length()+100,80);
         index.setText(levelData.getLevelIndex());
+        if(!levelData.isSelected()){
+            selectedBg.remove();
+        }
         if(levelData.isCanSelect()){
             locked.remove();
         }

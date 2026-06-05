@@ -8,8 +8,11 @@ import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.ProgressBar;
+import com.badlogic.gdx.scenes.scene2d.ui.Slider;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
+import com.badlogic.gdx.utils.ObjectMap;
+import com.regensnakevsblock.sbb.assets.Assets2;
 
 public class ActorFactory {
 
@@ -47,6 +50,22 @@ public class ActorFactory {
         Texture fillTexture,
         Texture knobTexture,     // nullable
         Texture afterTexture,    // nullable
+        float min,
+        float max,
+        float step,
+        float width,
+        float height,
+        boolean vertical,
+        float fillOffset
+        ) {
+        return createProgressBar(new TextureRegion(bgTexture), new TextureRegion(fillTexture), new TextureRegion(knobTexture), new TextureRegion(afterTexture), min, max, step, width, height, vertical, fillOffset);
+    }
+
+    public static ProgressBar createProgressBar(
+        TextureRegion bgTexture,
+        TextureRegion fillTexture,
+        TextureRegion knobTexture,     // nullable
+        TextureRegion afterTexture,    // nullable
         float min,
         float max,
         float step,
@@ -117,68 +136,110 @@ public class ActorFactory {
     public static ProgressBar createProgressBar(Texture bgTexture, Texture fillTexture, float width, float height) {
         return createProgressBar(bgTexture, fillTexture, null, null, 0, 1, 0.01f, width,height,false,5);
     }
+    public static ProgressBar createProgressBar(TextureRegion bgTexture, TextureRegion fillTexture, float width, float height) {
+        return createProgressBar(bgTexture, fillTexture, null, null, 0, 1, 0.01f, width,height,false,5);
+    }
     public static ProgressBar createProgressBar(Texture bgTexture, Texture fillTexture,Texture knobTexture,float width, float height) {
         return createProgressBar(bgTexture, fillTexture, knobTexture, null, 0, 1, 0.01f,width,height, false,50);
     }
-    private static Texture createDarkenedTexture(Texture original) {
+    public static Slider createCustomSlider(float x, float y, float width, float height) {
 
+        TextureRegionDrawable background =
+            new TextureRegionDrawable(new TextureRegion(Assets2.getInstance().sliderBackgroundTexture));
+
+        TextureRegionDrawable fill =
+            new TextureRegionDrawable(new TextureRegion(Assets2.getInstance().sliderFillTexture));
+
+        TextureRegionDrawable knob =
+            new TextureRegionDrawable(new TextureRegion(Assets2.getInstance().sliderKnobTexture));
+
+        // track thickness
+        background.setMinHeight(height);
+        fill.setMinHeight(height-height/6);
+
+        // slim knob
+        knob.setMinHeight(height * 1.5f);   // knob taller than track
+        knob.setMinWidth(height );    // narrow knob
+
+        Slider.SliderStyle style = new Slider.SliderStyle();
+        style.background = background;
+        style.knobBefore = fill;
+        style.knob = knob;
+
+        Slider slider = new Slider(0f, 100f, 1f, false, style);
+
+        slider.setPosition(x, y);
+        slider.setWidth(width);
+
+        return slider;
+    }
+    private static final ObjectMap<Texture, Texture> darkTextureCache = new ObjectMap<>();
+
+    /**
+     * Returns a darkened version of the given texture.
+     * Uses a cache to avoid regenerating for the same original texture.
+     */
+    private static Texture getDarkenedTexture(Texture original) {
+        if (darkTextureCache.containsKey(original)) {
+            return darkTextureCache.get(original);
+        }
+
+        // Prepare and consume pixmap
         if (!original.getTextureData().isPrepared()) {
             original.getTextureData().prepare();
         }
-
         Pixmap originalPixmap = original.getTextureData().consumePixmap();
+        Pixmap newPixmap = null;
 
-        Pixmap newPixmap = new Pixmap(
-            originalPixmap.getWidth(),
-            originalPixmap.getHeight(),
-            originalPixmap.getFormat()
-        );
+        try {
+            int width = originalPixmap.getWidth();
+            int height = originalPixmap.getHeight();
+            newPixmap = new Pixmap(width, height, originalPixmap.getFormat());
 
-        int width = originalPixmap.getWidth();
-        int height = originalPixmap.getHeight();
+            for (int x = 0; x < width; x++) {
+                for (int y = 0; y < height; y++) {
+                    int pixel = originalPixmap.getPixel(x, y);
 
-        for (int x = 0; x < width; x++) {
-            for (int y = 0; y < height; y++) {
+                    // Extract RGBA components (assuming RGBA8888)
+                    int r = (pixel >> 24) & 0xff;
+                    int g = (pixel >> 16) & 0xff;
+                    int b = (pixel >> 8) & 0xff;
+                    int a = pixel & 0xff;
 
-                int pixel = originalPixmap.getPixel(x, y);
+                    if (a == 0) {
+                        newPixmap.drawPixel(x, y, pixel);
+                        continue;
+                    }
 
-                int r = (pixel >> 24) & 0xff;
-                int g = (pixel >> 16) & 0xff;
-                int b = (pixel >> 8) & 0xff;
-                int a = pixel & 0xff;
+                    float factor = 0.6f;  // 1 - 0.4
+                    int newR = (int)(r * factor);
+                    int newG = (int)(g * factor);
+                    int newB = (int)(b * factor);
 
-                if (a == 0) {
-                    // Fully transparent → keep as is
-                    newPixmap.drawPixel(x, y, pixel);
-                    continue;
+                    int newPixel = (newR << 24) | (newG << 16) | (newB << 8) | a;
+                    newPixmap.drawPixel(x, y, newPixel);
                 }
+            }
 
-                // Apply darkening (blend toward black)
-                float factor = 1f - (float) 0.4;
+            Texture darkTexture = new Texture(newPixmap);
+            darkTextureCache.put(original, darkTexture);
+            return darkTexture;
 
-                int newR = (int)(r * factor);
-                int newG = (int)(g * factor);
-                int newB = (int)(b * factor);
-
-                int newPixel =
-                    (newR << 24) |
-                        (newG << 16) |
-                        (newB << 8) |
-                        a;
-
-                newPixmap.drawPixel(x, y, newPixel);
+        } finally {
+            // CRITICAL: dispose both pixmaps to prevent memory leaks
+            originalPixmap.dispose();
+            if (newPixmap != null) {
+                newPixmap.dispose();
             }
         }
-
-        Texture result = new Texture(newPixmap);
-        newPixmap.dispose();
-
-        return result;
     }
 
+    /**
+     * Creates a new ImageButton with up (normal) and down (darkened) states.
+     * Uses cached darkened texture when possible.
+     */
     public static ImageButton createButton(Texture texture, float x, float y, float width, float height) {
-
-        Texture darkTexture = createDarkenedTexture(texture);
+        Texture darkTexture = getDarkenedTexture(texture);
 
         Drawable up = new TextureRegionDrawable(new TextureRegion(texture));
         Drawable down = new TextureRegionDrawable(new TextureRegion(darkTexture));
@@ -190,11 +251,30 @@ public class ActorFactory {
         ImageButton button = new ImageButton(style);
         button.setPosition(x, y);
         button.setSize(width, height);
-
         return button;
     }
+    public static ImageButton createButton(TextureRegion texture, float x, float y, float width, float height) {
+        //Texture darkTexture = getDarkenedTexture(texture);
+
+        Drawable up = new TextureRegionDrawable(texture);
+        Drawable down = new TextureRegionDrawable(texture);
+
+        ImageButton.ImageButtonStyle style = new ImageButton.ImageButtonStyle();
+        style.up = up;
+        style.down = down;
+
+        ImageButton button = new ImageButton(style);
+        button.setPosition(x, y);
+        button.setSize(width, height);
+        return button;
+    }
+
+    /**
+     * Updates an existing button's textures.
+     * Reuses the cached darkened version of the new texture.
+     */
     public static void updateButtonStyle(ImageButton button, Texture newTexture) {
-        Texture darkTexture = createDarkenedTexture(newTexture);
+        Texture darkTexture = getDarkenedTexture(newTexture);
 
         Drawable up = new TextureRegionDrawable(new TextureRegion(newTexture));
         Drawable down = new TextureRegionDrawable(new TextureRegion(darkTexture));
@@ -202,8 +282,34 @@ public class ActorFactory {
         ImageButton.ImageButtonStyle style = button.getStyle();
         style.up = up;
         style.down = down;
-
         button.setStyle(style);
+    }
+    public static void updateButtonStyle(ImageButton button, TextureRegion newTexture) {
+        //Texture darkTexture = getDarkenedTexture(newTexture);
+
+        Drawable up = new TextureRegionDrawable(newTexture);
+        Drawable down = new TextureRegionDrawable(newTexture);
+
+        ImageButton.ImageButtonStyle style = button.getStyle();
+        style.up = up;
+        style.down = down;
+        button.setStyle(style);
+    }
+
+    /**
+     * Call this when unloading assets (e.g., in your AssetManager or game dispose)
+     * to free GPU memory used by the darkened textures.
+     */
+    public static void disposeCache() {
+        for (Texture dark : darkTextureCache.values()) {
+            dark.dispose();
+        }
+        darkTextureCache.clear();
+    }
+
+    // Required by Disposable interface – you can call this globally
+    public static void dispose() {
+        disposeCache();
     }
 
     /*public static ImageButton createButton(Texture texture, float x, float y, float width, float height) {
@@ -220,6 +326,12 @@ public class ActorFactory {
         return button;
     }*/
     public static Image createUiImage(Texture texture, float x, float y, float width, float height) {
+        Image image = new Image(texture);
+        image.setPosition(x, y);
+        image.setSize(width, height);
+        return image;
+    }
+    public static Image createUiImage(TextureRegion texture, float x, float y, float width, float height) {
         Image image = new Image(texture);
         image.setPosition(x, y);
         image.setSize(width, height);

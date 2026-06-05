@@ -6,17 +6,17 @@ public class AtlasGenerator {
     public static void main(String[] args) {
         TexturePacker.Settings settings = new TexturePacker.Settings();
 
-        settings.maxWidth = 2048;
-        settings.maxHeight = 2048;
+        settings.maxWidth = 1024;
+        settings.maxHeight = 1024;
         settings.filterMin = Texture.TextureFilter.Linear;
         settings.filterMag = Texture.TextureFilter.Linear;
         settings.duplicatePadding = true;
 
         TexturePacker.process(
             settings,
-            "assets/ui",      // input
-            "assets/mapped-ui",             // output
-            "ui"                  // atlas name
+            "assets/raw/home",      // input
+            "assets/ui",             // output
+            "home"                  // atlas name
         );
     }
 }

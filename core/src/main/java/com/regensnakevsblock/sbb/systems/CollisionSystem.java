@@ -1,6 +1,8 @@
 package com.regensnakevsblock.sbb.systems;
 
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.math.Rectangle;
+import com.regensnakevsblock.sbb.assets.Assets2;
 import com.regensnakevsblock.sbb.entities.*;
 import com.regensnakevsblock.sbb.enumaretors.PowerUp;
 import com.regensnakevsblock.sbb.service.SaveService;
@@ -13,6 +15,9 @@ public class CollisionSystem extends GlobalSystems {
     private Line lastRightBlocker;
     private SaveService saveService;
     private Rectangle finishLine;
+    private Sound winItem;
+    private Sound hitBlock;
+    private Sound winPowerUp;
 
     // Fixed timestep for consistent block breaking
     private static final float BLOCK_BREAK_INTERVAL = 0.125f; // 8 times per second
@@ -25,10 +30,14 @@ public class CollisionSystem extends GlobalSystems {
         super(worldState);
         saveService =new SaveService();
         finishLine=new Rectangle(0,0,worldState.getScreenWidth(),worldState.getBlockDimension());
+        winItem=Assets2.getInstance().winObjectSound;
+        hitBlock=Assets2.getInstance().collisionSound;
+        winPowerUp= Assets2.getInstance().powerUpSound;
     }
 
     @Override
     public void update(float deltaTime) {
+        float volume =(float)worldState.getSoundVolume()/100;
         if (worldState.isPaused() || worldState.isGameOver()) return;
 
         Snake snake = worldState.getSnake();
@@ -111,7 +120,8 @@ public class CollisionSystem extends GlobalSystems {
                     blockBreakTimer += deltaTime;
                     if(snake.getLength()!=0) {
                         while (blockBreakTimer >= BLOCK_BREAK_INTERVAL) {
-                            if(worldState.isPowerUpIsActive()&&worldState.getPowerUp().equals(PowerUp.HAMMER)){
+                            hitBlock.play(volume);
+                            if(worldState.isPowerUpActive()&&worldState.getPowerUp().equals(PowerUp.HAMMER)){
                                 block.setValue(0);
                                 break;
                             }
@@ -125,6 +135,7 @@ public class CollisionSystem extends GlobalSystems {
                         if(saveService.getHighScore()<worldState.getScore()){
                             saveService.saveHighScore(worldState.getScore());
                         }
+                        saveService.saveCoins(saveService.getCoins()+worldState.getCoins());
                         worldState.setGameOver(true);
                         this.worldState.setMoving(false);
                         block.setActive(false);
@@ -137,8 +148,10 @@ public class CollisionSystem extends GlobalSystems {
                     if (block.getValue() <= 0) {
                         worldState.addColorDestroyed(block.getColor());
                         if(block.hasPowerUp()){
+                            winPowerUp.play(volume);
+                            worldState.setPowerUpTimeRemaining(6000);
                             worldState.setPowerUp(block.getPowerUp());
-                            worldState.setPowerUpIsActive(true);
+                            worldState.setPowerUpActive(true);
                         }
                         block.setActive(false);
 
@@ -171,6 +184,7 @@ public class CollisionSystem extends GlobalSystems {
 
                 if (snake.getBounds().overlaps(winBody.getBounds())) {
                     winBody.setActive(false);
+                    winItem.play(volume);
                     if(winBody.getType()== WinBody.Type.BODY){
                         snake.addSegments(winBody.getValue()*worldState.getScoreMultiplier());
                     }

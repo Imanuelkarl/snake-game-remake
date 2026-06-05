@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.GL20;
 import com.regensnakevsblock.sbb.MyGame;
 import com.regensnakevsblock.sbb.ui.MenuUi;
 import com.regensnakevsblock.sbb.uiactions.MenuUIListener;
+import com.regensnakevsblock.sbb.utils.ActorFactory;
 
 public class MenuScreen implements Screen, MenuUIListener {
 
@@ -55,12 +56,13 @@ public class MenuScreen implements Screen, MenuUIListener {
 
     @Override
     public void hide() {
+        dispose();
 
     }
 
     @Override
     public void dispose() {
-
+        ActorFactory.dispose();
     }
 
     @Override

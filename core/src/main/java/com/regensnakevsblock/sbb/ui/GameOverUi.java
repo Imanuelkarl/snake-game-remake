@@ -9,6 +9,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
+import com.regensnakevsblock.sbb.assets.Assets2;
 import com.regensnakevsblock.sbb.config.Constants;
 import com.regensnakevsblock.sbb.elements.GameDialog;
 import com.regensnakevsblock.sbb.service.SaveService;
@@ -24,6 +25,7 @@ public class GameOverUi {
     private int scoreValue =0;
     private int highScoreValue=0;
     private int coinsValue=0;
+    private int soundVolume;
 
     private final SaveService saveService;
 
@@ -35,6 +37,9 @@ public class GameOverUi {
         saveService = new SaveService();
         int gameSize = Constants.SCREEN_SIZE;
         camera=new OrthographicCamera();
+        soundVolume = saveService.getSoundVolume();
+        Assets2.getInstance().backgroundMusic.pause();
+        Assets2.getInstance().gameOverSound.play((float) soundVolume /100);
         int WORLD_WIDTH=/*Constants.SCREEN_WIDTH;*/(gameSize * Gdx.graphics.getWidth()) /Gdx.graphics.getHeight();
         FitViewport viewport = new FitViewport(WORLD_WIDTH, gameSize, camera);
         this.stage = new Stage(viewport);

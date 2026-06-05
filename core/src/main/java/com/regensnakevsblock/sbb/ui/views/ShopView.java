@@ -1,18 +1,17 @@
 package com.regensnakevsblock.sbb.ui.views;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
-import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.regensnakevsblock.sbb.assets.Assets;
+import com.regensnakevsblock.sbb.assets.Assets2;
+import com.regensnakevsblock.sbb.config.GameInstance;
+import com.regensnakevsblock.sbb.service.purchase.PurchaseService;
 import com.regensnakevsblock.sbb.ui.adapters.ShopAdapter;
 import com.regensnakevsblock.sbb.ui.cards.ShopCard;
 import com.regensnakevsblock.sbb.ui.core.ListManager;
 import com.regensnakevsblock.sbb.ui.data.ShopCategory;
 import com.regensnakevsblock.sbb.ui.data.ShopItemData;
-import com.regensnakevsblock.sbb.utils.ActorFactory;
 import com.regensnakevsblock.sbb.utils.TextureTools;
 
 public class ShopView extends BaseActorView {
@@ -54,9 +53,9 @@ public class ShopView extends BaseActorView {
     }
 
     private void loadData() {
-        Texture coins = Assets.getInstance().coinPilesTexture;
-        Texture diamonds = Assets.getInstance().diamondPilesTexture;
-        Texture portions = Assets.getInstance().portionPilesTexture;
+        TextureRegion coins = Assets2.getInstance().coinPilesTexture;
+        TextureRegion diamonds = Assets2.getInstance().diamondPilesTexture;
+        TextureRegion portions = Assets2.getInstance().portionPilesTexture;
 
         TextureRegion coinPile1 = TextureTools.resolveRegion(coins,2,2,0,0,0);
         TextureRegion coinPile2 = TextureTools.resolveRegion(coins,2,2,0,1,0);
@@ -69,17 +68,18 @@ public class ShopView extends BaseActorView {
         TextureRegion portionPile3 = TextureTools.resolveRegion(portions,2,2,1,0,0);
         java.util.List<ShopItemData> items = new java.util.ArrayList<>();
         items.add(new ShopItemData("item_1", "Health Potion", "Restores 50 HP",
-            ShopItemData.CurrencyType.COINS,coinPile1, 100, Assets.getInstance().defaultItemTexture, false,1000, ShopCategory.COIN));
+            "N",coinPile1, 100d, false,1000, ShopCategory.COIN));
         items.add(new ShopItemData("item_2", "Mana Potion", "Restores 30 MP",
-            ShopItemData.CurrencyType.COINS,coinPile2, 80, Assets.getInstance().defaultItemTexture, false,5500,ShopCategory.COIN));
+            "N",coinPile2, 80d, false,5500,ShopCategory.COIN));
         items.add(new ShopItemData("item_3", "Starter Pack", "2000 Coins + 50 Diamonds",
-            ShopItemData.CurrencyType.DIAMONDS,coinPile3, 10, Assets.getInstance().defaultItemTexture, false,15000,ShopCategory.COIN));
+            "N",coinPile3, 10d, false,15000,ShopCategory.COIN));
         items.add(new ShopItemData("item_4", "Double Damage", "Permanent 2x damage boost",
-            ShopItemData.CurrencyType.DIAMONDS, diamondPile1,50,Assets.getInstance().defaultItemTexture, false,50,ShopCategory.DIAMOND));
+            "N", diamondPile1,50d, false,50,ShopCategory.DIAMOND));
         items.add(new ShopItemData("item_5", "Speed Boost", "Permanent speed increase",
-            ShopItemData.CurrencyType.COINS,diamondPile2, 5000, Assets.getInstance().defaultItemTexture, false,275, ShopCategory.DIAMOND));
+            "N",diamondPile2, 5000d, false,275, ShopCategory.DIAMOND));
 
-        adapter.setData(items);
+        //adapter.setData(items);
+        adapter.setData(GameInstance.getInstance().shopItems!=null?GameInstance.getInstance().shopItems:items);
     }
     private void setupTransform(){
 
@@ -91,30 +91,7 @@ public class ShopView extends BaseActorView {
     private void purchaseItem(ShopItemData item, int position) {
         boolean hasCurrency = false;
 
-        if (item.currencyType == ShopItemData.CurrencyType.COINS) {
-            hasCurrency = getPlayerCoins() >= item.price;
-        } else {
-            hasCurrency = getPlayerDiamonds() >= item.price;
-        }
 
-        if (hasCurrency) {
-            // Deduct currency and add item to inventory
-            if (item.currencyType == ShopItemData.CurrencyType.COINS) {
-                deductCoins(item.price);
-            } else {
-                deductDiamonds(item.price);
-            }
-
-            item.isPurchased = true;
-            adapter.notifyDataSetChanged();
-            updateCurrencyDisplay();
-
-            // Show purchase success message
-            showPurchaseSuccess(item.name);
-        } else {
-            // Show insufficient currency message
-            showInsufficientCurrency();
-        }
     }
 
     private int getPlayerCoins() {

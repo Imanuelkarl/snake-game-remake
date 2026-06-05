@@ -4,31 +4,28 @@ import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.Slider;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.viewport.FitViewport;
-import com.badlogic.gdx.utils.viewport.ScreenViewport;
-import com.regensnakevsblock.sbb.assets.Assets;
+import com.regensnakevsblock.sbb.assets.Assets2;
 import com.regensnakevsblock.sbb.config.Constants;
 import com.regensnakevsblock.sbb.config.GameInstance;
-import com.regensnakevsblock.sbb.elements.BottomNavigation;
 import com.regensnakevsblock.sbb.elements.GameDialog;
+import com.regensnakevsblock.sbb.elements.ImageCheckBoxGroup;
 import com.regensnakevsblock.sbb.service.SaveService;
 import com.regensnakevsblock.sbb.uiactions.HomeUiListener;
 import com.regensnakevsblock.sbb.uifactory.HomeUiFactory;
 import com.regensnakevsblock.sbb.utils.ActorFactory;
-import com.regensnakevsblock.sbb.utils.FontFactory;
 import com.regensnakevsblock.sbb.utils.SimpleBitmapFont;
 
 public class HomeUi {
@@ -42,6 +39,8 @@ public class HomeUi {
     private OrthographicCamera camera;
     private Label info;
     private final SaveService saveService;
+    private int soundVolume;
+    private int musicVolume;
 
     SimpleBitmapFont simpleBitmapFont;
     private final HomeUiFactory homeUiFactory;
@@ -54,6 +53,7 @@ public class HomeUi {
         this.stage = new Stage(viewport);
         this.homeUiFactory=new HomeUiFactory(stage);
         saveService = new SaveService();
+        setup();
         build();
     }
 
@@ -63,9 +63,9 @@ public class HomeUi {
         // Optional: Enable debug to see character boxes
         simpleBitmapFont.setDebugMode(false);
         Table header = homeUiFactory.createHeaderTable();
-        header.setBackground(new TextureRegionDrawable(Assets.getInstance().upLayout));
-        ImageButton closeBtn = ActorFactory.createButton(Assets.getInstance().closeTexture, stage.getWidth()-70, stage.getHeight()-70, 60, 60);
-        ImageButton minimizeBtn = ActorFactory.createButton(Assets.getInstance().sliderFillTexture, stage.getWidth()-140,stage.getHeight()-40,60,20);
+        header.setBackground(new TextureRegionDrawable(Assets2.getInstance().upLayout));
+        ImageButton closeBtn = ActorFactory.createButton(Assets2.getInstance().closeTexture, stage.getWidth()-70, stage.getHeight()-70, 60, 60);
+        ImageButton minimizeBtn = ActorFactory.createButton(Assets2.getInstance().sliderFillTexture, stage.getWidth()-140,stage.getHeight()-40,60,20);
 
 
         closeBtn.addListener(new ClickListener() {
@@ -93,7 +93,7 @@ public class HomeUi {
         ImageButton settingsButton = homeUiFactory.createSettingsButton();
         ImageButton shareButton = homeUiFactory.createShareButton();
         ImageButton snakeSkinButton = homeUiFactory.createSnakeSkinButton();
-        Image background = ActorFactory.createUiImage(Assets.getInstance().backgroundTexture,0,0,stage.getWidth(),stage.getHeight());
+        Image background = ActorFactory.createUiImage(Assets2.getInstance().backgroundTexture,0,0,stage.getWidth(),stage.getHeight());
         //Set Buttons Actions/ Listeners
         playButton.addListener(new ClickListener() {
             @Override
@@ -144,16 +144,62 @@ public class HomeUi {
 
         //stage.addActor(header);
 
+        ImageCheckBoxGroup imageCheckBoxGroup = homeUiFactory.createDifficultyGroup();
+        imageCheckBoxGroup.setCheckedItem(saveService.getDifficulty());
+        imageCheckBoxGroup.setSelectionListener(new ImageCheckBoxGroup.SelectionListener() {
+            @Override
+            public void onItemChanged(int index, ImageCheckBoxGroup.Item item) {
 
-        //dialog =new DynamicDialog(new BitmapFont());
+            }
 
-// Customize before showing (optional)
+            @Override
+            public void onItemChecked(int index, ImageCheckBoxGroup.Item item) {
+                System.out.println("Item " + index + " was checked!");
+                // Call your functions here
+                saveService.saveDifficulty(index);
+            }
+
+            @Override
+            public void onItemUnchecked(int index, ImageCheckBoxGroup.Item item) {
+                System.out.println("Item " + index + " was unchecked!");
+            }
+        });
+
        dialog = new GameDialog(stage);
 
        dialog.setDialogSize(dialog.getWidth(),stage.getHeight()/2.5f);
-       dialog.setTitleTexture(Assets.getInstance().settingHeader);
+       dialog.setTitleTexture(Assets2.getInstance().settingHeader);
        dialog.setTitle("");
        dialog.setTitleEnabled(true);
+
+        Image musicIcon=ActorFactory.createUiImage(Assets2.getInstance().musicTexture , stage.getWidth()/4,dialog.getHeight()*0.55f, stage.getWidth()/12,stage.getWidth()/12);
+        Image soundIcon = ActorFactory.createUiImage(Assets2.getInstance().soundTexture,stage.getWidth()/4,dialog.getHeight()*0.47f,stage.getWidth()/12, stage.getWidth()/12);
+        Slider musicVolumeSlider = ActorFactory.createCustomSlider(stage.getWidth()/2.5f, dialog.getHeight()*0.55f,stage.getWidth()/3,stage.getHeight()/40);
+        Slider soundVolumeSlider = ActorFactory.createCustomSlider(stage.getWidth()/2.5f, dialog.getHeight()*0.47f,stage.getWidth()/3,stage.getHeight()/40);
+
+        soundVolumeSlider.setValue(soundVolume);
+        soundVolumeSlider.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                saveService.saveSoundVolume((int) soundVolumeSlider.getValue());
+                soundVolume=(int) soundVolumeSlider.getValue();
+            }
+        });
+        musicVolumeSlider.setValue(musicVolume);
+        musicVolumeSlider.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                saveService.saveMusicVolume((int) musicVolumeSlider.getValue());
+                musicVolume=(int) musicVolumeSlider.getValue();
+                Assets2.getInstance().backgroundMusic.setVolume((float) musicVolume/100);
+            }
+        });
+        dialog.addContentActor(musicIcon);
+        dialog.addContentActor(soundIcon);
+        dialog.addContentActor(musicVolumeSlider);
+        dialog.addContentActor(soundVolumeSlider);
+       dialog.addContentActor(imageCheckBoxGroup);
+       dialog.addContentActor(homeUiFactory.createDifficultyTitle());
 
         stage.addActor(background);
 
@@ -216,6 +262,11 @@ public class HomeUi {
         termsOfService.addContentActor(privacyPolicy);
         termsOfService.addContentActor(acceptTerms);
         termsOfService.addContentActor(rejectTerms);
+    }
+    private void setup(){
+        Assets2.getInstance().backgroundMusic.setVolume((float) saveService.getMusicVolume()/100);
+        soundVolume=saveService.getSoundVolume();
+        musicVolume=saveService.getMusicVolume();
     }
     private boolean isDesktop() {
         Application.ApplicationType type = Gdx.app.getType();

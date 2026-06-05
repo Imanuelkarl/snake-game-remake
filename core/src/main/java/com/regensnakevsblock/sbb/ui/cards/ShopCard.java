@@ -6,13 +6,16 @@ import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
-import com.regensnakevsblock.sbb.assets.Assets;
+import com.regensnakevsblock.sbb.assets.Assets2;
 import com.regensnakevsblock.sbb.config.GameInstance;
 import com.regensnakevsblock.sbb.ui.core.BaseView;
 import com.regensnakevsblock.sbb.ui.core.ListItemView;
 import com.regensnakevsblock.sbb.ui.data.ShopItemData;
 import com.regensnakevsblock.sbb.utils.ActorFactory;
+import com.regensnakevsblock.sbb.utils.CurrencyResolver;
 import com.regensnakevsblock.sbb.utils.FontActor;
+
+import java.text.DecimalFormat;
 
 public class ShopCard extends Group implements ListItemView<ShopItemData>, BaseView {
     private Image background;
@@ -30,18 +33,22 @@ public class ShopCard extends Group implements ListItemView<ShopItemData>, BaseV
     private ShopItemData currentData;
 
     private int currentPosition;
+    DecimalFormat df;
+
 
     public ShopCard() {
         setupUI();
+        df = new DecimalFormat("#,###.##");
+
     }
 
     private void setupUI() {
         // Background
-        background = new Image(new TextureRegionDrawable(Assets.getInstance().cardBackgroundTexture));
+        background = new Image(new TextureRegionDrawable(Assets2.getInstance().cardBackgroundTexture));
         addActor(background);
 
         // Icon
-        icon = new Image(new TextureRegionDrawable(Assets.getInstance().defaultItemTexture));
+        icon = new Image(new TextureRegionDrawable(Assets2.getInstance().defaultItemTexture));
         addActor(icon);
 
         // Name
@@ -57,10 +64,10 @@ public class ShopCard extends Group implements ListItemView<ShopItemData>, BaseV
         //addActor(descriptionLabel);
 
         //Price Background
-        priceBackground = new Image(new TextureRegionDrawable(Assets.getInstance().priceBarTexture));//card background for now
+        priceBackground = new Image(new TextureRegionDrawable(Assets2.getInstance().priceBarTexture));//card background for now
         //addActor(priceBackground);
 
-        actionButton = ActorFactory.createButton(Assets.getInstance().priceBarTexture,12.5f,20,220,80);
+        actionButton = ActorFactory.createButton(Assets2.getInstance().priceBarTexture,12.5f,20,220,80);
         addActor(actionButton);
         // Price
         Label.LabelStyle priceStyle = new Label.LabelStyle();
@@ -88,13 +95,12 @@ public class ShopCard extends Group implements ListItemView<ShopItemData>, BaseV
         nameLabel.setText(item.name);
         descriptionLabel.setText(item.description);
         itemQuantity.setText(item.itemQuantity > 1 ? "x" + item.itemQuantity : "");
-
+        String currency = CurrencyResolver.getCurrencyCode(item.currencySign);
         if (item.isPurchased) {
             priceLabel.setText("PURCHASED");
         } else {
-            String currencySymbol = item.currencyType == ShopItemData.CurrencyType.COINS ? "₦" : "$";
-            priceLabel.setText(currencySymbol+item.price + " " );
-            priceText.setText(currencySymbol+item.price + " " );
+            priceLabel.setText(currency +df.format(item.price )+ " " );
+            priceText.setText(currency +df.format(item.price )+ " " );
         }
     }
     private  void layout() {

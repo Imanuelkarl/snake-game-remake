@@ -1,0 +1,139 @@
+
+home.png
+size: 1024, 1024
+format: RGBA8888
+filter: Linear, Linear
+repeat: none
+LevelsButton
+  rotate: false
+  xy: 259, 34
+  size: 256, 90
+  orig: 256, 90
+  offset: 0, 0
+  index: -1
+PlayButtonUpdate
+  rotate: false
+  xy: 1, 114
+  size: 256, 256
+  orig: 256, 256
+  offset: 0, 0
+  index: -1
+SnakeBlockLogo
+  rotate: false
+  xy: 1, 642
+  size: 512, 204
+  orig: 512, 204
+  offset: 0, 0
+  index: -1
+acceptTerms
+  rotate: false
+  xy: 515, 736
+  size: 256, 110
+  orig: 256, 110
+  offset: 0, 0
+  index: -1
+checkedCircle
+  rotate: false
+  xy: 773, 750
+  size: 96, 96
+  orig: 96, 96
+  offset: 0, 0
+  index: -1
+difficultyLabel
+  rotate: false
+  xy: 1, 848
+  size: 941, 162
+  orig: 941, 162
+  offset: 0, 0
+  index: -1
+easyLabel
+  rotate: false
+  xy: 615, 218
+  size: 128, 50
+  orig: 128, 50
+  offset: 0, 0
+  index: -1
+hardLabel
+  rotate: false
+  xy: 615, 166
+  size: 128, 50
+  orig: 128, 50
+  offset: 0, 0
+  index: -1
+levelBg
+  rotate: false
+  xy: 1, 372
+  size: 256, 268
+  orig: 256, 268
+  offset: 0, 0
+  index: -1
+licenseAndCredits
+  rotate: false
+  xy: 775, 732
+  size: 128, 16
+  orig: 128, 16
+  offset: 0, 0
+  index: -1
+mediumLabel
+  rotate: false
+  xy: 517, 348
+  size: 256, 60
+  orig: 256, 60
+  offset: 0, 0
+  index: -1
+privacyPolicy
+  rotate: false
+  xy: 517, 305
+  size: 256, 41
+  orig: 256, 41
+  offset: 0, 0
+  index: -1
+rejectTerms
+  rotate: false
+  xy: 1, 1
+  size: 256, 111
+  orig: 256, 111
+  offset: 0, 0
+  index: -1
+settingsHeader
+  rotate: false
+  xy: 517, 410
+  size: 256, 66
+  orig: 256, 66
+  offset: 0, 0
+  index: -1
+settingsIconNew
+  rotate: false
+  xy: 259, 384
+  size: 256, 256
+  orig: 256, 256
+  offset: 0, 0
+  index: -1
+shareIconNew
+  rotate: false
+  xy: 259, 126
+  size: 256, 256
+  orig: 256, 256
+  offset: 0, 0
+  index: -1
+skinIconNew
+  rotate: false
+  xy: 517, 478
+  size: 256, 256
+  orig: 256, 256
+  offset: 0, 0
+  index: -1
+termsOfService
+  rotate: false
+  xy: 517, 270
+  size: 256, 33
+  orig: 256, 33
+  offset: 0, 0
+  index: -1
+uncheckedCircle
+  rotate: false
+  xy: 517, 172
+  size: 96, 96
+  orig: 96, 96
+  offset: 0, 0
+  index: -1

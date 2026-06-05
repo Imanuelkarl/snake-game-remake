@@ -4,8 +4,10 @@ import java.util.List;
 
 public interface PurchaseService {
     void initializeBillingService();
-    void initiatePayment(PurchaseItem item);
-    List<PurchaseItem> loadStoreItems();
+    void initiatePayment(String productId);
+    void loadStoreItems();
+    List<PurchaseItem> getPurchaseItems();
     void setPaymentListener(PurchaseListener listener);
 
+    boolean isListLoaded();
 }

@@ -38,12 +38,15 @@ public class LevelsUi {
 
 
         stage.addActor(levelUiFactory.background);
+        if(GameInstance.getInstance().levelsView==null){
+            GameInstance.getInstance().levelsView = new LevelsView();
+        }
         Group levelGroupView = new Group();
-        levelGroupView.setSize(stage.getWidth(), stage.getHeight()-levelUiFactory.headerBackground.getHeight()-levelUiFactory.bottomNavigation.getHeight());
-        levelGroupView.setPosition(0,levelUiFactory.bottomNavigation.getHeight());
+        levelGroupView.setSize(stage.getWidth(), stage.getHeight()-levelUiFactory.headerBackground.getHeight()-levelUiFactory.bottomBackground.getHeight());
+        levelGroupView.setPosition(0,levelUiFactory.bottomBackground.getHeight());
         GameInstance.getInstance().levelsView.setParentView(levelGroupView);
         levelGroupView.addActor(GameInstance.getInstance().levelsView);
-        GameInstance.getInstance().levelsView.resize(stage.getWidth(),stage.getHeight()-levelUiFactory.headerBackground.getHeight()-levelUiFactory.bottomNavigation.getHeight());
+        GameInstance.getInstance().levelsView.resize(stage.getWidth(),stage.getHeight()-levelUiFactory.headerBackground.getHeight()-levelUiFactory.bottomBackground.getHeight());
 
 
 
@@ -64,7 +67,8 @@ public class LevelsUi {
         stage.addActor(levelUiFactory.coinBar);
         stage.addActor(levelUiFactory.diamondBar);
         stage.addActor(levelUiFactory.healthBar);
-        stage.addActor(levelUiFactory.bottomNavigation);
+        stage.addActor(levelUiFactory.bottomBackground);
+        stage.addActor(levelUiFactory.playButton);
 
     }
     public void update(float deltaTime){

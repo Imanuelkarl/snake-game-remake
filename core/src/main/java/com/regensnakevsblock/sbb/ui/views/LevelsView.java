@@ -49,13 +49,7 @@ public class LevelsView extends BaseActorView {
         listManager.setLayout( 4, 200);
     }
     private void loadData() {
-        List<LevelCard> cards = new ArrayList<>();
-        for (int i = 0; i < 100; i++) {
-            LevelCard card = new LevelCard();
-            System.out.println("Creating first items yahoo "+i);
-            cards.add(card);
-        }
-        //adapter.setData(GameInstance.getInstance().getLevelData());
+        adapter.setData(GameInstance.getInstance().getLevelData());
         adapter.setOnItemClickListener((level, position) -> {
             if(level.isCanSelect()){
                 level.setSelected(true);

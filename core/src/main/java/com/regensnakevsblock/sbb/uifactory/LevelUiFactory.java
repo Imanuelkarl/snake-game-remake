@@ -3,7 +3,7 @@ package com.regensnakevsblock.sbb.uifactory;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
-import com.regensnakevsblock.sbb.assets.Assets;
+import com.regensnakevsblock.sbb.assets.Assets2;
 import com.regensnakevsblock.sbb.elements.BottomNavigation;
 import com.regensnakevsblock.sbb.elements.ItemBar;
 import com.regensnakevsblock.sbb.utils.ActorFactory;
@@ -19,7 +19,8 @@ public class LevelUiFactory {
     public Group header;
     public ImageButton cancelButton;
     public Image headerBackground;
-    public BottomNavigation bottomNavigation;
+    public Image bottomBackground;
+    public ImageButton playButton;
     public LevelUiFactory(float width, float height){
         this.width=width;
         this.height=height;
@@ -27,11 +28,10 @@ public class LevelUiFactory {
     }
 
     public void build(){
-        background = ActorFactory.createUiImage(Assets.getInstance().menuBGTexture,0,0,width,height);
-        bottomNavigation= new BottomNavigation(4);
-        bottomNavigation.setSize(width, height*.1f);
-        bottomNavigation.setPosition(0, 0);
-        bottomNavigation.selectItem(0);
+        background = ActorFactory.createUiImage(Assets2.getInstance().menuBGTexture,0,0,width,height);
+        bottomBackground = ActorFactory.createUiImage(Assets2.getInstance().bottomNavBg,0,0,width,height*.1f);
+
+        playButton=ActorFactory.createButton(Assets2.getInstance().levelPlayButton, width/2 -width/4, height*0.005f, width/2, height/12);
     }
     public void resize(float width, float height){
         this.width=width;
@@ -49,13 +49,13 @@ public class LevelUiFactory {
         float barPad=(barSpace -barWidth)/2;
         float barY=height-height/18;
         coinBar = new ItemBar(barPad,barY,barWidth,barHeight);
-        coinBar.setItemTexture(Assets.getInstance().coinTexture);
+        coinBar.setItemTexture(Assets2.getInstance().coinTexture);
         diamondBar = new ItemBar(barSpace+ barPad,barY,barWidth,barHeight);
-        diamondBar.setItemTexture(Assets.getInstance().diamondTexture);
+        diamondBar.setItemTexture(Assets2.getInstance().diamondTexture);
         healthBar = new ItemBar(2*barSpace+barPad,barY,barWidth,barHeight);
-        healthBar.setItemTexture(Assets.getInstance().healthTexture);
-        headerBackground = ActorFactory.createUiImage(Assets.getInstance().upLayout,0,height-height/12,width,height/12);
-        cancelButton = ActorFactory.createButton(Assets.getInstance().closeTexture,width-width/8,height-width/8,width/12,width/12);
+        healthBar.setItemTexture(Assets2.getInstance().healthTexture);
+        headerBackground = ActorFactory.createUiImage(Assets2.getInstance().upLayout,0,height-height/12,width,height/12);
+        cancelButton = ActorFactory.createButton(Assets2.getInstance().closeTexture,width-width/8,height-width/8,width/12,width/12);
     }
 
 

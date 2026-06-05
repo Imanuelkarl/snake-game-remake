@@ -6,15 +6,15 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
 public class ShopItemData {
     public enum CurrencyType {
-        COINS, DIAMONDS
+        COINS, DIAMONDS, PORTIONS
     }
 
     public String id;
     public String name;
     public String description;
-    public CurrencyType currencyType;
-    public int price;
-    public Texture icon;
+    public String currencySign;
+    public Double price;
+    public TextureRegion icon;
     public TextureRegion itemIcon;
     public boolean isPurchased;
     public double originalPrice;
@@ -24,14 +24,26 @@ public class ShopItemData {
     public int discountQuantity;
 
 
-    public ShopItemData(String id, String name, String description, CurrencyType currencyType,TextureRegion itemIcon,
-                        int price, Texture icon, boolean isPurchased,long itemQuantity,ShopCategory category) {
+
+    public ShopItemData(String id, String name, String description, String currencyType,Texture itemIcon,
+                        Double price,  boolean isPurchased,long itemQuantity,ShopCategory category) {
         this.id = id;
         this.name = name;
         this.description = description;
-        this.currencyType = currencyType;
+        this.currencySign = currencyType;
         this.price = price;
-        this.icon = icon;
+        this.isPurchased = isPurchased;
+        this.itemQuantity=itemQuantity;
+        this.category=category;
+        this.itemIcon = new TextureRegion(itemIcon);
+    }
+    public ShopItemData(String id, String name, String description, String currencyType,TextureRegion itemIcon,
+                        Double price, boolean isPurchased,long itemQuantity,ShopCategory category) {
+        this.id = id;
+        this.name = name;
+        this.description = description;
+        this.currencySign = currencyType;
+        this.price = price;
         this.isPurchased = isPurchased;
         this.itemQuantity=itemQuantity;
         this.category=category;

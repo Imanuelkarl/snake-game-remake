@@ -1,5 +1,6 @@
 package com.regensnakevsblock.sbb.uifactory;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
@@ -11,8 +12,9 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
-import com.regensnakevsblock.sbb.assets.Assets;
+import com.regensnakevsblock.sbb.assets.Assets2;
 import com.regensnakevsblock.sbb.elements.GameDialog;
+import com.regensnakevsblock.sbb.elements.ImageCheckBoxGroup;
 import com.regensnakevsblock.sbb.utils.FontFactory;
 
 public class HomeUiFactory {
@@ -54,7 +56,7 @@ public class HomeUiFactory {
     public ImageButton createSettingsButton() {
         System.out.println("The width here is "+width/6f);
         return createButton(
-            Assets.getInstance().settingsButtonTexture,
+            Assets2.getInstance().settingsButtonTexture,
             width / 3 - width / 4,
             height / 32,
             actionButtonSize,
@@ -65,7 +67,7 @@ public class HomeUiFactory {
     public ImageButton createPlayButton() {
 
         return createButton(
-            Assets.getInstance().playButtonTexture,
+            Assets2.getInstance().playButtonTexture,
             width / 2 - playButtonSize/2,
             height *0.45f,
             playButtonSize,
@@ -84,7 +86,7 @@ public class HomeUiFactory {
 
     public ImageButton createSnakeSkinButton() {
         return createButton(
-            Assets.getInstance().snakeSkinButtonTexture,
+            Assets2.getInstance().snakeSkinButtonTexture,
             2 * width / 3 - 2 * width / 8,
             height / 32,
             actionButtonSize,
@@ -94,7 +96,7 @@ public class HomeUiFactory {
 
     public ImageButton createShareButton() {
         return createButton(
-            Assets.getInstance().shareButtonTexture,
+            Assets2.getInstance().shareButtonTexture,
             3 * width / 3 - 3 * width / 12,
             height / 32,
             actionButtonSize,
@@ -174,11 +176,28 @@ public class HomeUiFactory {
 
         return button;
     }
+    private ImageButton createButton(TextureRegion texture, float x, float y, float width, float height) {
+
+        //Texture darkTexture = createDarkenedTexture(texture);
+
+        Drawable up = new TextureRegionDrawable(texture);
+        Drawable down = new TextureRegionDrawable(texture);
+
+        ImageButton.ImageButtonStyle style = new ImageButton.ImageButtonStyle();
+        style.up = up;
+        style.down = down;
+
+        ImageButton button = new ImageButton(style);
+        button.setPosition(x, y);
+        button.setSize(width, height);
+
+        return button;
+    }
 
     // Image creation methods
     public Image createLogoImage() {
         return createUiImage(
-            Assets.getInstance().logoTexture,
+            Assets2.getInstance().logoTexture,
             (width-logoWidth)/2,
             height *0.75f,
             logoWidth,
@@ -190,7 +209,7 @@ public class HomeUiFactory {
         dialog.setDialogSize(stage.getWidth(), stage.getHeight()/3);
         dialog.setTitleEnabled(false);
         dialog.setCloseButtonEnabled(false);
-        dialog.setBackground(Assets.getInstance().dialogHalfSize);
+        dialog.setBackground(Assets2.getInstance().dialogHalfSize);
         return dialog;
     }
 
@@ -228,7 +247,7 @@ public class HomeUiFactory {
 
     public ImageButton createTermsAndConditionButton() {
         return createButton(
-            Assets.getInstance().tosTexture,
+            Assets2.getInstance().tosTexture,
             topRowStartX, topRowY,
             smallBtnW, mediumBtnH
         );
@@ -236,7 +255,7 @@ public class HomeUiFactory {
 
     public ImageButton createPrivacyPolicyButton() {
         return createButton(
-            Assets.getInstance().privacyPolicyTexture,
+            Assets2.getInstance().privacyPolicyTexture,
             topRowStartX + smallBtnW + defaultSpacing, topRowY,
             smallBtnW, mediumBtnH
         );
@@ -244,7 +263,7 @@ public class HomeUiFactory {
 
     public ImageButton createAcceptButton() {
         return createButton(
-            Assets.getInstance().acceptTerms,
+            Assets2.getInstance().acceptTerms,
             bottomRowStartX, bottomRowY,
             largeBtnW, largeBtnH
         );
@@ -252,12 +271,18 @@ public class HomeUiFactory {
 
     public ImageButton createRejectButton() {
         return createButton(
-            Assets.getInstance().rejectTerms,
+            Assets2.getInstance().rejectTerms,
             bottomRowRejectStartX , bottomRowY,
             largeBtnW, largeBtnH
         );
     }
     private Image createUiImage(Texture texture, float x, float y, float width, float height) {
+        Image image = new Image(texture);
+        image.setPosition(x, y);
+        image.setSize(width, height);
+        return image;
+    }
+    private Image createUiImage(TextureRegion texture, float x, float y, float width, float height) {
         Image image = new Image(texture);
         image.setPosition(x, y);
         image.setSize(width, height);
@@ -276,7 +301,29 @@ public class HomeUiFactory {
     }
     public ImageButton createLevelsButton() {
 
-        return createButton(Assets.getInstance().levelsButtonTexture, width/2 -width/4, height/4, width/2, height/12);
+        return createButton(Assets2.getInstance().levelsButtonTexture, width/2 -width/4, height/4, width/2, height/12);
+    }
+
+    public ImageCheckBoxGroup createDifficultyGroup(){
+        ImageCheckBoxGroup group = new ImageCheckBoxGroup(Assets2.getInstance().checkedTexture, Assets2.getInstance().uncheckedTexture);
+        group.setSize(width- width/16, 200);
+        group.setPosition(width/32, height/3.5f);
+        group.setLayoutType(
+            ImageCheckBoxGroup.LayoutType.GRID);
+
+        group.setColumns(3);
+        group.setSelectionMode(ImageCheckBoxGroup.SelectionMode.SINGLE);
+        float scale = Gdx.graphics.getWidth() / 1920f; // Scale based on reference resolution
+        group.setCheckboxSize(80f * scale); // 64px checkbox on 1080p
+        group.setItemSize(300f * scale, 80f * scale);
+        group.addItem(Assets2.getInstance().easyTexture);
+        group.addItem(Assets2.getInstance().mediumTexture);
+        group.addItem(Assets2.getInstance().hardTexture);
+
+        return group;
+    }
+    public Image createDifficultyTitle(){
+        return createUiImage(Assets2.getInstance().difficultyTexture, width/2 -width/7, height/2.4f, width/3.5f, height*0.02f);
     }
 
 }

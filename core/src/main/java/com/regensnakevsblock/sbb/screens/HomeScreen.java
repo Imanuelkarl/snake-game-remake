@@ -6,6 +6,8 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.regensnakevsblock.sbb.MyGame;
+import com.regensnakevsblock.sbb.assets.Assets;
+import com.regensnakevsblock.sbb.assets.Assets2;
 import com.regensnakevsblock.sbb.ui.HomeUi;
 import com.regensnakevsblock.sbb.uiactions.HomeUiListener;
 
@@ -26,6 +28,9 @@ public class HomeScreen implements Screen, HomeUiListener {
         batch =new SpriteBatch();
         Gdx.input.setInputProcessor(homeUi.getStage());
         this.camera = new OrthographicCamera();
+        Assets2.getInstance().backgroundMusic.setLooping(true);
+        Assets2.getInstance().backgroundMusic.play();
+        Assets2.logMemory();
     }
 
     @Override
@@ -56,7 +61,7 @@ public class HomeScreen implements Screen, HomeUiListener {
 
     @Override
     public void hide() {
-
+        dispose();
     }
 
     @Override

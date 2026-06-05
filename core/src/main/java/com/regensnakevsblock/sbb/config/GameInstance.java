@@ -4,15 +4,18 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.google.gson.Gson;
-import com.regensnakevsblock.sbb.assets.Assets;
+import com.regensnakevsblock.sbb.MyGame;
+import com.regensnakevsblock.sbb.assets.Assets2;
 import com.regensnakevsblock.sbb.levels.Level;
 import com.regensnakevsblock.sbb.service.SaveService;
 import com.regensnakevsblock.sbb.service.ads.AdsService;
+import com.regensnakevsblock.sbb.service.purchase.PurchaseItem;
 import com.regensnakevsblock.sbb.service.purchase.PurchaseService;
-import com.regensnakevsblock.sbb.ui.adapters.SkinAdapter;
 import com.regensnakevsblock.sbb.ui.core.ViewManager;
 import com.regensnakevsblock.sbb.ui.core.ViewPagerAdapter;
 import com.regensnakevsblock.sbb.ui.data.LevelData;
+import com.regensnakevsblock.sbb.ui.data.ShopCategory;
+import com.regensnakevsblock.sbb.ui.data.ShopItemData;
 import com.regensnakevsblock.sbb.ui.data.SkinData;
 import com.regensnakevsblock.sbb.ui.views.AchievementsView;
 import com.regensnakevsblock.sbb.ui.views.LevelsView;
@@ -26,12 +29,14 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Locale;
 
 public class GameInstance {
 
     private static GameInstance instance;
     private static SaveService saveService;
     public LevelsView levelsView;
+    private MyGame game;
 
     public List<LevelData> getLevelData() {
         List<LevelData> levelDataList = new ArrayList<>();
@@ -59,6 +64,7 @@ public class GameInstance {
 
     // ===== DATA =====
     private List<SkinData> skins;
+    public List<ShopItemData> shopItems;
 
     // ===== CALLBACK =====
     private Runnable onSkinDataLoaded;
@@ -79,7 +85,9 @@ public class GameInstance {
         return instance;
     }
 
-
+    public static SaveService getSaveService() {
+        return saveService;
+    }
 
     // =====================================================
     // FONT (LAZY LOADED)
@@ -96,7 +104,93 @@ public class GameInstance {
     // =====================================================
     // SKIN DATA LOADING (ASYNC + CACHED)
     // =====================================================
-    public void loadSkinData() {
+    private ShopCategory dataToShopCategory(String data) {
+        switch (data.toUpperCase(Locale.ROOT)){
+            case "COINS":
+                return ShopCategory.COIN;
+            case "DIAMONDS":
+                return ShopCategory.DIAMOND;
+            default:
+                return ShopCategory.PORTION;
+        }
+    }
+    private TextureRegion quantityToTexture(String item, Long quantity){
+        TextureRegion coins = Assets2.getInstance().coinPilesTexture;
+        TextureRegion diamonds = Assets2.getInstance().diamondPilesTexture;
+        TextureRegion portions = Assets2.getInstance().portionPilesTexture;
+
+        TextureRegion coinPile1 = TextureTools.resolveRegion(coins,2,2,0,0,0);
+        TextureRegion coinPile2 = TextureTools.resolveRegion(coins,2,2,0,1,0);
+        TextureRegion coinPile3 = TextureTools.resolveRegion(coins,2,2,1,0,0);
+        TextureRegion coinPile4 = TextureTools.resolveRegion(coins,2,2,1,1,0);
+        TextureRegion diamondPile1 = TextureTools.resolveRegion(diamonds, 2, 2, 0, 0, 0);
+        TextureRegion diamondPile2 = TextureTools.resolveRegion(diamonds,2,2,0,1,0);
+        TextureRegion diamondPile3 = TextureTools.resolveRegion(diamonds,2,2,1,0,0);
+        TextureRegion diamondPile4 = TextureTools.resolveRegion(diamonds,2,2,1,1,0);
+        TextureRegion portionPile1 = TextureTools.resolveRegion(portions,2,2,0,0,0);
+        TextureRegion portionPile2 = TextureTools.resolveRegion(portions,2,2,0,1,0);
+        TextureRegion portionPile3 = TextureTools.resolveRegion(portions,2,2,1,0,0);
+        TextureRegion portionPile4 = TextureTools.resolveRegion(portions,2,2,1,1,0);
+        switch (item.toUpperCase(Locale.ROOT)){
+            case "COINS":
+                if(quantity>=10000){
+                    return coinPile4;
+                }else if(quantity>=5000){
+                    return coinPile3;
+                }else if(quantity>=2000){
+                    return coinPile2;
+                }else{
+                    return coinPile1;
+                }
+            case "POTIONS":
+                if(quantity>=1500){
+                    return portionPile4;
+                }else if(quantity>=600){
+                    return portionPile3;
+                }else if(quantity>=250){
+                    return portionPile2;
+                }else{
+                    return portionPile1;
+                }
+            case "DIAMONDS":
+                if(quantity>=5000){
+                    return diamondPile4;
+                }else if(quantity>=2000){
+                    return diamondPile3;
+                }else if(quantity>=1000){
+                    return diamondPile2;
+                }else{
+                    return diamondPile1;
+                }
+            default:
+                return portionPile1;
+        }
+    }
+    private List<ShopItemData> normalizePurchaseItems(List<PurchaseItem> items){
+        List<ShopItemData> shopItems = new ArrayList<>();
+        for (int i = 0; i <items.size(); i++) {
+            PurchaseItem item = items.get(i);
+            System.out.println("Product price is "+item.getAmount());
+            String gift = item.getProductId().split("_")[1];
+            long quantity = Long.parseLong(item.getProductId().split("_")[0]);
+            TextureRegion itemTexture =quantityToTexture(gift,quantity);
+            ShopItemData shopItemData = new ShopItemData(item.getProductId(),item.getTitle().replace('_',' '),item.getDescription(),item.getCurrency(),
+                itemTexture,item.getAmount()/1000000,false,quantity,dataToShopCategory(gift));
+            shopItems.add(shopItemData);
+        }
+        return shopItems;
+    }
+
+    public void loadSkinData(MyGame game) {
+        this.game = game;
+        //game.getPurchaseService().initializeBillingService();
+        if(game.getPurchaseService()!=null){
+            List<PurchaseItem> items = game.getPurchaseService().getPurchaseItems();
+            shopItems = normalizePurchaseItems(items);
+            System.out.println("Total items found are "+shopItems.size());
+        }
+
+
         if (skinDataState == LoadState.LOADING || skinDataState == LoadState.LOADED) {
             return;
         }
@@ -117,13 +211,22 @@ public class GameInstance {
             // Switch back to render thread
             Gdx.app.postRunnable(() -> {
                 skins = loadedData;
-                setupViewPager();
                 skinDataState = LoadState.LOADED;
                 if (onSkinDataLoaded != null) {
                     onSkinDataLoaded.run();
                 }
             });
         }).start();
+    }
+    public void setPurchaseService(PurchaseService purchaseService) {
+        if (instance == null) {
+            instance = new GameInstance();
+            saveService = new SaveService();
+            instance.purchaseService = purchaseService;
+        }
+        else{
+            instance.purchaseService = purchaseService;
+        }
     }
 
     // =====================================================
@@ -151,7 +254,7 @@ public class GameInstance {
     public void setOnSkinDataLoaded(Runnable callback) {
         this.onSkinDataLoaded = callback;
     }
-    private void setupViewPager() {
+    public void setupViewPager() {
         menuViewManager = new ViewManager();
         menuViewManagerAdapter = new ViewPagerAdapter();
 
@@ -171,7 +274,7 @@ public class GameInstance {
     private List<SkinData> createSkinData() {
 
         List<SkinData> skins = new ArrayList<>();
-        Texture texture = Assets.getInstance().snakeSkins;
+        Texture texture = Assets2.getInstance().snakeSkins;
         int columns = 6;
         int rows = 8;
 
@@ -183,7 +286,7 @@ public class GameInstance {
             int col = i % columns;
             int row = i / columns;
 
-            TextureRegion region = TextureTools.resolveRegion(texture,rows,columns,col,row,8);
+            TextureRegion region = TextureTools.resolveRegion(texture,rows,columns,col,row,12);
 
             skins.add(new SkinData(
                 "skin_" + i,
@@ -222,7 +325,7 @@ public class GameInstance {
 
         // Optional: sort or index by id
         levels.sort(Comparator.comparingInt(Level::getLevelId));
-        this.levelsView = new LevelsView();
+
     }
 
     public Level getByIndex(int index) {

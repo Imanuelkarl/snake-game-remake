@@ -1,0 +1,48 @@
+
+levels.png
+size: 512, 512
+format: RGBA8888
+filter: Linear, Linear
+repeat: none
+levelBg
+  rotate: false
+  xy: 1, 214
+  size: 256, 268
+  orig: 256, 268
+  offset: 0, 0
+  index: -1
+levelClearedText
+  rotate: false
+  xy: 1, 1
+  size: 256, 52
+  orig: 256, 52
+  offset: 0, 0
+  index: -1
+levelLock
+  rotate: false
+  xy: 259, 293
+  size: 158, 189
+  orig: 158, 189
+  offset: 0, 0
+  index: -1
+levelMarked
+  rotate: false
+  xy: 1, 55
+  size: 209, 157
+  orig: 209, 157
+  offset: 0, 0
+  index: -1
+levelsPlayButton2
+  rotate: false
+  xy: 212, 72
+  size: 256, 89
+  orig: 256, 89
+  offset: 0, 0
+  index: -1
+selectFrame
+  rotate: false
+  xy: 259, 163
+  size: 128, 128
+  orig: 128, 128
+  offset: 0, 0
+  index: -1

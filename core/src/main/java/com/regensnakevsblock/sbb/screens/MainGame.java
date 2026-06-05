@@ -6,6 +6,7 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.viewport.FitViewport;
@@ -14,6 +15,7 @@ import com.regensnakevsblock.sbb.MyGame;
 import com.regensnakevsblock.sbb.config.Constants;
 import com.regensnakevsblock.sbb.inputs.InputController;
 import com.regensnakevsblock.sbb.ui.UIRenderer;
+import com.regensnakevsblock.sbb.utils.ActorFactory;
 import com.regensnakevsblock.sbb.world.WorldController;
 import com.regensnakevsblock.sbb.world.WorldRenderer;
 import com.regensnakevsblock.sbb.world.WorldState;
@@ -35,6 +37,7 @@ public class MainGame implements Screen {
     private final int gameSize;
 
     private Stage stage;
+
 
     public MainGame(MyGame game) {
         this.game = game;
@@ -131,11 +134,14 @@ public class MainGame implements Screen {
 
     @Override
     public void hide() {
+        dispose();
     }
+
 
     @Override
     public void dispose() {
-        worldRenderer.dispose();
+        //worldRenderer.dispose();
         uiRenderer.dispose();
+        ActorFactory.dispose();
     }
 }

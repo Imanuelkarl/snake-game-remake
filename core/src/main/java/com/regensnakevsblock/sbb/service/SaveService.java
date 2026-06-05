@@ -51,11 +51,12 @@ public class SaveService {
     }
 
     public int getSelectedSkinIndex() {
-        return selectedSkinIndex;
+        return Math.toIntExact(getNumberValue("selectedSkinIndex"));
     }
 
     public void saveSelectedSkinIndex(int selectedSkinIndex) {
         this.selectedSkinIndex = selectedSkinIndex;
+        saveIntegerData("selectedSkinIndex", (long) selectedSkinIndex);
     }
     public void saveAcceptTerms(boolean acceptTerms){
         saveBooleanData("acceptTerms",acceptTerms);
@@ -159,4 +160,30 @@ public class SaveService {
     public int getMaxLevel(){
         return myPreferences.getInteger("maxLevel",1);
     }
+
+    public int getSoundVolume() {
+        return myPreferences.getInteger("soundVolume",100);
+    }
+    public void saveSoundVolume(int soundVolume) {
+        myPreferences.putInteger("soundVolume",soundVolume);
+        myPreferences.flush();
+    }
+
+    public int getMusicVolume() {
+        return myPreferences.getInteger("musicVolume",100);
+    }
+
+    public void saveMusicVolume(int musicVolume) {
+        myPreferences.putInteger("musicVolume",musicVolume);
+        myPreferences.flush();
+    }
+
+    public void saveDifficulty(int index) {
+        myPreferences.putInteger("difficulty",index);
+        myPreferences.flush();
+    }
+    public int getDifficulty(){
+        return myPreferences.getInteger("difficulty",0);
+    }
+
 }

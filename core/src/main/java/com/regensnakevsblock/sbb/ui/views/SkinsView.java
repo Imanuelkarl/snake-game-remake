@@ -2,11 +2,18 @@ package com.regensnakevsblock.sbb.ui.views;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.scenes.scene2d.Group;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
+import com.regensnakevsblock.sbb.assets.Assets2;
 import com.regensnakevsblock.sbb.config.GameInstance;
+import com.regensnakevsblock.sbb.elements.GameDialog;
 import com.regensnakevsblock.sbb.ui.adapters.SkinAdapter;
 import com.regensnakevsblock.sbb.ui.cards.SkinCard;
+import com.regensnakevsblock.sbb.ui.cards.SnakePreview;
 import com.regensnakevsblock.sbb.ui.core.ListManager;
 import com.regensnakevsblock.sbb.ui.data.SkinData;
 import com.regensnakevsblock.sbb.utils.ActorFactory;
@@ -17,6 +24,7 @@ public class SkinsView extends BaseActorView {
     private Label titleLabel;
     private float width;
     private float height;
+    private GameDialog dialog;
 
     public SkinsView(Group group) {
         super(group);
@@ -71,6 +79,25 @@ public class SkinsView extends BaseActorView {
         titleLabel = ActorFactory.createTextLabel(24,20, Gdx.graphics.getHeight() - 50);
         titleLabel.setPosition(20, Gdx.graphics.getHeight() - 50);
         addActor(titleLabel);
+        /*addListener(new ClickListener(){
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                System.out.println("Clicking on skins");
+                if (dialog != null) {
+                    dialog.open();
+                }else{
+                    setupDialog();
+                }
+            }
+        });*/
+    }
+    private void setupDialog(Stage stage){
+        dialog = new GameDialog(stage);
+        dialog.setDialogSize(width,height/8);
+        dialog.setTitleEnabled(false);
+
+        dialog.setBackground(Assets2.getInstance().dialogQuarterSizeOpen);
+        dialog.open();
     }
 
     private void setupList() {
@@ -88,23 +115,6 @@ public class SkinsView extends BaseActorView {
 
     private void loadData() {
         adapter.setData(GameInstance.getInstance().getSkins());
-        adapter.setOnItemClickListener((skin, position) -> {
-            if (!skin.isOwned) {
-                // Show purchase dialog
-                purchaseSkin(skin, position);
-            } else if (!skin.isEquipped) {
-                // Equip skin
-                adapter.equipSkin(skin.id);
-            }
-        });
-    }
-
-    private void purchaseSkin(SkinData skin, int position) {
-        // Check if player has enough coins
-        // Show confirmation dialog
-        // On confirm:
-        skin.isOwned = true;
-        adapter.updateSkinOwnership(skin.id, true);
     }
 
     @Override
@@ -117,11 +127,17 @@ public class SkinsView extends BaseActorView {
         this.width = width;
         this.height = height;
         setupTransform();
+        //dialog = new GameDialog(getStage());
         listManager.renderAllItems();
+        if(adapter.notEnoughCoins){
+            setupDialog(this.getRoot().getStage());
+            adapter.notEnoughCoins=false;
+        }
     }
 
     @Override
     public boolean backPressed() {
         return false;
     }
+
 }

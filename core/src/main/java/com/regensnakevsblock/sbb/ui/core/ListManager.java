@@ -30,14 +30,12 @@ public class ListManager<T, V extends ListItemView<T> & BaseView> extends Group 
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
                 lastTouchY = y;
-
                 return true; // MUST return true to receive drag
             }
 
             @Override
             public void touchDragged(InputEvent event, float x, float y, int pointer) {
                 float deltaY = y - lastTouchY;
-                System.out.println("List manager y is "+ listManager.getY());
                 scrollBy(deltaY);
                 lastTouchY = y;
 
@@ -85,7 +83,6 @@ public class ListManager<T, V extends ListItemView<T> & BaseView> extends Group 
 
         float newY =content.getY()+ delta;
         if(newY< -100) newY=-100;
-        System.out.println(maxScroll);
         if (newY > maxScroll) newY = maxScroll;
         content.setY(newY);
 

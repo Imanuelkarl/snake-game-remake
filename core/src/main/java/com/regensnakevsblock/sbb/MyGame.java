@@ -6,6 +6,7 @@ import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.regensnakevsblock.sbb.assets.Assets;
+import com.regensnakevsblock.sbb.assets.Assets2;
 import com.regensnakevsblock.sbb.config.Constants;
 import com.regensnakevsblock.sbb.screens.CrossFadeTransition;
 import com.regensnakevsblock.sbb.screens.SplashScreen;
@@ -26,6 +27,8 @@ public class MyGame extends Game {
 
     private SaveService saveService;
     private AdsService adsService;
+    private PurchaseService purchaseService;
+
 
     @Override
     public void create() {
@@ -36,7 +39,7 @@ public class MyGame extends Game {
 
         // Set up game configuration
         Constants.initialize();
-        Assets.getInstance().setAssetManager(assetManager);
+        Assets2.getInstance().setAssetManager(assetManager);
 
         // Start with loading screen
         setScreen(new SplashScreen(this));
@@ -92,7 +95,7 @@ public class MyGame extends Game {
     }
 
     public void setPurchaseService(PurchaseService purchaseService) {
-
+        this.purchaseService = purchaseService;
     }
 
     public void setAdsService(AdsService adsService) {
@@ -102,4 +105,7 @@ public class MyGame extends Game {
         return adsService;
     }
 
+    public PurchaseService getPurchaseService() {
+        return purchaseService;
+    }
 }

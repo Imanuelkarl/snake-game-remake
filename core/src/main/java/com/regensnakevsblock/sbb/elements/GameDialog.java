@@ -1,6 +1,5 @@
 package com.regensnakevsblock.sbb.elements;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
@@ -20,7 +19,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
-import com.regensnakevsblock.sbb.assets.Assets;
+import com.regensnakevsblock.sbb.assets.Assets2;
 import com.regensnakevsblock.sbb.config.GameInstance;
 import com.regensnakevsblock.sbb.enumaretors.AnimationType;
 import com.regensnakevsblock.sbb.utils.ActorFactory;
@@ -46,9 +45,9 @@ public class GameDialog extends Group {
     private float dialogHeight;
     private final Vector2 tmpVec = new Vector2();
 
-    private Texture bgTexture;
-    private Texture titleTexture;
-    private Texture closeTexture;
+    private TextureRegion bgTexture;
+    private TextureRegion titleTexture;
+    private TextureRegion closeTexture;
     SimpleBitmapFont simpleBitmapFont;
     private CloseListener closeListener;
     private FontActor titleFont;
@@ -56,8 +55,9 @@ public class GameDialog extends Group {
     public GameDialog(Stage stage) {
 
         this.stage = stage;
+        if(stage==null) return;
 
-        Assets assets = Assets.getInstance();
+        Assets2 assets = Assets2.getInstance();
 
         // Default textures
         bgTexture = assets.noHeaderDialog;
@@ -128,7 +128,7 @@ public class GameDialog extends Group {
         titleBackground.setSize(dialogWidth * 0.8f,titleHeight);
         titleBackground.setPosition(
             dialogWidth / 2f - titleBackground.getWidth() / 2f,
-            dialogHeight - titleHeight *0.7f
+            dialogHeight - titleHeight *0.55f
         );
 
         titleLabel = ActorFactory.createTextLabel(30, 0, 0);
@@ -557,6 +557,9 @@ public class GameDialog extends Group {
     public void setBackground(Texture texture) {
         background.setDrawable(new TextureRegionDrawable(texture));
     }
+    public void setBackground(TextureRegion texture) {
+        background.setDrawable(new TextureRegionDrawable(texture));
+    }
     public Texture createWhiteTexture() {
         Pixmap pixmap = new Pixmap(1, 1, Pixmap.Format.RGBA8888);
         pixmap.setColor(Color.WHITE);
@@ -567,6 +570,10 @@ public class GameDialog extends Group {
     }
 
     public void setTitleTexture(Texture texture) {
+
+        titleBackground.setDrawable(new TextureRegionDrawable(texture));
+    }
+    public void setTitleTexture(TextureRegion texture) {
 
         titleBackground.setDrawable(new TextureRegionDrawable(texture));
     }

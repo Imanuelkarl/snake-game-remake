@@ -20,6 +20,7 @@ public class WorldState {
 
     private boolean soundEnabled;
     private boolean musicEnabled;
+    private int soundVolume;
     private Block activeBlock;
     private boolean moving;
 
@@ -47,7 +48,7 @@ public class WorldState {
     private int score;
     private int highScore;
 
-    private boolean powerUpIsActive;
+    private boolean powerUpActive;
     private PowerUp powerUp;
     private ArrayList<Row> rows;
     private int coins;
@@ -58,6 +59,7 @@ public class WorldState {
     private final Map<Integer , Integer> blocksDestroyedColor;
     private boolean finishLineSpawned = false;
     private HitListener hitListener;
+    float powerUpTimeRemaining =3000;
 
     public boolean isFinishLineSpawned() {
         return finishLineSpawned;
@@ -73,6 +75,14 @@ public class WorldState {
 
     public Level getLevel() {
         return level;
+    }
+
+    public float getPowerUpTimeRemaining() {
+        return powerUpTimeRemaining;
+    }
+
+    public void setPowerUpTimeRemaining(float remaining) {
+        powerUpTimeRemaining=remaining;
     }
 
     public enum GameMode{
@@ -103,6 +113,12 @@ public class WorldState {
 
         nextRowY=camera.viewportHeight+blockDimension ;
     }
+    public void setSoundVolume(int soundVolume) {
+        this.soundVolume = soundVolume;
+    }
+    public int getSoundVolume() {
+        return soundVolume;
+    }
     public void setOnHitListener(HitListener hitListener){
         this.hitListener = hitListener;
     }
@@ -131,6 +147,9 @@ public class WorldState {
     public Snake getSnake() {
         return snake;
     }
+    public int getSnakeSkinId(){
+        return saveService.getSelectedSkinIndex();
+    }
 
     public void setAwake(boolean awake) {
         this.awake = awake;
@@ -157,12 +176,12 @@ public class WorldState {
     public int getMinScore() {
         return minScore;
     }
-    public boolean isPowerUpIsActive() {
-        return powerUpIsActive;
+    public boolean isPowerUpActive() {
+        return powerUpActive;
     }
 
-    public void setPowerUpIsActive(boolean powerUpIsActive) {
-        this.powerUpIsActive = powerUpIsActive;
+    public void setPowerUpActive(boolean powerUpActive) {
+        this.powerUpActive = powerUpActive;
     }
 
     public PowerUp getPowerUp() {
@@ -342,7 +361,7 @@ public class WorldState {
     }
 
     public int getScoreMultiplier() {
-        return (powerUpIsActive&&powerUp==PowerUp.MULTIPLIER)?2:1;
+        return (powerUpActive &&powerUp==PowerUp.MULTIPLIER)?2:1;
     }
 
     public int getCoins() {

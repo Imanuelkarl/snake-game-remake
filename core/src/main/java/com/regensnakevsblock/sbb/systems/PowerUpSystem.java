@@ -1,7 +1,6 @@
 package com.regensnakevsblock.sbb.systems;
 
 import com.badlogic.gdx.Gdx;
-import com.regensnakevsblock.sbb.config.PowerUpDimensions;
 import com.regensnakevsblock.sbb.entities.Row;
 import com.regensnakevsblock.sbb.entities.WinBody;
 import com.regensnakevsblock.sbb.enumaretors.PowerUp;
@@ -16,6 +15,7 @@ public class PowerUpSystem extends GlobalSystems{
     public void update(float deltaTime) {
         float width = worldState.getScreenWidth();
         float height =worldState.getScreenHeight();
+        updatePowerUps(deltaTime);
         for (Row row: worldState.getRows()) {
             for (WinBody winBody : row.getWinBodies()) {
                 float dx = worldState.getSnake().getX() - winBody.getX();
@@ -24,7 +24,7 @@ public class PowerUpSystem extends GlobalSystems{
                 float distance = (float) Math.sqrt(dx * dx + dy * dy);
 
                 // Magnet activation
-                if (worldState.isPowerUpIsActive() &&
+                if (worldState.isPowerUpActive() &&
                     worldState.getPowerUp().equals(PowerUp.MAGNET)) {
 
                     float magnetRadius = width * 0.5f; // or define properly
@@ -50,6 +50,26 @@ public class PowerUpSystem extends GlobalSystems{
                 }
 
             }
+        }
+    }
+    private void updatePowerUps(float delta) {
+
+        if (!worldState.isPowerUpActive())
+            return;
+
+        float remaining =
+            worldState.getPowerUpTimeRemaining();
+
+        remaining -= delta*1000;
+
+        if (remaining <= 0) {
+            worldState.setPowerUpActive(false);
+
+        } else {
+
+            worldState.setPowerUpTimeRemaining(
+                remaining);
+            System.out.println("New powerUp remaining time is "+remaining);
         }
     }
 

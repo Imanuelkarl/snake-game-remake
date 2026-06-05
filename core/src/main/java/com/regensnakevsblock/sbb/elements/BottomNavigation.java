@@ -6,7 +6,6 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
@@ -15,7 +14,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Array;
-import com.regensnakevsblock.sbb.assets.Assets;
+import com.regensnakevsblock.sbb.assets.Assets2;
 
 public class BottomNavigation extends Group {
 
@@ -34,10 +33,10 @@ public class BottomNavigation extends Group {
     private float itemDisplaySize; // Size of the actual item icon (50-65% of item area)
     private float itemDisplayOffset; // Offset from bottom for item display
 
-    private Texture backgroundTexture;
-    private Texture defaultItemTexture;
-    private Texture selectedItemTexture;
-    private Texture defaultIndicatorTexture;
+    private TextureRegion backgroundTexture;
+    private TextureRegion defaultItemTexture;
+    private TextureRegion selectedItemTexture;
+    private TextureRegion defaultIndicatorTexture;
 
     private float animationDuration = 0.25f;
     private float selectedScale = 1.2f;
@@ -56,7 +55,7 @@ public class BottomNavigation extends Group {
         this.items = new Array<>();
         this.listeners = new Array<>();
 
-        Assets assets = Assets.getInstance();
+        Assets2 assets = Assets2.getInstance();
 
         // Default textures - you should replace these with your actual default textures
         backgroundTexture = assets.bottomNavBg;
@@ -253,11 +252,23 @@ public class BottomNavigation extends Group {
     }
 
     public void setBackgroundTexture(Texture texture) {
+        this.backgroundTexture = new TextureRegion(texture);
+        background.setDrawable(new TextureRegionDrawable(texture));
+    }
+    public void setBackgroundTexture(TextureRegion texture) {
         this.backgroundTexture = texture;
         background.setDrawable(new TextureRegionDrawable(texture));
     }
 
     public void setDefaultItemTexture(Texture texture) {
+        this.defaultItemTexture = new TextureRegion(texture);
+        for (NavigationItem item : items) {
+            if (!item.isSelected() && !item.hasCustomTexture()) {
+                item.setDefaultTexture();
+            }
+        }
+    }
+    public void setDefaultItemTexture(TextureRegion texture) {
         this.defaultItemTexture = texture;
         for (NavigationItem item : items) {
             if (!item.isSelected() && !item.hasCustomTexture()) {
@@ -267,13 +278,24 @@ public class BottomNavigation extends Group {
     }
 
     public void setSelectedItemTexture(Texture texture) {
-        this.selectedItemTexture = texture;
+        this.selectedItemTexture = new TextureRegion(texture);
         if (selectedItem != null) {
             selectedItem.setSelectedTexture();
         }
     }
 
     public void setSelectionIndicatorTexture(Texture texture) {
+        this.defaultIndicatorTexture = new TextureRegion(texture);;
+        selectionIndicator.setDrawable(new TextureRegionDrawable(texture));
+    }
+    public void setSelectedItemTexture(TextureRegion texture) {
+        this.selectedItemTexture = texture;
+        if (selectedItem != null) {
+            selectedItem.setSelectedTexture();
+        }
+    }
+
+    public void setSelectionIndicatorTexture(TextureRegion texture) {
         this.defaultIndicatorTexture = texture;
         selectionIndicator.setDrawable(new TextureRegionDrawable(texture));
     }

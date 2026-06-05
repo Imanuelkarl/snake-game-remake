@@ -6,10 +6,9 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.regensnakevsblock.sbb.MyGame;
-import com.regensnakevsblock.sbb.assets.Assets;
+import com.regensnakevsblock.sbb.assets.Assets2;
 import com.regensnakevsblock.sbb.config.GameInstance;
 import com.regensnakevsblock.sbb.utils.SimpleBitmapFont;
 
@@ -37,14 +36,19 @@ public class LoadingScreen extends InputAdapter implements Screen {
             Gdx.files.internal("fonts/ImageFonts/FontsHDTwo.fnt"),
             Gdx.files.internal("fonts/ImageFonts/FontsHDTwo.png")
         );
-        logo = new Texture("ui/SnakeBlockLogo.png");
+        logo = new Texture("SnakeBlockLogo.png");
         background = new Texture("game_bg_light.png");
-        barBg = new Texture("ui/progressBarBg.png");
-        barFill = new Texture("ui/progressBarFill.png");
-        knob = new Texture("ui/progressBarKnob.png");
+        barBg = new Texture("progressBarBg.png");
+        barFill = new Texture("progressBarFill.png");
+        knob = new Texture("progressBarKnob.png");
 
         // Start asset loading
-        Assets.getInstance().loadAllAssets();
+        Assets2.getInstance().loadAllUI();
+        Assets2.getInstance().loadAllAssets();
+        if(game.getPurchaseService()!=null){
+            game.getPurchaseService().loadStoreItems();
+        }
+        GameInstance.getInstance().setPurchaseService(game.getPurchaseService());
     }
 
     @Override
@@ -57,7 +61,7 @@ public class LoadingScreen extends InputAdapter implements Screen {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         // Update asset loading progress
-        progress = Assets.getInstance().getProgress();
+        progress = Assets2.getInstance().getProgress();
         batch.setProjectionMatrix(camera.combined);
         camera.update();
 
@@ -89,7 +93,6 @@ public class LoadingScreen extends InputAdapter implements Screen {
         knobX = Math.min(barX + barWidth - knobSize / 2f, knobX);
         float textY = barY + barHeight + 15;
 
-
         batch.begin();
         batch.draw(background, 0, -camera.viewportHeight/2, camera.viewportWidth, camera.viewportHeight*2);
         // Draw background
@@ -110,14 +113,14 @@ public class LoadingScreen extends InputAdapter implements Screen {
             screenWidth / 2f - 150, textY);
 
         batch.end();
-
         // When loading is complete, switch to menu screen
-        if (Assets.getInstance().isLoaded()) {
-            Assets.getInstance().assignAssets(); // REQUIRED
-            GameInstance.getInstance().loadSkinData();
+        if (Assets2.getInstance().isLoaded()) {
+            Assets2.getInstance().assignAssets(); // REQUIRED
+            GameInstance.getInstance().loadSkinData(game);
             GameInstance.getInstance().load();
         }
-        if(Assets.getInstance().isLoaded()&&GameInstance.getInstance().isSkinDataLoaded()){
+        if(Assets2.getInstance().isLoaded()&&GameInstance.getInstance().isSkinDataLoaded()){
+
             game.setScreen(new HomeScreen(game));
         }
 
@@ -141,6 +144,7 @@ public class LoadingScreen extends InputAdapter implements Screen {
 
     @Override
     public void hide() {
+        dispose();
     }
 
     @Override

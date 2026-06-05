@@ -6,10 +6,9 @@ import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.ProgressBar;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
-import com.regensnakevsblock.sbb.assets.Assets;
+import com.regensnakevsblock.sbb.assets.Assets2;
 import com.regensnakevsblock.sbb.ui.core.BaseView;
 import com.regensnakevsblock.sbb.ui.core.ListItemView;
 import com.regensnakevsblock.sbb.ui.data.UpgradeData;
@@ -39,13 +38,13 @@ public class UpgradeCard extends Group implements ListItemView<UpgradeData>, Bas
 
     private void setupUI() {
 
-        background = new Image(new TextureRegionDrawable(Assets.getInstance().upgradeCardBG));
+        background = new Image(new TextureRegionDrawable(Assets2.getInstance().upgradeCardBG));
         background.setSize(width-40, 260);
         background.setPosition(20,20);
         addActor(background);
 
 
-        icon = new Image(new TextureRegionDrawable(Assets.getInstance().coinTexture));
+        icon = new Image(new TextureRegionDrawable(Assets2.getInstance().coinTexture));
         icon.setSize(height-100, height-100);
         icon.setPosition(20,20);
         addActor(icon);
@@ -64,10 +63,10 @@ public class UpgradeCard extends Group implements ListItemView<UpgradeData>, Bas
         valueLabel.setPosition(height-40, height-170);
         addActor(valueLabel);
         //Upgrade button
-        upgradeButton = ActorFactory.createButton(Assets.getInstance().upgradeItemButton, 0,0,230,90);
+        upgradeButton = ActorFactory.createButton(Assets2.getInstance().upgradeItemButton, 0,0,230,90);
 
         //Currency to purchase with
-        currencyIcon = ActorFactory.createUiImage(Assets.getInstance().coinTexture, 50,5,30,30);
+        currencyIcon = ActorFactory.createUiImage(Assets2.getInstance().coinTexture, 50,5,30,30);
 
         // Cost
         costLabel =  ActorFactory.createTextLabel(30, 110, 20);
@@ -82,7 +81,7 @@ public class UpgradeCard extends Group implements ListItemView<UpgradeData>, Bas
         addActor(buttonGroup);
 
         // Progress bar
-        progressBar =ActorFactory.createProgressBar(Assets.getInstance().upgradeProgressBG, Assets.getInstance().upgradeProgressFill,250,40);
+        progressBar =ActorFactory.createProgressBar(Assets2.getInstance().upgradeProgressBG, Assets2.getInstance().upgradeProgressFill,250,40);
         progressBar.setSize(450, 15);
         progressBar.setPosition(200, 40);
         addActor(progressBar);

@@ -209,13 +209,16 @@ public class SplashScreen implements Screen {
     public void resume() {}
 
     @Override
-    public void hide() {}
+    public void hide() {
+        dispose();
+    }
 
     @Override
     public void dispose() {
-        batch.dispose();
         logoMain.dispose();
         logoPartner.dispose();
         collaborationText.dispose();
+        //batch.dispose();
+
     }
 }

@@ -1,0 +1,97 @@
+
+global.png
+size: 2048, 2048
+format: RGBA8888
+filter: Linear, Linear
+repeat: none
+FontsHDTwo
+  rotate: false
+  xy: 455, 310
+  size: 512, 143
+  orig: 512, 143
+  offset: 0, 0
+  index: -1
+addButton2
+  rotate: false
+  xy: 1602, 1774
+  size: 264, 264
+  orig: 264, 264
+  offset: 0, 0
+  index: -1
+defaultButton
+  rotate: false
+  xy: 1, 1225
+  size: 1360, 492
+  orig: 1360, 492
+  offset: 0, 0
+  index: -1
+defaultItemsLook
+  rotate: false
+  xy: 1363, 1540
+  size: 128, 177
+  orig: 128, 177
+  offset: 0, 0
+  index: -1
+downBGBlue
+  rotate: false
+  xy: 1, 1719
+  size: 1599, 319
+  orig: 1599, 319
+  offset: 0, 0
+  index: -1
+menuBG
+  rotate: false
+  xy: 1, 455
+  size: 512, 768
+  orig: 512, 768
+  offset: 0, 0
+  index: -1
+powerUpTexture
+  rotate: false
+  xy: 1, 1
+  size: 452, 452
+  orig: 452, 452
+  offset: 0, 0
+  index: -1
+scoreBoard
+  rotate: false
+  xy: 455, 131
+  size: 289, 87
+  orig: 289, 87
+  offset: 0, 0
+  index: -1
+shaderLayer
+  rotate: false
+  xy: 515, 455
+  size: 512, 768
+  orig: 512, 768
+  offset: 0, 0
+  index: -1
+snakeCoin
+  rotate: false
+  xy: 1029, 474
+  size: 256, 233
+  orig: 256, 233
+  offset: 0, 0
+  index: -1
+snakeDiamond
+  rotate: false
+  xy: 1029, 967
+  size: 256, 256
+  orig: 256, 256
+  offset: 0, 0
+  index: -1
+snakeHealthPortion
+  rotate: false
+  xy: 1029, 709
+  size: 256, 256
+  orig: 256, 256
+  offset: 0, 0
+  index: -1
+upLayout
+  rotate: false
+  xy: 455, 220
+  size: 512, 88
+  orig: 512, 88
+  offset: 0, 0
+  index: -1

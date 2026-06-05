@@ -1,9 +1,6 @@
 package com.regensnakevsblock.sbb.world;
 
-import static com.regensnakevsblock.sbb.utils.RandomEngine.getRandom;
-
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
@@ -14,9 +11,8 @@ import com.badlogic.gdx.graphics.g2d.ParticleEffect;
 import com.badlogic.gdx.graphics.g2d.ParticleEmitter;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
-import com.regensnakevsblock.sbb.assets.Assets;
+import com.regensnakevsblock.sbb.assets.Assets2;
 import com.regensnakevsblock.sbb.config.Constants;
 import com.regensnakevsblock.sbb.config.GameInstance;
 import com.regensnakevsblock.sbb.entities.Block;
@@ -25,14 +21,11 @@ import com.regensnakevsblock.sbb.entities.Row;
 import com.regensnakevsblock.sbb.entities.Snake;
 import com.regensnakevsblock.sbb.entities.SnakeSection;
 import com.regensnakevsblock.sbb.entities.WinBody;
-import com.regensnakevsblock.sbb.enumaretors.PowerUp;
-import com.regensnakevsblock.sbb.utils.CustomBitmapFont;
 import com.regensnakevsblock.sbb.utils.FontFactory;
 import com.regensnakevsblock.sbb.utils.SimpleBitmapFont;
 import com.regensnakevsblock.sbb.utils.TextureTools;
 
 import java.util.ArrayList;
-import java.util.Base64;
 
 public class WorldRenderer implements HitListener {
     public OrthographicCamera camera;
@@ -46,8 +39,9 @@ public class WorldRenderer implements HitListener {
 
     private final Texture blockTexture;
     private final Texture lineTexture;
-    private final Texture snakeTexture;
+    private final TextureRegion snakeTexture;
     private float radius;
+    private int snakeSkinId;
 
     private BitmapFont scoreFont;
     private BitmapFont blockFont;
@@ -67,27 +61,30 @@ public class WorldRenderer implements HitListener {
         this.camera= worldState.getCamera();
         this.worldState = worldState;
         this.batch = new SpriteBatch();
-        this.snakeTexture = Assets.getInstance().snakeTexture;
-        this.blockTexture=Assets.getInstance().blockTexture;
-        this.lineTexture=Assets.getInstance().lineTexture;
+
+        this.blockTexture= Assets2.getInstance().blockTexture;
+        this.lineTexture= Assets2.getInstance().lineTexture;
         radius= worldState.getBlockDimension()/7;
         this.snake=worldState.getSnake();
         snake.setRadius(radius);
-
+        snakeSkinId = worldState.getSnakeSkinId();
+        int col = snakeSkinId % 6;
+        int row = snakeSkinId / 6;
+        this.snakeTexture = TextureTools.resolveRegion(Assets2.getInstance().snakeSkins,8,6,col,row,12);
         this.rows=worldState.getRows();
         this.scoreFont = FontFactory.getRoboto(34, true);   // Score / High score
         this.blockFont = FontFactory.getRoboto(60, false);   // Block numbers
         this.smallFont = FontFactory.getRoboto(20, false);
 
-        Texture powerUps= Assets.getInstance().powerUpTexture;;
+        TextureRegion powerUps= Assets2.getInstance().powerUpTexture;;
         this.magnetPowerUp = TextureTools.resolveRegion(powerUps,2,2,1,0,0);
         this.hammerPowerUp = TextureTools.resolveRegion(powerUps,2,2,0,0,0);
         this.freezePowerUp = TextureTools.resolveRegion(powerUps,2,2,1,1,0);
         this.multiplierPowerUp=TextureTools.resolveRegion(powerUps,2,2,0,1,0);
 
-        this.bloodEffect =Assets.getInstance().bloodEffect;
+        this.bloodEffect = Assets2.getInstance().bloodEffect;
         ParticleEmitter emitter=bloodEffect.findEmitter(bloodEffect.getEmitters().get(0).getName());
-        emitter.getTint().setColors(Constants.Snake_Texture_Colors[9]);;
+        emitter.getTint().setColors(Constants.Snake_Texture_Colors[snakeSkinId]);;
         bloodEffect.setDuration(3000);
         font=GameInstance.getInstance().getSimpleBitmapFont();
 
@@ -120,7 +117,7 @@ public class WorldRenderer implements HitListener {
 
     }
     private void renderPowerUp(){
-        if(worldState.isPowerUpIsActive()) {
+        if(worldState.isPowerUpActive()) {
             float size = worldState.getBlockDimension() * 1.1f;
             float powerUpX=worldState.getScreenWidth()/2 - size / 2;
             float powerUpY=worldState.getScreenHeight() - (worldState.getScreenHeight() / 8);
@@ -237,7 +234,8 @@ public class WorldRenderer implements HitListener {
                             winBody.setPosition(winBodyX,row.getY()+radius*2);
 
                         }
-                        batch.draw(winBody.getType()== WinBody.Type.COIN?Assets.getInstance().coinTexture : snakeTexture, winBody.getX(), winBody.getY(), radius * 2, radius * 2);
+                        TextureRegion coinRegion =TextureTools.resolveRegion(Assets2.getInstance().coinTexture,1,1,0,0,0);
+                        batch.draw(winBody.getType()== WinBody.Type.COIN?coinRegion : snakeTexture, winBody.getX(), winBody.getY(), radius * 2, radius * 2);
                         float textX = winBody.getX() + radius - layout.width / 2f;
                         float textY = winBody.getY() + radius * 2f + layout.height *2f;
                         smallFont.draw(batch, layout, textX, textY);
@@ -250,7 +248,7 @@ public class WorldRenderer implements HitListener {
                     batch.draw(lineTexture, lineX, row.getY(), line.getWidth(), worldState.getBlockDimension());
                 }
                 if(row.isFinishLine()){
-                    batch.draw(Assets.getInstance().finishLineTexture,0,row.getY()+worldState.getBlockDimension()*2,camera.viewportWidth,worldState.getBlockDimension());
+                    batch.draw(Assets2.getInstance().finishLineTexture,0,row.getY()+worldState.getBlockDimension()*2,camera.viewportWidth,worldState.getBlockDimension());
                 }
             }
         }
@@ -287,7 +285,7 @@ public class WorldRenderer implements HitListener {
         batch.dispose();
         bloodEffect.dispose();
         font.dispose();
-        snakeTexture.dispose();
+        //snakeTexture.dispose();
         lineTexture.dispose();
         blockTexture.dispose();
     }
