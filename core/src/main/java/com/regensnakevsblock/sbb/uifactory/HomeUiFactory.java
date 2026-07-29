@@ -4,7 +4,9 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
@@ -15,6 +17,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.regensnakevsblock.sbb.assets.Assets2;
 import com.regensnakevsblock.sbb.elements.GameDialog;
 import com.regensnakevsblock.sbb.elements.ImageCheckBoxGroup;
+import com.regensnakevsblock.sbb.utils.ActorFactory;
 import com.regensnakevsblock.sbb.utils.FontFactory;
 
 public class HomeUiFactory {
@@ -34,6 +37,8 @@ public class HomeUiFactory {
     private float topRowStartX;
     private float bottomRowStartX;
     private float bottomRowRejectStartX;
+    private GlyphLayout layout;
+    private BitmapFont font;
 
     public HomeUiFactory(Stage stage) {
 
@@ -42,6 +47,8 @@ public class HomeUiFactory {
         actionButtonSize=120.5f;
         logoHeight =230f;
         logoWidth =602f;
+        font = new BitmapFont(Gdx.files.internal("fonts/ImageFonts/highScoreNumbers.fnt"));
+        layout = new GlyphLayout();
         initButtonLayout();
     }
 
@@ -54,7 +61,6 @@ public class HomeUiFactory {
 
     // Button creation methods
     public ImageButton createSettingsButton() {
-        System.out.println("The width here is "+width/6f);
         return createButton(
             Assets2.getInstance().settingsButtonTexture,
             width / 3 - width / 4,
@@ -69,7 +75,7 @@ public class HomeUiFactory {
         return createButton(
             Assets2.getInstance().playButtonTexture,
             width / 2 - playButtonSize/2,
-            height *0.45f,
+            height *0.4f,
             playButtonSize,
             playButtonSize
         );
@@ -325,5 +331,29 @@ public class HomeUiFactory {
     public Image createDifficultyTitle(){
         return createUiImage(Assets2.getInstance().difficultyTexture, width/2 -width/7, height/2.4f, width/3.5f, height*0.02f);
     }
+    public Group highScoreGroup(Long highScore){
+        Group group = new Group();
+        float gWidth = width/2f;
+        float gHeight = height/12;
+        String highScoreText =String.valueOf(highScore);
+        font.getData().setScale(0.35f);
+        layout.setText(font,highScoreText);
+        Label highScoreLabel = ActorFactory.createTextLabel(font,highScoreText);
+        float scoreX = gWidth/2-layout.width/2;
+        float scoreY =-layout.height/2+40;
+        highScoreLabel.setPosition(scoreX+gWidth*0.08f,-layout.height/2+40);
+        Image highScoreBg = createUiImage(Assets2.getInstance().highScoreBackground,0,0,gWidth,gHeight);
+        Image highScoreUiLabel = createUiImage(Assets2.getInstance().highScoreLabel,30+gWidth/4,scoreY+layout.height+20,gWidth/2f,30);
+        Image highScoreTrophy = createUiImage(Assets2.getInstance().highScoreTrophy,20,10,gWidth/4f,gHeight -30);
+        group.setPosition((width-gWidth)/2,height*0.6f);
+        group.addActor(highScoreBg);
+        group.addActor(highScoreTrophy);
+        group.addActor(highScoreUiLabel);
+        group.addActor(highScoreLabel);
 
+        return group;
+    }
+    public void dispose(){
+        font.dispose();
+    }
 }

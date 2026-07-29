@@ -6,10 +6,10 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.regensnakevsblock.sbb.MyGame;
-import com.regensnakevsblock.sbb.assets.Assets;
 import com.regensnakevsblock.sbb.assets.Assets2;
 import com.regensnakevsblock.sbb.ui.HomeUi;
 import com.regensnakevsblock.sbb.uiactions.HomeUiListener;
+import com.regensnakevsblock.sbb.world.WorldState;
 
 public class HomeScreen implements Screen, HomeUiListener {
 
@@ -71,7 +71,7 @@ public class HomeScreen implements Screen, HomeUiListener {
 
     @Override
     public void onPlayClicked() {
-        game.setScreen(new MainGame(game));
+        game.setScreen(new MainGame(game, WorldState.GameMode.ENDLESS));
     }
 
     @Override

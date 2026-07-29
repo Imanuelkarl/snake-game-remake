@@ -3,6 +3,7 @@ package com.regensnakevsblock.sbb.utils;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
@@ -26,12 +27,20 @@ public class ActorFactory {
         return createTextLabel(text,fontSize,x,y,style);
     }
     public static Label createTextLabel(String text, int fontSize, float x, float y, Label.LabelStyle style) {
+        BitmapFont font = FontFactory.getRoboto(fontSize, true);
 
-        style.font = FontFactory.getRoboto(fontSize, true);
+        return createTextLabel(text,/*fontSize,*/x,y,style,font);
+    }
+    public static Label createTextLabel(String text,/* int fontSize,*/ float x, float y, Label.LabelStyle style, BitmapFont font) {
 
+        style.font = font;
         Label label = new Label(text, style);
         label.setPosition(x, y);
         return label;
+    }
+    public static Label createTextLabel( BitmapFont font,String text) {
+        Label.LabelStyle style = new Label.LabelStyle();
+        return createTextLabel(text,0,0,style,font);
     }
     public static Label createTextLabel( float x, float y) {
         return createTextLabel(24,x,y);

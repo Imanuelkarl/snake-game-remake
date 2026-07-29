@@ -7,4 +7,6 @@ public interface GameOverListener {
     void shopButtonClicked();
 
     void multiplyButtonClicked();
+
+    void nextLevelButtonClicked();
 }

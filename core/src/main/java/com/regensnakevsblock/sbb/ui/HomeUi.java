@@ -5,7 +5,9 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
@@ -26,7 +28,6 @@ import com.regensnakevsblock.sbb.service.SaveService;
 import com.regensnakevsblock.sbb.uiactions.HomeUiListener;
 import com.regensnakevsblock.sbb.uifactory.HomeUiFactory;
 import com.regensnakevsblock.sbb.utils.ActorFactory;
-import com.regensnakevsblock.sbb.utils.SimpleBitmapFont;
 
 public class HomeUi {
 
@@ -42,7 +43,7 @@ public class HomeUi {
     private int soundVolume;
     private int musicVolume;
 
-    SimpleBitmapFont simpleBitmapFont;
+    BitmapFont bitmapFont;
     private final HomeUiFactory homeUiFactory;
     public HomeUi(HomeUiListener listener) {
         this.listener = listener;
@@ -53,15 +54,14 @@ public class HomeUi {
         this.stage = new Stage(viewport);
         this.homeUiFactory=new HomeUiFactory(stage);
         saveService = new SaveService();
+        //saveService.clearData();
         setup();
         build();
     }
 
     private void build() {
-        simpleBitmapFont = GameInstance.getInstance().getSimpleBitmapFont();
+        bitmapFont = Assets2.getInstance().font;
 
-        // Optional: Enable debug to see character boxes
-        simpleBitmapFont.setDebugMode(false);
         Table header = homeUiFactory.createHeaderTable();
         header.setBackground(new TextureRegionDrawable(Assets2.getInstance().upLayout));
         ImageButton closeBtn = ActorFactory.createButton(Assets2.getInstance().closeTexture, stage.getWidth()-70, stage.getHeight()-70, 60, 60);
@@ -71,7 +71,6 @@ public class HomeUi {
         closeBtn.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                System.out.println("Exit clicked");
                 Gdx.app.exit();
 
             }
@@ -86,13 +85,13 @@ public class HomeUi {
         });
 
 
-
         // Create Buttons
         ImageButton playButton = homeUiFactory.createPlayButton();
         ImageButton levelsButton = homeUiFactory.createLevelsButton();
         ImageButton settingsButton = homeUiFactory.createSettingsButton();
         ImageButton shareButton = homeUiFactory.createShareButton();
         ImageButton snakeSkinButton = homeUiFactory.createSnakeSkinButton();
+        Group highScoreGroup = homeUiFactory.highScoreGroup(saveService.getHighScore());
         Image background = ActorFactory.createUiImage(Assets2.getInstance().backgroundTexture,0,0,stage.getWidth(),stage.getHeight());
         //Set Buttons Actions/ Listeners
         playButton.addListener(new ClickListener() {
@@ -154,7 +153,7 @@ public class HomeUi {
 
             @Override
             public void onItemChecked(int index, ImageCheckBoxGroup.Item item) {
-                System.out.println("Item " + index + " was checked!");
+
                 // Call your functions here
                 saveService.saveDifficulty(index);
             }
@@ -206,6 +205,7 @@ public class HomeUi {
         stage.addActor(homeUiFactory.createLogoImage());
         if(isDesktop()) stage.addActor(header);
         // Add Buttons to Stage
+        stage.addActor(highScoreGroup);
         stage.addActor(playButton);
         stage.addActor(levelsButton);
         stage.addActor(settingsButton);

@@ -70,7 +70,7 @@ public class PurchaseManager implements PurchaseService {
                 .build())
             .setListener(new PurchasesUpdatedListener() {
                 @Override
-                public void onPurchasesUpdated(@NonNull BillingResult billingResult, @Nullable List<Purchase> list) {
+                public void onPurchasesUpdated( BillingResult billingResult, @Nullable List<Purchase> list) {
                     if(billingResult.getResponseCode()==BillingClient.BillingResponseCode.OK&&list!=null){
                         for (Purchase purchase:list) {
                             if(purchase.getPurchaseState()==Purchase.PurchaseState.PURCHASED&&!purchase.isAcknowledged()){
@@ -136,6 +136,8 @@ public class PurchaseManager implements PurchaseService {
     }
     @Override
     public List<PurchaseItem> getPurchaseItems() {
+        Log.d("ITEM LIST","Items are ready \n\n\"");
+        System.out.println(items);
         return items;
     }
 

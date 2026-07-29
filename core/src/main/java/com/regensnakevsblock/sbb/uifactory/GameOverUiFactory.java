@@ -43,6 +43,10 @@ public class GameOverUiFactory {
     public Image createGameOverTitle(){
         return ActorFactory.createUiImage(Assets2.getInstance().gameOverHeaderTexture,gameOverLayout.title.x,gameOverLayout.title.y,gameOverLayout.title.width,gameOverLayout.title.height);
     }
+    public Image createVictoryTitle(){
+        return ActorFactory.createUiImage(Assets2.getInstance().victoryHeaderTexture,gameOverLayout.title.x,gameOverLayout.title.y,gameOverLayout.title.width,gameOverLayout.title.height);
+    }
+
     public Image createGameOverDialog(){
         return ActorFactory.createUiImage(Assets2.getInstance().noHeaderDialog,gameOverLayout.dialog.x,gameOverLayout.dialog.y,gameOverLayout.dialog.width,gameOverLayout.dialog.height);
     }
@@ -63,6 +67,9 @@ public class GameOverUiFactory {
     }
     public ImageButton createShopButton(){
         return ActorFactory.createButton(Assets2.getInstance().upgradeButtonTexture,width/2-width/4.4f,height/16+height/12,width/2.2f,height/12);
+    }
+    public ImageButton createNextLevelButton(){
+        return ActorFactory.createButton(Assets2.getInstance().nextLevelTexture,width/2-width/4.4f,height/16+height/12,width/2.2f,height/12);
     }
     public void resize(float width,float height){
         this.width=width;

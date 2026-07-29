@@ -32,6 +32,9 @@ public class SaveService {
         saveIntegerData("diamonds",diamonds);
         this.diamonds = diamonds;
     }
+    public void clearData(){
+        myPreferences.clear();
+    }
 
     public Long getHealths() {
         return getNumberValue("health");

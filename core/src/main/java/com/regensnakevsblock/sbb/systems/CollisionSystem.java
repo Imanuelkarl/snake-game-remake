@@ -3,6 +3,7 @@ package com.regensnakevsblock.sbb.systems;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.math.Rectangle;
 import com.regensnakevsblock.sbb.assets.Assets2;
+import com.regensnakevsblock.sbb.config.GameInstance;
 import com.regensnakevsblock.sbb.entities.*;
 import com.regensnakevsblock.sbb.enumaretors.PowerUp;
 import com.regensnakevsblock.sbb.service.SaveService;
@@ -64,6 +65,7 @@ public class CollisionSystem extends GlobalSystems {
             if(row.isFinishLine()){
                 if(snake.getBounds().overlaps(finishLine)){
                     worldState.setPaused(true);
+                    worldState.setLevelCleared();
                     return;
                 }
             }

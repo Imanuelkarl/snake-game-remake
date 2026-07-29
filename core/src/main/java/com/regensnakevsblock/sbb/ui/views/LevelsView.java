@@ -28,6 +28,16 @@ public class LevelsView extends BaseActorView {
         setupTransform();
         loadData();
     }
+    public LevelsView(Group group){
+        super(group);
+        setSize(group.getWidth(), group.getHeight());
+
+        this.width = group.getWidth();
+        this.height = group.getHeight();
+        setupList();
+        setupTransform();
+        loadData();
+    }
 
     @Override
     public void setParentView(Group parent) {
@@ -56,7 +66,10 @@ public class LevelsView extends BaseActorView {
             }
         });
     }
-
+    public void rebindView(){
+        adapter.setData(GameInstance.getInstance().getLevelData());
+        listManager.onResize(width, height);
+    }
     @Override
     public void update(float delta) {
 

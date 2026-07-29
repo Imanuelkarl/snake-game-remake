@@ -1,258 +1,224 @@
 [
   {
-    "noOfBlocks": 12,
+    "noOfBlocks": 0,
     "cleared": false,
-    "levelType": "BLOCKS",
-    "noOfRows": 0,
+    "levelType": "FINISH_LINE",
+    "noOfRows": 10,
     "levelId": 1
   },
   {
-    "noOfBlocks": 14,
+    "noOfBlocks": 0,
     "cleared": false,
-    "levelType": "BLOCKS",
-    "noOfRows": 0,
+    "levelType": "FINISH_LINE",
+    "noOfRows": 11,
     "levelId": 2
   },
   {
-    "noOfBlocks": 20,
+    "noOfBlocks": 0,
     "cleared": false,
-    "colorIntegerMap": {
-      "2": 9,
-      "4": 11
-    },
-    "levelType": "COLORED_BLOCKS",
-    "noOfRows": 0,
+    "levelType": "FINISH_LINE",
+    "noOfRows": 13,
     "levelId": 3
   },
   {
-    "noOfBlocks": 18,
+    "noOfBlocks": 8,
     "cleared": false,
     "levelType": "BLOCKS",
     "noOfRows": 0,
     "levelId": 4
   },
   {
-    "noOfBlocks": 20,
+    "noOfBlocks": 9,
     "cleared": false,
     "levelType": "BLOCKS",
     "noOfRows": 0,
     "levelId": 5
   },
   {
-    "noOfBlocks": 46,
+    "noOfBlocks": 7,
     "cleared": false,
     "colorIntegerMap": {
-      "1": 15,
-      "2": 16,
-      "3": 15
+      "1": 3,
+      "4": 4
     },
     "levelType": "COLORED_BLOCKS",
     "noOfRows": 0,
     "levelId": 6
   },
   {
-    "noOfBlocks": 24,
+    "noOfBlocks": 11,
     "cleared": false,
-    "levelType": "BLOCKS",
+    "colorIntegerMap": {
+      "4": 6,
+      "5": 5
+    },
+    "levelType": "COLORED_BLOCKS",
     "noOfRows": 0,
     "levelId": 7
   },
   {
-    "noOfBlocks": 26,
+    "noOfBlocks": 0,
     "cleared": false,
-    "levelType": "BLOCKS",
-    "noOfRows": 0,
+    "levelType": "FINISH_LINE",
+    "noOfRows": 17,
     "levelId": 8
   },
   {
-    "noOfBlocks": 82,
+    "noOfBlocks": 0,
     "cleared": false,
-    "colorIntegerMap": {
-      "1": 19,
-      "2": 14,
-      "3": 14,
-      "4": 16,
-      "5": 19
-    },
-    "levelType": "COLORED_BLOCKS",
-    "noOfRows": 0,
+    "levelType": "FINISH_LINE",
+    "noOfRows": 20,
     "levelId": 9
   },
   {
     "noOfBlocks": 0,
     "cleared": false,
     "levelType": "FINISH_LINE",
-    "noOfRows": 100,
+    "noOfRows": 27,
     "levelId": 10
   },
   {
-    "noOfBlocks": 32,
+    "noOfBlocks": 9,
     "cleared": false,
-    "levelType": "BLOCKS",
+    "colorIntegerMap": {
+      "2": 6,
+      "5": 3
+    },
+    "levelType": "COLORED_BLOCKS",
     "noOfRows": 0,
     "levelId": 11
   },
   {
-    "noOfBlocks": 98,
+    "noOfBlocks": 0,
     "cleared": false,
-    "colorIntegerMap": {
-      "1": 17,
-      "2": 22,
-      "3": 21,
-      "4": 18,
-      "5": 20
-    },
-    "levelType": "COLORED_BLOCKS",
-    "noOfRows": 0,
+    "levelType": "FINISH_LINE",
+    "noOfRows": 26,
     "levelId": 12
   },
   {
-    "noOfBlocks": 36,
+    "noOfBlocks": 0,
     "cleared": false,
-    "levelType": "BLOCKS",
-    "noOfRows": 0,
+    "levelType": "FINISH_LINE",
+    "noOfRows": 29,
     "levelId": 13
   },
   {
-    "noOfBlocks": 38,
+    "noOfBlocks": 0,
     "cleared": false,
-    "levelType": "BLOCKS",
-    "noOfRows": 0,
+    "levelType": "FINISH_LINE",
+    "noOfRows": 32,
     "levelId": 14
   },
   {
-    "noOfBlocks": 109,
+    "noOfBlocks": 12,
     "cleared": false,
-    "colorIntegerMap": {
-      "1": 23,
-      "2": 22,
-      "3": 24,
-      "4": 20,
-      "5": 20
-    },
-    "levelType": "COLORED_BLOCKS",
+    "levelType": "BLOCKS",
     "noOfRows": 0,
     "levelId": 15
   },
   {
-    "noOfBlocks": 42,
+    "noOfBlocks": 0,
     "cleared": false,
-    "levelType": "BLOCKS",
-    "noOfRows": 0,
+    "levelType": "FINISH_LINE",
+    "noOfRows": 34,
     "levelId": 16
   },
   {
-    "noOfBlocks": 44,
+    "noOfBlocks": 13,
     "cleared": false,
     "levelType": "BLOCKS",
     "noOfRows": 0,
     "levelId": 17
   },
   {
-    "noOfBlocks": 100,
+    "noOfBlocks": 0,
     "cleared": false,
-    "colorIntegerMap": {
-      "1": 26,
-      "2": 25,
-      "3": 25,
-      "4": 24
-    },
-    "levelType": "COLORED_BLOCKS",
-    "noOfRows": 0,
+    "levelType": "FINISH_LINE",
+    "noOfRows": 40,
     "levelId": 18
   },
   {
-    "noOfBlocks": 48,
+    "noOfBlocks": 0,
     "cleared": false,
-    "levelType": "BLOCKS",
-    "noOfRows": 0,
+    "levelType": "FINISH_LINE",
+    "noOfRows": 42,
     "levelId": 19
   },
   {
     "noOfBlocks": 0,
     "cleared": false,
     "levelType": "FINISH_LINE",
-    "noOfRows": 150,
+    "noOfRows": 47,
     "levelId": 20
   },
   {
-    "noOfBlocks": 112,
+    "noOfBlocks": 15,
     "cleared": false,
-    "colorIntegerMap": {
-      "1": 30,
-      "2": 27,
-      "4": 27,
-      "5": 28
-    },
-    "levelType": "COLORED_BLOCKS",
+    "levelType": "BLOCKS",
     "noOfRows": 0,
     "levelId": 21
   },
   {
-    "noOfBlocks": 54,
+    "noOfBlocks": 16,
     "cleared": false,
     "levelType": "BLOCKS",
     "noOfRows": 0,
     "levelId": 22
   },
   {
-    "noOfBlocks": 56,
+    "noOfBlocks": 10,
     "cleared": false,
-    "levelType": "BLOCKS",
+    "colorIntegerMap": {
+      "4": 5,
+      "5": 5
+    },
+    "levelType": "COLORED_BLOCKS",
     "noOfRows": 0,
     "levelId": 23
   },
   {
-    "noOfBlocks": 94,
+    "noOfBlocks": 22,
     "cleared": false,
-    "colorIntegerMap": {
-      "1": 30,
-      "4": 34,
-      "5": 30
-    },
-    "levelType": "COLORED_BLOCKS",
+    "levelType": "BLOCKS",
     "noOfRows": 0,
     "levelId": 24
   },
   {
-    "noOfBlocks": 60,
+    "noOfBlocks": 21,
     "cleared": false,
     "levelType": "BLOCKS",
     "noOfRows": 0,
     "levelId": 25
   },
   {
-    "noOfBlocks": 62,
+    "noOfBlocks": 0,
     "cleared": false,
-    "levelType": "BLOCKS",
-    "noOfRows": 0,
+    "levelType": "FINISH_LINE",
+    "noOfRows": 50,
     "levelId": 26
   },
   {
-    "noOfBlocks": 172,
+    "noOfBlocks": 0,
     "cleared": false,
-    "colorIntegerMap": {
-      "1": 33,
-      "2": 36,
-      "3": 33,
-      "4": 34,
-      "5": 36
-    },
-    "levelType": "COLORED_BLOCKS",
-    "noOfRows": 0,
+    "levelType": "FINISH_LINE",
+    "noOfRows": 49,
     "levelId": 27
   },
   {
-    "noOfBlocks": 66,
+    "noOfBlocks": 0,
     "cleared": false,
-    "levelType": "BLOCKS",
-    "noOfRows": 0,
+    "levelType": "FINISH_LINE",
+    "noOfRows": 53,
     "levelId": 28
   },
   {
-    "noOfBlocks": 68,
+    "noOfBlocks": 9,
     "cleared": false,
-    "levelType": "BLOCKS",
+    "colorIntegerMap": {
+      "3": 5,
+      "5": 4
+    },
+    "levelType": "COLORED_BLOCKS",
     "noOfRows": 0,
     "levelId": 29
   },
@@ -260,83 +226,79 @@
     "noOfBlocks": 0,
     "cleared": false,
     "levelType": "FINISH_LINE",
-    "noOfRows": 200,
+    "noOfRows": 59,
     "levelId": 30
   },
   {
-    "noOfBlocks": 72,
+    "noOfBlocks": 28,
     "cleared": false,
     "levelType": "BLOCKS",
     "noOfRows": 0,
     "levelId": 31
   },
   {
-    "noOfBlocks": 74,
+    "noOfBlocks": 0,
     "cleared": false,
-    "levelType": "BLOCKS",
-    "noOfRows": 0,
+    "levelType": "FINISH_LINE",
+    "noOfRows": 62,
     "levelId": 32
   },
   {
-    "noOfBlocks": 165,
+    "noOfBlocks": 0,
     "cleared": false,
-    "colorIntegerMap": {
-      "1": 43,
-      "2": 42,
-      "4": 39,
-      "5": 41
-    },
-    "levelType": "COLORED_BLOCKS",
-    "noOfRows": 0,
+    "levelType": "FINISH_LINE",
+    "noOfRows": 60,
     "levelId": 33
   },
   {
-    "noOfBlocks": 78,
+    "noOfBlocks": 23,
     "cleared": false,
-    "levelType": "BLOCKS",
+    "colorIntegerMap": {
+      "1": 6,
+      "3": 8,
+      "5": 9
+    },
+    "levelType": "COLORED_BLOCKS",
     "noOfRows": 0,
     "levelId": 34
   },
   {
-    "noOfBlocks": 80,
+    "noOfBlocks": 22,
     "cleared": false,
-    "levelType": "BLOCKS",
+    "colorIntegerMap": {
+      "2": 6,
+      "4": 7,
+      "5": 9
+    },
+    "levelType": "COLORED_BLOCKS",
     "noOfRows": 0,
     "levelId": 35
   },
   {
-    "noOfBlocks": 88,
+    "noOfBlocks": 27,
     "cleared": false,
-    "colorIntegerMap": {
-      "2": 46,
-      "3": 42
-    },
-    "levelType": "COLORED_BLOCKS",
+    "levelType": "BLOCKS",
     "noOfRows": 0,
     "levelId": 36
   },
   {
-    "noOfBlocks": 84,
+    "noOfBlocks": 0,
     "cleared": false,
-    "levelType": "BLOCKS",
-    "noOfRows": 0,
+    "levelType": "FINISH_LINE",
+    "noOfRows": 63,
     "levelId": 37
   },
   {
-    "noOfBlocks": 86,
+    "noOfBlocks": 32,
     "cleared": false,
     "levelType": "BLOCKS",
     "noOfRows": 0,
     "levelId": 38
   },
   {
-    "noOfBlocks": 94,
+    "noOfBlocks": 31,
     "cleared": false,
-    "colorIntegerMap": {
-      "2": 48,
-      "3": 46
-    },
-    "levelType": "COLORED_BLOCKS",
+    "levelType": "BLOCKS",
     "noOfRows": 0,
     "levelId": 39
   },
@@ -344,167 +306,162 @@
     "noOfBlocks": 0,
     "cleared": false,
     "levelType": "FINISH_LINE",
-    "noOfRows": 250,
+    "noOfRows": 66,
     "levelId": 40
   },
   {
-    "noOfBlocks": 92,
+    "noOfBlocks": 0,
     "cleared": false,
-    "levelType": "BLOCKS",
-    "noOfRows": 0,
+    "levelType": "FINISH_LINE",
+    "noOfRows": 72,
     "levelId": 41
   },
   {
-    "noOfBlocks": 252,
+    "noOfBlocks": 20,
     "cleared": false,
     "colorIntegerMap": {
-      "1": 52,
-      "2": 52,
-      "3": 47,
-      "4": 49,
-      "5": 52
+      "2": 6,
+      "3": 6,
+      "4": 8
     },
     "levelType": "COLORED_BLOCKS",
     "noOfRows": 0,
     "levelId": 42
   },
   {
-    "noOfBlocks": 96,
+    "noOfBlocks": 23,
     "cleared": false,
-    "levelType": "BLOCKS",
+    "colorIntegerMap": {
+      "1": 6,
+      "3": 8,
+      "4": 9
+    },
+    "levelType": "COLORED_BLOCKS",
     "noOfRows": 0,
     "levelId": 43
   },
   {
-    "noOfBlocks": 98,
+    "noOfBlocks": 33,
     "cleared": false,
     "levelType": "BLOCKS",
     "noOfRows": 0,
     "levelId": 44
   },
   {
-    "noOfBlocks": 215,
+    "noOfBlocks": 0,
     "cleared": false,
-    "colorIntegerMap": {
-      "1": 52,
-      "2": 55,
-      "3": 54,
-      "4": 54
-    },
-    "levelType": "COLORED_BLOCKS",
-    "noOfRows": 0,
+    "levelType": "FINISH_LINE",
+    "noOfRows": 74,
     "levelId": 45
   },
   {
-    "noOfBlocks": 102,
+    "noOfBlocks": 39,
     "cleared": false,
     "levelType": "BLOCKS",
     "noOfRows": 0,
     "levelId": 46
   },
   {
-    "noOfBlocks": 104,
+    "noOfBlocks": 0,
     "cleared": false,
-    "levelType": "BLOCKS",
-    "noOfRows": 0,
+    "levelType": "FINISH_LINE",
+    "noOfRows": 77,
     "levelId": 47
   },
   {
-    "noOfBlocks": 107,
+    "noOfBlocks": 0,
     "cleared": false,
-    "colorIntegerMap": {
-      "3": 54,
-      "4": 53
-    },
-    "levelType": "COLORED_BLOCKS",
-    "noOfRows": 0,
+    "levelType": "FINISH_LINE",
+    "noOfRows": 80,
     "levelId": 48
   },
   {
-    "noOfBlocks": 108,
+    "noOfBlocks": 0,
     "cleared": false,
-    "levelType": "BLOCKS",
-    "noOfRows": 0,
+    "levelType": "FINISH_LINE",
+    "noOfRows": 84,
     "levelId": 49
   },
   {
     "noOfBlocks": 0,
     "cleared": false,
     "levelType": "FINISH_LINE",
-    "noOfRows": 300,
+    "noOfRows": 86,
     "levelId": 50
   },
   {
-    "noOfBlocks": 116,
+    "noOfBlocks": 21,
     "cleared": false,
     "colorIntegerMap": {
-      "2": 60,
-      "4": 56
+      "1": 6,
+      "2": 6,
+      "3": 9
     },
     "levelType": "COLORED_BLOCKS",
     "noOfRows": 0,
     "levelId": 51
   },
   {
-    "noOfBlocks": 114,
+    "noOfBlocks": 43,
     "cleared": false,
     "levelType": "BLOCKS",
     "noOfRows": 0,
     "levelId": 52
   },
   {
-    "noOfBlocks": 116,
+    "noOfBlocks": 40,
     "cleared": false,
     "levelType": "BLOCKS",
     "noOfRows": 0,
     "levelId": 53
   },
   {
-    "noOfBlocks": 186,
+    "noOfBlocks": 21,
     "cleared": false,
     "colorIntegerMap": {
-      "1": 64,
-      "3": 62,
-      "4": 60
+      "1": 6,
+      "2": 7,
+      "4": 8
     },
     "levelType": "COLORED_BLOCKS",
     "noOfRows": 0,
     "levelId": 54
   },
   {
-    "noOfBlocks": 120,
+    "noOfBlocks": 47,
     "cleared": false,
     "levelType": "BLOCKS",
     "noOfRows": 0,
     "levelId": 55
   },
   {
-    "noOfBlocks": 122,
+    "noOfBlocks": 50,
     "cleared": false,
     "levelType": "BLOCKS",
     "noOfRows": 0,
     "levelId": 56
   },
   {
-    "noOfBlocks": 133,
+    "noOfBlocks": 52,
     "cleared": false,
-    "colorIntegerMap": {
-      "3": 67,
-      "5": 66
-    },
-    "levelType": "COLORED_BLOCKS",
+    "levelType": "BLOCKS",
     "noOfRows": 0,
     "levelId": 57
   },
   {
-    "noOfBlocks": 126,
+    "noOfBlocks": 24,
     "cleared": false,
-    "levelType": "BLOCKS",
+    "colorIntegerMap": {
+      "1": 7,
+      "2": 8,
+      "5": 9
+    },
+    "levelType": "COLORED_BLOCKS",
     "noOfRows": 0,
     "levelId": 58
   },
   {
-    "noOfBlocks": 128,
+    "noOfBlocks": 51,
     "cleared": false,
     "levelType": "BLOCKS",
     "noOfRows": 0,
@@ -514,85 +471,94 @@
     "noOfBlocks": 0,
     "cleared": false,
     "levelType": "FINISH_LINE",
-    "noOfRows": 350,
+    "noOfRows": 91,
     "levelId": 60
   },
   {
-    "noOfBlocks": 132,
+    "noOfBlocks": 0,
     "cleared": false,
-    "levelType": "BLOCKS",
-    "noOfRows": 0,
+    "levelType": "FINISH_LINE",
+    "noOfRows": 92,
     "levelId": 61
   },
   {
-    "noOfBlocks": 134,
+    "noOfBlocks": 23,
     "cleared": false,
-    "levelType": "BLOCKS",
+    "colorIntegerMap": {
+      "1": 7,
+      "2": 7,
+      "3": 9
+    },
+    "levelType": "COLORED_BLOCKS",
     "noOfRows": 0,
     "levelId": 62
   },
   {
-    "noOfBlocks": 354,
+    "noOfBlocks": 57,
     "cleared": false,
-    "colorIntegerMap": {
-      "1": 71,
-      "2": 73,
-      "3": 68,
-      "4": 72,
-      "5": 70
-    },
-    "levelType": "COLORED_BLOCKS",
+    "levelType": "BLOCKS",
     "noOfRows": 0,
     "levelId": 63
   },
   {
-    "noOfBlocks": 138,
+    "noOfBlocks": 22,
     "cleared": false,
-    "levelType": "BLOCKS",
+    "colorIntegerMap": {
+      "2": 6,
+      "3": 8,
+      "4": 8
+    },
+    "levelType": "COLORED_BLOCKS",
     "noOfRows": 0,
     "levelId": 64
   },
   {
-    "noOfBlocks": 140,
+    "noOfBlocks": 53,
     "cleared": false,
     "levelType": "BLOCKS",
     "noOfRows": 0,
     "levelId": 65
   },
   {
-    "noOfBlocks": 148,
+    "noOfBlocks": 22,
     "cleared": false,
     "colorIntegerMap": {
-      "2": 76,
-      "3": 72
+      "1": 7,
+      "2": 7,
+      "4": 8
     },
     "levelType": "COLORED_BLOCKS",
     "noOfRows": 0,
     "levelId": 66
   },
   {
-    "noOfBlocks": 144,
+    "noOfBlocks": 24,
     "cleared": false,
-    "levelType": "BLOCKS",
+    "colorIntegerMap": {
+      "1": 7,
+      "2": 8,
+      "3": 9
+    },
+    "levelType": "COLORED_BLOCKS",
     "noOfRows": 0,
     "levelId": 67
   },
   {
-    "noOfBlocks": 146,
+    "noOfBlocks": 20,
     "cleared": false,
-    "levelType": "BLOCKS",
+    "colorIntegerMap": {
+      "2": 6,
+      "4": 6,
+      "5": 8
+    },
+    "levelType": "COLORED_BLOCKS",
     "noOfRows": 0,
     "levelId": 68
   },
   {
-    "noOfBlocks": 223,
+    "noOfBlocks": 56,
     "cleared": false,
-    "colorIntegerMap": {
-      "1": 74,
-      "4": 75,
-      "5": 74
-    },
-    "levelType": "COLORED_BLOCKS",
+    "levelType": "BLOCKS",
     "noOfRows": 0,
     "levelId": 69
   },
@@ -600,88 +566,99 @@
     "noOfBlocks": 0,
     "cleared": false,
     "levelType": "FINISH_LINE",
-    "noOfRows": 400,
+    "noOfRows": 93,
     "levelId": 70
   },
   {
-    "noOfBlocks": 152,
+    "noOfBlocks": 38,
     "cleared": false,
-    "levelType": "BLOCKS",
+    "colorIntegerMap": {
+      "1": 8,
+      "3": 8,
+      "4": 10,
+      "5": 12
+    },
+    "levelType": "COLORED_BLOCKS",
     "noOfRows": 0,
     "levelId": 71
   },
   {
-    "noOfBlocks": 238,
+    "noOfBlocks": 37,
     "cleared": false,
     "colorIntegerMap": {
-      "2": 82,
-      "3": 77,
-      "5": 79
+      "1": 8,
+      "2": 8,
+      "3": 10,
+      "4": 11
     },
     "levelType": "COLORED_BLOCKS",
     "noOfRows": 0,
     "levelId": 72
   },
   {
-    "noOfBlocks": 156,
+    "noOfBlocks": 61,
     "cleared": false,
     "levelType": "BLOCKS",
     "noOfRows": 0,
     "levelId": 73
   },
   {
-    "noOfBlocks": 158,
+    "noOfBlocks": 62,
     "cleared": false,
     "levelType": "BLOCKS",
     "noOfRows": 0,
     "levelId": 74
   },
   {
-    "noOfBlocks": 412,
+    "noOfBlocks": 43,
     "cleared": false,
     "colorIntegerMap": {
-      "1": 82,
-      "2": 85,
-      "3": 84,
-      "4": 80,
-      "5": 81
+      "1": 9,
+      "2": 10,
+      "3": 11,
+      "4": 13
     },
     "levelType": "COLORED_BLOCKS",
     "noOfRows": 0,
     "levelId": 75
   },
   {
-    "noOfBlocks": 162,
+    "noOfBlocks": 43,
     "cleared": false,
-    "levelType": "BLOCKS",
+    "colorIntegerMap": {
+      "1": 9,
+      "3": 9,
+      "4": 12,
+      "5": 13
+    },
+    "levelType": "COLORED_BLOCKS",
     "noOfRows": 0,
     "levelId": 76
   },
   {
-    "noOfBlocks": 164,
+    "noOfBlocks": 68,
     "cleared": false,
     "levelType": "BLOCKS",
     "noOfRows": 0,
     "levelId": 77
   },
   {
-    "noOfBlocks": 428,
+    "noOfBlocks": 0,
     "cleared": false,
-    "colorIntegerMap": {
-      "1": 86,
-      "2": 85,
-      "3": 85,
-      "4": 85,
-      "5": 87
-    },
-    "levelType": "COLORED_BLOCKS",
-    "noOfRows": 0,
+    "levelType": "FINISH_LINE",
+    "noOfRows": 102,
     "levelId": 78
   },
   {
-    "noOfBlocks": 168,
+    "noOfBlocks": 43,
     "cleared": false,
-    "levelType": "BLOCKS",
+    "colorIntegerMap": {
+      "1": 8,
+      "3": 10,
+      "4": 12,
+      "5": 13
+    },
+    "levelType": "COLORED_BLOCKS",
     "noOfRows": 0,
     "levelId": 79
   },
@@ -689,85 +666,99 @@
     "noOfBlocks": 0,
     "cleared": false,
     "levelType": "FINISH_LINE",
-    "noOfRows": 450,
+    "noOfRows": 104,
     "levelId": 80
   },
   {
-    "noOfBlocks": 438,
+    "noOfBlocks": 46,
     "cleared": false,
     "colorIntegerMap": {
-      "1": 86,
-      "2": 87,
-      "3": 90,
-      "4": 88,
-      "5": 87
+      "1": 9,
+      "3": 11,
+      "4": 13,
+      "5": 13
     },
     "levelType": "COLORED_BLOCKS",
     "noOfRows": 0,
     "levelId": 81
   },
   {
-    "noOfBlocks": 174,
+    "noOfBlocks": 0,
     "cleared": false,
-    "levelType": "BLOCKS",
-    "noOfRows": 0,
+    "levelType": "FINISH_LINE",
+    "noOfRows": 107,
     "levelId": 82
   },
   {
-    "noOfBlocks": 176,
+    "noOfBlocks": 45,
     "cleared": false,
-    "levelType": "BLOCKS",
+    "colorIntegerMap": {
+      "2": 9,
+      "3": 11,
+      "4": 11,
+      "5": 14
+    },
+    "levelType": "COLORED_BLOCKS",
     "noOfRows": 0,
     "levelId": 83
   },
   {
-    "noOfBlocks": 274,
+    "noOfBlocks": 45,
     "cleared": false,
     "colorIntegerMap": {
-      "1": 91,
-      "2": 94,
-      "5": 89
+      "1": 8,
+      "2": 10,
+      "3": 13,
+      "5": 14
     },
     "levelType": "COLORED_BLOCKS",
     "noOfRows": 0,
     "levelId": 84
   },
   {
-    "noOfBlocks": 180,
+    "noOfBlocks": 0,
     "cleared": false,
-    "levelType": "BLOCKS",
-    "noOfRows": 0,
+    "levelType": "FINISH_LINE",
+    "noOfRows": 110,
     "levelId": 85
   },
   {
-    "noOfBlocks": 182,
+    "noOfBlocks": 71,
     "cleared": false,
     "levelType": "BLOCKS",
     "noOfRows": 0,
     "levelId": 86
   },
   {
-    "noOfBlocks": 186,
+    "noOfBlocks": 73,
     "cleared": false,
-    "colorIntegerMap": {
-      "2": 93,
-      "5": 93
-    },
-    "levelType": "COLORED_BLOCKS",
+    "levelType": "BLOCKS",
     "noOfRows": 0,
     "levelId": 87
   },
   {
-    "noOfBlocks": 186,
+    "noOfBlocks": 45,
     "cleared": false,
-    "levelType": "BLOCKS",
+    "colorIntegerMap": {
+      "2": 8,
+      "3": 11,
+      "4": 11,
+      "5": 15
+    },
+    "levelType": "COLORED_BLOCKS",
     "noOfRows": 0,
     "levelId": 88
   },
   {
-    "noOfBlocks": 188,
+    "noOfBlocks": 45,
     "cleared": false,
-    "levelType": "BLOCKS",
+    "colorIntegerMap": {
+      "1": 8,
+      "3": 11,
+      "4": 12,
+      "5": 14
+    },
+    "levelType": "COLORED_BLOCKS",
     "noOfRows": 0,
     "levelId": 89
   },
@@ -775,84 +766,90 @@
     "noOfBlocks": 0,
     "cleared": false,
     "levelType": "FINISH_LINE",
-    "noOfRows": 500,
+    "noOfRows": 108,
     "levelId": 90
   },
   {
-    "noOfBlocks": 192,
+    "noOfBlocks": 0,
     "cleared": false,
-    "levelType": "BLOCKS",
-    "noOfRows": 0,
+    "levelType": "FINISH_LINE",
+    "noOfRows": 112,
     "levelId": 91
   },
   {
-    "noOfBlocks": 194,
+    "noOfBlocks": 60,
     "cleared": false,
-    "levelType": "BLOCKS",
+    "colorIntegerMap": {
+      "1": 8,
+      "2": 9,
+      "3": 13,
+      "4": 14,
+      "5": 16
+    },
+    "levelType": "COLORED_BLOCKS",
     "noOfRows": 0,
     "levelId": 92
   },
   {
-    "noOfBlocks": 508,
+    "noOfBlocks": 74,
     "cleared": false,
-    "colorIntegerMap": {
-      "1": 99,
-      "2": 100,
-      "3": 103,
-      "4": 103,
-      "5": 103
-    },
-    "levelType": "COLORED_BLOCKS",
+    "levelType": "BLOCKS",
     "noOfRows": 0,
     "levelId": 93
   },
   {
-    "noOfBlocks": 198,
+    "noOfBlocks": 75,
     "cleared": false,
     "levelType": "BLOCKS",
     "noOfRows": 0,
     "levelId": 94
   },
   {
-    "noOfBlocks": 200,
+    "noOfBlocks": 63,
     "cleared": false,
-    "levelType": "BLOCKS",
+    "colorIntegerMap": {
+      "1": 9,
+      "2": 11,
+      "3": 12,
+      "4": 14,
+      "5": 17
+    },
+    "levelType": "COLORED_BLOCKS",
     "noOfRows": 0,
     "levelId": 95
   },
   {
-    "noOfBlocks": 205,
+    "noOfBlocks": 64,
     "cleared": false,
     "colorIntegerMap": {
-      "4": 103,
-      "5": 102
+      "1": 9,
+      "2": 11,
+      "3": 12,
+      "4": 15,
+      "5": 17
     },
     "levelType": "COLORED_BLOCKS",
     "noOfRows": 0,
     "levelId": 96
   },
   {
-    "noOfBlocks": 204,
+    "noOfBlocks": 0,
     "cleared": false,
-    "levelType": "BLOCKS",
-    "noOfRows": 0,
+    "levelType": "FINISH_LINE",
+    "noOfRows": 119,
     "levelId": 97
   },
   {
-    "noOfBlocks": 206,
+    "noOfBlocks": 77,
     "cleared": false,
     "levelType": "BLOCKS",
     "noOfRows": 0,
     "levelId": 98
   },
   {
-    "noOfBlocks": 211,
+    "noOfBlocks": 80,
     "cleared": false,
-    "colorIntegerMap": {
-      "3": 107,
-      "5": 104
-    },
-    "levelType": "COLORED_BLOCKS",
+    "levelType": "BLOCKS",
     "noOfRows": 0,
     "levelId": 99
   },
@@ -860,7 +857,7 @@
     "noOfBlocks": 0,
     "cleared": false,
     "levelType": "FINISH_LINE",
-    "noOfRows": 550,
+    "noOfRows": 120,
     "levelId": 100
   }
 ]

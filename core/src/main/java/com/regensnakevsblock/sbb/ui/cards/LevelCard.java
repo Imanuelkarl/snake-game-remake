@@ -27,8 +27,7 @@ public class LevelCard extends Group implements ListItemView<LevelData>, BaseVie
     }
     private void setupUI() {
 
-        selectedBg = ActorFactory.createUiImage(Assets2.getInstance().levelSelectedBg,12.5f,20,160,160);
-        addActor(selectedBg);
+
         // Background
         background = ActorFactory.createButton(Assets2.getInstance().levelCardBg, 22.5f,30,140,140);
         addActor(background);
@@ -38,6 +37,12 @@ public class LevelCard extends Group implements ListItemView<LevelData>, BaseVie
 
         locked = ActorFactory.createUiImage(Assets2.getInstance().levelLockTexture,70,60,50,60);
         addActor(locked);
+
+        cleared = ActorFactory.createUiImage(Assets2.getInstance().levelMarkedTexture,70,60,50,60);
+        addActor(cleared);
+
+        selectedBg = ActorFactory.createUiImage(Assets2.getInstance().levelSelectedBg,12.5f,20,160,160);
+        addActor(selectedBg);
 
 
     }
@@ -100,8 +105,15 @@ public class LevelCard extends Group implements ListItemView<LevelData>, BaseVie
         String text =String.valueOf(levelData.getLevelIndex());
         index.setPosition(-20 *text.length()+100,80);
         index.setText(levelData.getLevelIndex());
+        if(levelData.isCleared()){
+            index.remove();
+        }else{
+            cleared.remove();
+        }
         if(!levelData.isSelected()){
             selectedBg.remove();
+        }else{
+            addActor(selectedBg);
         }
         if(levelData.isCanSelect()){
             locked.remove();

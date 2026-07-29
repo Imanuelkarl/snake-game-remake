@@ -5,6 +5,7 @@ import static com.regensnakevsblock.sbb.utils.RandomEngine.getRandom;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.math.Vector2;
 import com.regensnakevsblock.sbb.enumaretors.PowerUp;
 
 public class Block {
@@ -114,6 +115,11 @@ public class Block {
     public int getColor(){
         return colorY*2 +colorX;
 
+    }
+    public static Vector2 getBlockPosition(int position){
+        int x= position /5;
+        int y=position%5;
+        return new Vector2(x,y);
     }
     public Rectangle getBounds() { return bounds; }
     public int getValue() { return value; }

@@ -9,9 +9,11 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.regensnakevsblock.sbb.config.Constants;
 import com.regensnakevsblock.sbb.config.GameInstance;
+import com.regensnakevsblock.sbb.screens.MainGame;
 import com.regensnakevsblock.sbb.ui.views.LevelsView;
 import com.regensnakevsblock.sbb.uiactions.LevelUIListener;
 import com.regensnakevsblock.sbb.uifactory.LevelUiFactory;
+import com.regensnakevsblock.sbb.world.WorldState;
 
 public class LevelsUi {
     private final Stage stage;
@@ -38,15 +40,16 @@ public class LevelsUi {
 
 
         stage.addActor(levelUiFactory.background);
-        if(GameInstance.getInstance().levelsView==null){
-            GameInstance.getInstance().levelsView = new LevelsView();
-        }
         Group levelGroupView = new Group();
         levelGroupView.setSize(stage.getWidth(), stage.getHeight()-levelUiFactory.headerBackground.getHeight()-levelUiFactory.bottomBackground.getHeight());
         levelGroupView.setPosition(0,levelUiFactory.bottomBackground.getHeight());
-        GameInstance.getInstance().levelsView.setParentView(levelGroupView);
+        if(GameInstance.getInstance().levelsView==null){
+            GameInstance.getInstance().levelsView = new LevelsView(levelGroupView);
+        }
+
+        //GameInstance.getInstance().levelsView.setParentView(levelGroupView);
         levelGroupView.addActor(GameInstance.getInstance().levelsView);
-        GameInstance.getInstance().levelsView.resize(stage.getWidth(),stage.getHeight()-levelUiFactory.headerBackground.getHeight()-levelUiFactory.bottomBackground.getHeight());
+        //GameInstance.getInstance().levelsView.resize(stage.getWidth(),stage.getHeight()-levelUiFactory.headerBackground.getHeight()-levelUiFactory.bottomBackground.getHeight());
 
 
 
@@ -61,7 +64,13 @@ public class LevelsUi {
                 levelUIListener.onCloseLevelScreen();
             }
         });
-
+        levelUiFactory.playButton.addListener(new ClickListener(){
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                super.clicked(event, x, y);
+                GameInstance.getInstance().game.setScreen(new MainGame(GameInstance.getInstance().game, WorldState.GameMode.LEVELS));
+            }
+        });
         stage.addActor(levelUiFactory.headerBackground);
         stage.addActor(levelUiFactory.cancelButton);
         stage.addActor(levelUiFactory.coinBar);
@@ -72,6 +81,7 @@ public class LevelsUi {
 
     }
     public void update(float deltaTime){
+        levelUiFactory.coinBar.setAmount(GameInstance.getSaveService().getCoins());
 
         stage.act(deltaTime);
         stage.draw();

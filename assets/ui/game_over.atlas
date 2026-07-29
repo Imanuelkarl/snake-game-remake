@@ -1,55 +1,69 @@
 
 game_over.png
-size: 2048, 256
+size: 1024, 1024
 format: RGBA8888
 filter: Linear, Linear
 repeat: none
 coinsTextBoard
   rotate: false
-  xy: 515, 41
+  xy: 1, 227
   size: 512, 95
   orig: 512, 95
   offset: 0, 0
   index: -1
 gameOverTitle
   rotate: false
-  xy: 1, 100
+  xy: 1, 521
   size: 512, 134
   orig: 512, 134
   offset: 0, 0
   index: -1
 highScoreTextBoard
   rotate: false
-  xy: 1, 1
+  xy: 1, 422
   size: 512, 97
   orig: 512, 97
   offset: 0, 0
   index: -1
 homeGOButton
   rotate: false
-  xy: 1029, 121
+  xy: 515, 680
   size: 256, 113
   orig: 256, 113
   offset: 0, 0
   index: -1
+nextLevelButton
+  rotate: false
+  xy: 515, 568
+  size: 256, 110
+  orig: 256, 110
+  offset: 0, 0
+  index: -1
 replayGOButton
   rotate: false
-  xy: 1545, 124
+  xy: 1, 1
   size: 256, 110
   orig: 256, 110
   offset: 0, 0
   index: -1
 scoreTextBoard
   rotate: false
-  xy: 515, 138
+  xy: 1, 324
   size: 512, 96
   orig: 512, 96
   offset: 0, 0
   index: -1
 upgradeBtnImg
   rotate: false
-  xy: 1287, 122
+  xy: 1, 113
   size: 256, 112
   orig: 256, 112
+  offset: 0, 0
+  index: -1
+victoryTitle
+  rotate: false
+  xy: 1, 657
+  size: 512, 136
+  orig: 512, 136
   offset: 0, 0
   index: -1

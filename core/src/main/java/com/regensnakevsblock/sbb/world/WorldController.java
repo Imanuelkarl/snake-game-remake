@@ -72,8 +72,8 @@ public class WorldController  {
 
     public void update(float deltaTime) {
         // Update all game systems
-        spawnSystem.update(deltaTime);
-        movementSystem.update(deltaTime);
+        if(worldState.getStartGame()) spawnSystem.update(deltaTime);
+        if(worldState.getStartGame()) movementSystem.update(deltaTime);
         collisionSystem.update(deltaTime);
         powerUpSystem.update(deltaTime);
         scoringSystem.update(deltaTime);
@@ -84,7 +84,7 @@ public class WorldController  {
 
 
         if (speed < maxSpeed) {
-            speed += increaseRate * deltaTime;
+            speed += increaseRate * deltaTime *worldState.getMoveFactor();
             if (speed > maxSpeed) {
                 speed = maxSpeed;
             }

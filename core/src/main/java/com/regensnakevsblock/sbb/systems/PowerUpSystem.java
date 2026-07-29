@@ -69,7 +69,6 @@ public class PowerUpSystem extends GlobalSystems{
 
             worldState.setPowerUpTimeRemaining(
                 remaining);
-            System.out.println("New powerUp remaining time is "+remaining);
         }
     }
 

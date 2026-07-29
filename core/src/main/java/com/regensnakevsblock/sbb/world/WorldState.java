@@ -3,14 +3,19 @@ package com.regensnakevsblock.sbb.world;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.regensnakevsblock.sbb.MyGame;
+import com.regensnakevsblock.sbb.assets.Assets2;
+import com.regensnakevsblock.sbb.config.GameInstance;
 import com.regensnakevsblock.sbb.entities.Block;
 import com.regensnakevsblock.sbb.entities.Row;
 import com.regensnakevsblock.sbb.entities.Snake;
 import com.regensnakevsblock.sbb.enumaretors.PowerUp;
 import com.regensnakevsblock.sbb.levels.Level;
 import com.regensnakevsblock.sbb.levels.TestLevelProvider;
+import com.regensnakevsblock.sbb.screens.GameOverScreen;
 import com.regensnakevsblock.sbb.service.SaveService;
+import com.regensnakevsblock.sbb.utils.TextureTools;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -54,12 +59,14 @@ public class WorldState {
     private int coins;
     private int totalDestroyed = 0;
     private int totalRowsCreated = 0;
+    private boolean startGame =false;
     private GameMode gameMode;
     private SaveService saveService;
     private final Map<Integer , Integer> blocksDestroyedColor;
     private boolean finishLineSpawned = false;
     private HitListener hitListener;
     float powerUpTimeRemaining =3000;
+    private HashMap<Integer, TextureRegion> levelBlocks;
 
     public boolean isFinishLineSpawned() {
         return finishLineSpawned;
@@ -85,6 +92,52 @@ public class WorldState {
         powerUpTimeRemaining=remaining;
     }
 
+    private boolean showTaskIntro;
+    private float taskIntroTime;
+
+    public boolean isShowTaskIntro() {
+        return showTaskIntro;
+    }
+
+    public void startTaskIntro() {
+        showTaskIntro = true;
+        taskIntroTime = 0;
+    }
+
+    public void updateTaskIntro(float delta) {
+        if(!showTaskIntro) return;
+
+        taskIntroTime += delta;
+
+        if(taskIntroTime >= 3f){
+            showTaskIntro = false;
+            startGame=true;
+        }
+    }
+
+    public float getTaskIntroTime() {
+        return taskIntroTime;
+    }
+
+    public void setLevelCleared() {
+        if(saveService.getSelectedLevel()==saveService.getMaxLevel()){
+            saveService.setMaxLevel(saveService.getMaxLevel()+1);
+            saveService.saveSelectedLevel(saveService.getSelectedLevel()+1);
+            GameInstance.getInstance().getLevelData().get(level.getLevelId()).setCanSelect(true);
+        }
+        level.setCleared(true);
+        GameInstance.getInstance().clearLevelId(level.getLevelId());
+        GameInstance.getInstance().levelsView.rebindView();
+        GameOverScreen gameOverScreen =new GameOverScreen(game,true);
+        gameOverScreen.setScore(score);
+        gameOverScreen.setCoins(coins);
+        game.setScreen(gameOverScreen);
+    }
+
+    public boolean getStartGame() {
+        return startGame;
+    }
+
     public enum GameMode{
         ENDLESS,
         LEVELS
@@ -108,10 +161,32 @@ public class WorldState {
         this.gameMode = gameMode;
         saveService = new SaveService();
         if(gameMode==GameMode.LEVELS){
-            level =  TestLevelProvider.createTestLevels().get(2);
+            level = GameInstance.getInstance().getById(saveService.getSelectedLevel());//TestLevelProvider.createTestLevels().get(1);
+            buildLevel();
+        }else{
+            startGame=true;
         }
-
         nextRowY=camera.viewportHeight+blockDimension ;
+    }
+    private void buildLevel(){
+        if(level.getLevelType()== Level.LevelType.BLOCKS){
+            levelBlocks=new HashMap<>();
+            //TextureRegion blockTexture = TextureTools.resolveRegion(Assets2.getInstance().blockTexture,2,5,(int)Block.getBlockPosition(0).x,(int)Block.getBlockPosition(0).y,0,0);
+            levelBlocks.put(0,Assets2.getInstance().defaultBlock);
+        }
+        if(level.getLevelType()== Level.LevelType.COLORED_BLOCKS){
+            levelBlocks=new HashMap<>();
+            for (Map.Entry<Integer, Integer> entry : level.getColorIntegerMap().entrySet()) {
+
+                int colorId = entry.getKey();
+                int required = entry.getValue();
+                TextureRegion blockTexture = TextureTools.resolveRegion(Assets2.getInstance().blockTexture,2,5,(int)Block.getBlockPosition(colorId).y,(int)Block.getBlockPosition(colorId).x,0,0);
+                levelBlocks.put(colorId,blockTexture);
+            }
+        }
+    }
+    public HashMap<Integer, TextureRegion> getLevelBlocks() {
+        return levelBlocks;
     }
     public void setSoundVolume(int soundVolume) {
         this.soundVolume = soundVolume;
@@ -262,7 +337,7 @@ public class WorldState {
     }
 
     public void update(float deltaTime){
-
+        updateTaskIntro(deltaTime);
     }
 
     public float getGameSpeed() {

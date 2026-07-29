@@ -24,4 +24,22 @@ public class CurrencyResolver {
     public static String getCurrencyCode(String symbol) {
         return SYMBOL_TO_CODE.getOrDefault(symbol, "?");
     }
+    public static String formatPrice(double value) {
+        String s = String.valueOf(value);
+
+        StringBuilder out = new StringBuilder();
+
+        int count = 0;
+
+        for (int i = s.length() - 1; i >= 0; i--) {
+            out.insert(0, s.charAt(i));
+            count++;
+
+            if (count % 3 == 0 && i != 0) {
+                out.insert(0, ",");
+            }
+        }
+
+        return out.toString();
+    }
 }

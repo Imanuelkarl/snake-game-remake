@@ -76,6 +76,8 @@ public class Assets2 implements Disposable {
     public TextureRegion diamondPilesTexture;
     public TextureRegion portionPilesTexture;
     public TextureRegion gameOverHeaderTexture;
+    public TextureRegion victoryHeaderTexture;
+    public TextureRegion nextLevelTexture;
     public TextureRegion scoreTextBoard;
     public TextureRegion highScoreTextBoard;
     public TextureRegion upgradeProgressBG;
@@ -98,6 +100,9 @@ public class Assets2 implements Disposable {
     public TextureRegion mediumTexture;
     public TextureRegion hardTexture;
     public TextureRegion difficultyTexture;
+    public TextureRegion highScoreBackground;
+    public TextureRegion highScoreTrophy;
+    public TextureRegion highScoreLabel;
     public TextureRegion bottomNavItems;
     public TextureRegion upgradeCardBG;
     public TextureRegion upgradeItemButton;
@@ -107,6 +112,9 @@ public class Assets2 implements Disposable {
     public TextureRegion levelMarkedTexture;
     public TextureRegion levelSelectedBg;
     public TextureRegion levelPlayButton;
+
+    public TextureRegion levelTaskHeaderBg;
+    public TextureRegion defaultBlock;
     // Note: finishLineTexture is gameplay, remains Texture (see below)
 
     // ---- Gameplay Textures (unchanged type: Texture) ----
@@ -121,12 +129,14 @@ public class Assets2 implements Disposable {
     public ParticleEffect bloodEffect;
     public ParticleEffect leftVictoryEffect;
     public ParticleEffect rightVictoryEffect;
+    public ParticleEffect confettiCanon;
     public BitmapFont font;
     public Sound collisionSound;
     public Sound powerUpSound;
     public Sound gameOverSound;
     public Sound winObjectSound;
     public Music backgroundMusic;
+    private String suffix ="";
 
 
 
@@ -138,7 +148,9 @@ public class Assets2 implements Disposable {
         "global", "dialog", "bottomNav", "home", "main_game", "game_over", "menu", "levels"
     };
 
-    private Assets2() {}
+    private Assets2() {
+        suffix = "_metal";
+    }
 
     public static Assets2 getInstance() {
         if (instance == null) {
@@ -215,7 +227,7 @@ public class Assets2 implements Disposable {
     public void loadAllAssets() {
         // ---- Non‑UI textures (gameplay) ----
         assetManager.load("snake_multiple_skins.png", Texture.class);
-        assetManager.load("blocks.png", Texture.class);
+        assetManager.load("blocks"+suffix+".png", Texture.class);
         assetManager.load("lineBG.png", Texture.class);
         assetManager.load("shaderLayer.png", Texture.class);
         assetManager.load("fonts/ImageFonts/FontsHDTwo.png", Texture.class);
@@ -227,6 +239,10 @@ public class Assets2 implements Disposable {
         assetManager.load("particles/snakeBlood.p", ParticleEffect.class);
         assetManager.load("particles/left_victory_particle.p", ParticleEffect.class);
         assetManager.load("particles/right_victory_particle.p", ParticleEffect.class);
+        assetManager.load("particles/confetti_cannon.p", ParticleEffect.class);
+
+        // ---- Fonts ----
+        assetManager.load("fonts/ImageFonts/FontsHDTwo.fnt", BitmapFont.class);
 
         // ---- Sounds ----
         assetManager.load("sounds/hitObstacle.wav", Sound.class);
@@ -242,7 +258,7 @@ public class Assets2 implements Disposable {
     public void assignAssets() {
         // ---- Assign gameplay textures ----
         snakeSkins = assetManager.get("snake_multiple_skins.png", Texture.class);
-        blockTexture = assetManager.get("blocks.png", Texture.class);
+        blockTexture = assetManager.get("blocks"+suffix+".png", Texture.class);
         lineTexture = assetManager.get("lineBG.png", Texture.class);
         backgroundTexture = assetManager.get("shaderLayer.png", Texture.class);
         fontTexture = assetManager.get("fonts/ImageFonts/FontsHDTwo.png", Texture.class);
@@ -256,6 +272,7 @@ public class Assets2 implements Disposable {
         bloodEffect = assetManager.get("particles/snakeBlood.p", ParticleEffect.class);
         leftVictoryEffect = assetManager.get("particles/left_victory_particle.p", ParticleEffect.class);
         rightVictoryEffect = assetManager.get("particles/right_victory_particle.p", ParticleEffect.class);
+        confettiCanon = assetManager.get("particles/confetti_cannon.p", ParticleEffect.class);
 
         // ---- Sounds ----
         collisionSound = assetManager.get("sounds/hitObstacle.wav", Sound.class);
@@ -267,7 +284,7 @@ public class Assets2 implements Disposable {
         backgroundMusic = assetManager.get("music/backgroundMusic.mp3", Music.class);
 
         // ---- Font ----
-        font = new BitmapFont();
+        font = assetManager.get("fonts/ImageFonts/FontsHDTwo.fnt", BitmapFont.class);
 
         // ---- UI TextureRegions (all from atlases) ----
         // home group
@@ -289,6 +306,10 @@ public class Assets2 implements Disposable {
         mediumTexture           = getUIRegion("mediumLabel");
         hardTexture             = getUIRegion("hardLabel");
         difficultyTexture       = getUIRegion("difficultyLabel");
+        highScoreBackground     = getUIRegion("highScoreBg");
+        highScoreTrophy         = getUIRegion("highScoreTrophy");
+        highScoreLabel          = getUIRegion("highScoreLabel");
+
 
 
         // main_game group
@@ -302,6 +323,9 @@ public class Assets2 implements Disposable {
         giveUpTexture           = getUIRegion("giveUpText");
         failTexture             = getUIRegion("failText");
         continueTexture         = getUIRegion("continueText");
+        defaultBlock = getUIRegion("defaultBlock");
+        levelTaskHeaderBg = getUIRegion("levelTaskBg");
+
 
         // dialog group
         pauseHeaderTexture      = getUIRegion("pauseDialogHeader");
@@ -328,6 +352,9 @@ public class Assets2 implements Disposable {
         scoreTextBoard          = getUIRegion("scoreTextBoard");
         highScoreTextBoard      = getUIRegion("highScoreTextBoard");
         coinsTextBoard          = getUIRegion("coinsTextBoard");
+        victoryHeaderTexture   = getUIRegion("victoryTitle");
+        nextLevelTexture        = getUIRegion("nextLevelButton");
+
 
         // menu group
         menuBGTexture           = getUIRegion("menuBG");

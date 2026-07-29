@@ -1,6 +1,7 @@
 package com.regensnakevsblock.sbb.android;
 
 import android.os.Bundle;
+import android.util.Log;
 
 import com.badlogic.gdx.backends.android.AndroidApplication;
 import com.badlogic.gdx.backends.android.AndroidApplicationConfiguration;
@@ -22,11 +23,14 @@ public class AndroidLauncher extends AndroidApplication {
         UnityAdsManager unityAdsManager = new UnityAdsManager(this);
         adsManager.initialize();
         unityAdsManager.initialize();
-        adsManager.loadBanner();
-        adsManager.loadInterstitial();
-        adsManager.loadRewarded();
+        //adsManager.loadBanner();
+        //adsManager.loadInterstitial();
+        //adsManager.loadRewarded();
+        Log.d("Unity Ads"," Staring ads service");
+        unityAdsManager.loadInterstitial();
+        unityAdsManager.loadRewarded();
         myGame.setPurchaseService(purchaseManager);
-        myGame.setAdsService(adsManager);
+        myGame.setAdsService(unityAdsManager);
         initialize(myGame, configuration);
     }
 }

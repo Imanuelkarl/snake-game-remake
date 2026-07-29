@@ -196,7 +196,6 @@ public class SplashScreen implements Screen {
         // Example:
         // ((Game) Gdx.app.getApplicationListener()).setScreen(new LoadingScreen());
         game.setScreen(new LoadingScreen(game));
-        System.out.println("Splash done -> switch to LoadingScreen");
     }
 
     @Override

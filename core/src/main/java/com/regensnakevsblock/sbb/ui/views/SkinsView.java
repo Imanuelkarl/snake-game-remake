@@ -1,6 +1,7 @@
 package com.regensnakevsblock.sbb.ui.views;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -24,6 +25,7 @@ public class SkinsView extends BaseActorView {
     private Label titleLabel;
     private float width;
     private float height;
+    private Label noCoinsPop;
     private GameDialog dialog;
 
     public SkinsView(Group group) {
@@ -44,7 +46,7 @@ public class SkinsView extends BaseActorView {
 
         Label loadingText = ActorFactory.createTextLabel(50, 20, 0);
         loadingText.setText("Loading skins...");
-        loadingText.setPosition(50, height / 2f, Align.center);
+        loadingText.setPosition(50, 800, Align.center);
 
         loadingGroup.addActor(loadingText);
         addActor(loadingGroup);
@@ -90,11 +92,20 @@ public class SkinsView extends BaseActorView {
                 }
             }
         });*/
+        Label.LabelStyle style = new Label.LabelStyle();
+        style.fontColor= Color.FIREBRICK;
+        noCoinsPop = ActorFactory.createTextLabel("24",style,20, Gdx.graphics.getHeight() - 50);
+        noCoinsPop.setFontScale(0.6f);
+
+        noCoinsPop.setWrap(true);
+        noCoinsPop.setText("You don't have enough coins to buy this skin");
+
     }
     private void setupDialog(Stage stage){
         dialog = new GameDialog(stage);
         dialog.setDialogSize(width,height/8);
         dialog.setTitleEnabled(false);
+        dialog.addContentActor(noCoinsPop);
 
         dialog.setBackground(Assets2.getInstance().dialogQuarterSizeOpen);
         dialog.open();
@@ -126,7 +137,9 @@ public class SkinsView extends BaseActorView {
     public void resize(float width, float height) {
         this.width = width;
         this.height = height;
+        noCoinsPop.setPosition(60,60);
         setupTransform();
+        noCoinsPop.setWidth(width*0.75f);
         //dialog = new GameDialog(getStage());
         listManager.renderAllItems();
         if(adapter.notEnoughCoins){

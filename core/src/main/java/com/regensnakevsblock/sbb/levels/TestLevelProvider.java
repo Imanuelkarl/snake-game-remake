@@ -33,8 +33,8 @@ public class TestLevelProvider {
         coloredLevelEasy.setLevelType(Level.LevelType.COLORED_BLOCKS);
 
         Map<Integer, Integer> map1 = new HashMap<>();
-        map1.put(1, 5); // colorId 1
-        map1.put(2, 4);  // colorId 2
+        map1.put(0, 5); // colorId 1
+        map1.put(8, 4);  // colorId 2
 
         coloredLevelEasy.setColorIntegerMap(map1);
         coloredLevelEasy.setNoOfBlocks(18);

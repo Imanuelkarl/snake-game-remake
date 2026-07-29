@@ -4,7 +4,8 @@ public enum StoreID {
     GOOGLE_PLAY,
     AMAZON,
     STEAM,
-    EPIC_GAMES
+    EPIC_GAMES,
+    WEB_STORE
     ;
 
 }

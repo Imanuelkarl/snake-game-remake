@@ -13,9 +13,6 @@ import com.regensnakevsblock.sbb.ui.core.ListItemView;
 import com.regensnakevsblock.sbb.ui.data.ShopItemData;
 import com.regensnakevsblock.sbb.utils.ActorFactory;
 import com.regensnakevsblock.sbb.utils.CurrencyResolver;
-import com.regensnakevsblock.sbb.utils.FontActor;
-
-import java.text.DecimalFormat;
 
 public class ShopCard extends Group implements ListItemView<ShopItemData>, BaseView {
     private Image background;
@@ -23,7 +20,7 @@ public class ShopCard extends Group implements ListItemView<ShopItemData>, BaseV
     private Label nameLabel;
     private Label descriptionLabel;
     private Label priceLabel;
-    private FontActor priceText;
+    private Label priceText;
     private Label itemQuantity;
     private Image priceBackground;
     private Label orignalPriceLabel;
@@ -33,12 +30,10 @@ public class ShopCard extends Group implements ListItemView<ShopItemData>, BaseV
     private ShopItemData currentData;
 
     private int currentPosition;
-    DecimalFormat df;
 
 
     public ShopCard() {
         setupUI();
-        df = new DecimalFormat("#,###.##");
 
     }
 
@@ -74,7 +69,7 @@ public class ShopCard extends Group implements ListItemView<ShopItemData>, BaseV
         priceLabel = ActorFactory.createTextLabel("",45, priceStyle);
         //addActor(priceLabel);
 
-        priceText = new FontActor(GameInstance.getInstance().getSimpleBitmapFont(),"");
+        priceText = ActorFactory.createTextLabel(Assets2.getInstance().font,"");
         priceText.setSize(70,30);
         addActor(priceText);
 
@@ -96,11 +91,12 @@ public class ShopCard extends Group implements ListItemView<ShopItemData>, BaseV
         descriptionLabel.setText(item.description);
         itemQuantity.setText(item.itemQuantity > 1 ? "x" + item.itemQuantity : "");
         String currency = CurrencyResolver.getCurrencyCode(item.currencySign);
+        String value = CurrencyResolver.formatPrice(item.price);
         if (item.isPurchased) {
             priceLabel.setText("PURCHASED");
         } else {
-            priceLabel.setText(currency +df.format(item.price )+ " " );
-            priceText.setText(currency +df.format(item.price )+ " " );
+            priceLabel.setText(currency +value+ " " );
+            priceText.setText(currency +value+ " " );
         }
     }
     private  void layout() {

@@ -20,8 +20,8 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.regensnakevsblock.sbb.assets.Assets2;
-import com.regensnakevsblock.sbb.config.GameInstance;
 import com.regensnakevsblock.sbb.elements.GameDialog;
+import com.regensnakevsblock.sbb.levels.Level;
 import com.regensnakevsblock.sbb.screens.GameOverScreen;
 import com.regensnakevsblock.sbb.screens.HomeScreen;
 import com.regensnakevsblock.sbb.screens.MainGame;
@@ -29,7 +29,6 @@ import com.regensnakevsblock.sbb.service.SaveService;
 import com.regensnakevsblock.sbb.service.ads.RewardListener;
 import com.regensnakevsblock.sbb.utils.ActorFactory;
 import com.regensnakevsblock.sbb.utils.FontFactory;
-import com.regensnakevsblock.sbb.utils.SimpleBitmapFont;
 import com.regensnakevsblock.sbb.world.WorldState;
 
 public class UIRenderer implements RewardListener {
@@ -43,13 +42,11 @@ public class UIRenderer implements RewardListener {
     private final Group pauseGroup;
     private final Group gameOverGroup;
     private Label scoreLabel;
-    private SimpleBitmapFont font;
 
     private GameDialog dialog;
     private GameDialog reviveDialog;
     private boolean reviveIsOpen;
     private SpriteBatch batch;
-    private SimpleBitmapFont simpleBitmapFont;
     private SaveService saveService;
     private int soundVolume;
     private int musicVolume;
@@ -65,16 +62,7 @@ public class UIRenderer implements RewardListener {
         saveService=new SaveService();
         soundVolume = saveService.getSoundVolume();
         musicVolume = saveService.getMusicVolume();
-        if(GameInstance.getInstance().getSimpleBitmapFont()==null){
-            simpleBitmapFont = new SimpleBitmapFont(
-                Gdx.files.internal("fonts/ImageFonts/FontsHDTwo.fnt"),
-                Assets2.getInstance().fontTexture
-            );
-            GameInstance.getInstance().setSimpleBitmapFont(simpleBitmapFont);
-        }
-        else{
-            simpleBitmapFont=GameInstance.getInstance().getSimpleBitmapFont();
-        }
+
         build();
         if(worldState.getGame().getAdsService()!=null){
             worldState.getGame().getAdsService().setRewardListener(this);
@@ -85,7 +73,9 @@ public class UIRenderer implements RewardListener {
         batch.setProjectionMatrix(worldState.getCamera().combined);
         pauseGroup.setVisible(worldState.isPaused());
         //gameOverGroup.setVisible(worldState.isGameOver());
+        scoreLabel.setFontScale(0.7f);
         scoreLabel.setText(worldState.getScore());
+
         if(worldState.isGameOver()&&!reviveIsOpen){
             reviveDialog.open();
             reviveIsOpen=true;
@@ -107,6 +97,7 @@ public class UIRenderer implements RewardListener {
         reviveDialog.setTitleEnabled(false);
         reviveDialog.setCloseButtonEnabled(false);
         reviveDialog.setBackground(Assets2.getInstance().dialogHalfSize);
+
 
         scoreLabel = createTextLabel(80,stage.getWidth()/24,
             stage.getHeight() - stage.getHeight()/32 );
@@ -245,6 +236,7 @@ public class UIRenderer implements RewardListener {
 
             }
         });
+
         reviveWithAdsButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -262,11 +254,13 @@ public class UIRenderer implements RewardListener {
                     }
                     else{
                         reviveDialog.addCloseListener(() -> {
-                            GameOverScreen gameOverScreen =new GameOverScreen(worldState.getGame());
+                            GameOverScreen gameOverScreen =new GameOverScreen(worldState.getGame(),false);
                             gameOverScreen.setScore(worldState.getScore());
                             gameOverScreen.setCoins(worldState.getCoins());
-                            if(worldState.getGame().getAdsService().isInterstitialLoaded()){
-                                worldState.getGame().getAdsService().showInterstitial();
+                            if(worldState.getGame().getAdsService()!=null){
+                                if(worldState.getGame().getAdsService().isInterstitialLoaded()){
+                                    worldState.getGame().getAdsService().showInterstitial();
+                                }
                             }
                             worldState.getGame().setScreen(gameOverScreen);
                             reviveIsOpen=false;
@@ -289,7 +283,7 @@ public class UIRenderer implements RewardListener {
             @Override
             public void clicked(InputEvent event, float x, float y) {
 
-                worldState.getGame().setScreen(new MainGame(worldState.getGame()));
+                worldState.getGame().setScreen(new MainGame(worldState.getGame(),worldState.getGameMode()));
             }
         });
         homeButton.addListener(new ClickListener(){
@@ -305,11 +299,13 @@ public class UIRenderer implements RewardListener {
                 reviveDialog.addCloseListener(new GameDialog.CloseListener() {
                     @Override
                     public void onPopupClosed() {
-                        GameOverScreen gameOverScreen =new GameOverScreen(worldState.getGame());
+                        GameOverScreen gameOverScreen =new GameOverScreen(worldState.getGame(),false);
                         gameOverScreen.setScore(worldState.getScore());
                         gameOverScreen.setCoins(worldState.getCoins());
-                        if(worldState.getGame().getAdsService().isInterstitialLoaded()){
-                            worldState.getGame().getAdsService().showInterstitial();
+                        if(worldState.getGame().getAdsService()!=null){
+                            if(worldState.getGame().getAdsService().isInterstitialLoaded()){
+                                worldState.getGame().getAdsService().showInterstitial();
+                            }
                         }
                         worldState.getGame().setScreen(gameOverScreen);
                         reviveIsOpen=false;
@@ -397,6 +393,7 @@ public class UIRenderer implements RewardListener {
 
         return button;
     }
+
     private Slider createCustomSlider(float x, float y, float width, float height) {
 
         TextureRegionDrawable background =

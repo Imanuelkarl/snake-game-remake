@@ -2,8 +2,14 @@ package com.regensnakevsblock.sbb.config;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.google.gson.Gson;
+import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.Json;
+//import com.google.gson.Gson;
+import com.badlogic.gdx.utils.JsonReader;
+import com.badlogic.gdx.utils.JsonValue;
+import com.badlogic.gdx.utils.Timer;
 import com.regensnakevsblock.sbb.MyGame;
 import com.regensnakevsblock.sbb.assets.Assets2;
 import com.regensnakevsblock.sbb.levels.Level;
@@ -22,12 +28,12 @@ import com.regensnakevsblock.sbb.ui.views.LevelsView;
 import com.regensnakevsblock.sbb.ui.views.ShopView;
 import com.regensnakevsblock.sbb.ui.views.SkinsView;
 import com.regensnakevsblock.sbb.ui.views.UpgradesView;
-import com.regensnakevsblock.sbb.utils.SimpleBitmapFont;
 import com.regensnakevsblock.sbb.utils.TextureTools;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
@@ -36,18 +42,35 @@ public class GameInstance {
     private static GameInstance instance;
     private static SaveService saveService;
     public LevelsView levelsView;
-    private MyGame game;
+    public List<LevelData> levelsData;
+    public MyGame game;
 
     public List<LevelData> getLevelData() {
+        if(levelsData!=null){
+            return levelsData;
+        }
         List<LevelData> levelDataList = new ArrayList<>();
         int currentLevel = saveService.getSelectedLevel();
         int maxLevel = saveService.getMaxLevel();
         for(int i=0;i<levels.size();i++){
             Level level = levels.get(i);
-            LevelData data = new LevelData(level.getLevelId(),level.isCleared(),currentLevel==level.getLevelId(),level.getLevelId()<=maxLevel);
+            LevelData data = new LevelData(level.getLevelId(),level.getLevelId()<maxLevel,maxLevel==level.getLevelId(),level.getLevelId()<=maxLevel);
             levelDataList.add(data);
         }
+        this.levelsData =levelDataList;
         return levelDataList;
+    }
+
+    public void clearLevelId(int levelId) {
+        int i=levelId-1;
+        for (int j = 0; j < levelsData.size(); j++) {
+            levelsData.get(j).setSelected(false);
+        }
+        levelsData.get(levelId).setCanSelect(true);
+        levelsData.get(levelId).setSelected(true);
+        levelsData.get(i).setCleared(true);
+        this.levelsView.rebindView();
+
     }
 
     // ===== LOAD STATES =====
@@ -70,7 +93,6 @@ public class GameInstance {
     private Runnable onSkinDataLoaded;
 
     // ===== ASSETS =====
-    private SimpleBitmapFont simpleBitmapFont;
     public ViewManager menuViewManager;
     public ViewPagerAdapter menuViewManagerAdapter;
 
@@ -87,18 +109,6 @@ public class GameInstance {
 
     public static SaveService getSaveService() {
         return saveService;
-    }
-
-    // =====================================================
-    // FONT (LAZY LOADED)
-    // =====================================================
-    public SimpleBitmapFont getSimpleBitmapFont() {
-
-        return simpleBitmapFont;
-    }
-
-    public void setSimpleBitmapFont(SimpleBitmapFont font) {
-        this.simpleBitmapFont = font;
     }
 
     // =====================================================
@@ -170,7 +180,6 @@ public class GameInstance {
         List<ShopItemData> shopItems = new ArrayList<>();
         for (int i = 0; i <items.size(); i++) {
             PurchaseItem item = items.get(i);
-            System.out.println("Product price is "+item.getAmount());
             String gift = item.getProductId().split("_")[1];
             long quantity = Long.parseLong(item.getProductId().split("_")[0]);
             TextureRegion itemTexture =quantityToTexture(gift,quantity);
@@ -180,15 +189,18 @@ public class GameInstance {
         }
         return shopItems;
     }
-
-    public void loadSkinData(MyGame game) {
-        this.game = game;
-        //game.getPurchaseService().initializeBillingService();
+    public void loadShopData(){
         if(game.getPurchaseService()!=null){
             List<PurchaseItem> items = game.getPurchaseService().getPurchaseItems();
             shopItems = normalizePurchaseItems(items);
             System.out.println("Total items found are "+shopItems.size());
         }
+    }
+
+    public void loadSkinData(MyGame game) {
+        this.game = game;
+        //game.getPurchaseService().initializeBillingService();
+        loadShopData();
 
 
         if (skinDataState == LoadState.LOADING || skinDataState == LoadState.LOADED) {
@@ -196,27 +208,27 @@ public class GameInstance {
         }
 
         skinDataState = LoadState.LOADING;
-        if (simpleBitmapFont == null) {
-            simpleBitmapFont = new SimpleBitmapFont(
-                Gdx.files.internal("fonts/ImageFonts/FontsHDTwo.fnt"),
-                Gdx.files.internal("fonts/ImageFonts/FontsHDTwo.png")
-            );
-            simpleBitmapFont.setDebugMode(false);
-        }
 
-        new Thread(() -> {
-            // Simulate heavy or future network operation
-            List<SkinData> loadedData = createSkinData();
+        Timer.schedule(new Timer.Task() {
+            @Override
+            public void run() {
+                // your async logic
+                List<SkinData> loadedData = createSkinData();
 
-            // Switch back to render thread
-            Gdx.app.postRunnable(() -> {
-                skins = loadedData;
-                skinDataState = LoadState.LOADED;
-                if (onSkinDataLoaded != null) {
-                    onSkinDataLoaded.run();
-                }
-            });
-        }).start();
+                // Switch back to render thread
+                Gdx.app.postRunnable(() -> {
+                    skins = loadedData;
+                    skinDataState = LoadState.LOADED;
+                    if (onSkinDataLoaded != null) {
+                        onSkinDataLoaded.run();
+                    }
+                });
+            }
+        }, 0);
+//        new Thread(() -> {
+//            // Simulate heavy or future network operation
+//
+//        }).start();
     }
     public void setPurchaseService(PurchaseService purchaseService) {
         if (instance == null) {
@@ -255,6 +267,11 @@ public class GameInstance {
         this.onSkinDataLoaded = callback;
     }
     public void setupViewPager() {
+        if(purchaseService!=null){
+            if(shopItems.isEmpty()){
+                loadShopData();
+            }
+        }
         menuViewManager = new ViewManager();
         menuViewManagerAdapter = new ViewPagerAdapter();
 
@@ -305,27 +322,51 @@ public class GameInstance {
     // CLEANUP
     // =====================================================
     public void dispose() {
-        if (simpleBitmapFont != null) {
-            simpleBitmapFont.dispose();
-        }
+
     }
 
     private final List<Level> levels = new ArrayList<>();
 
     public void load() {
-        // from assets (android-safe)
-        String json = Gdx.files.internal("levels.json").readString();
+        String jsonText = Gdx.files.internal("levels.json").readString();
 
-        // Gson example
-        Gson gson = new Gson();
-        Level[] loaded = gson.fromJson(json, Level[].class);
+//        Json json = new Json();
+//
+//        Level[] loaded = json.fromJson(Level[].class, jsonText);
 
         levels.clear();
-        Collections.addAll(levels, loaded);
+        //Collections.addAll(levels, loaded);
 
-        // Optional: sort or index by id
+        //levels.sort(Comparator.comparingInt(Level::getLevelId));
+        JsonReader reader = new JsonReader();
+        JsonValue root = reader.parse(jsonText);
+
+        for (JsonValue entry : root) {
+
+            Level level = new Level();
+
+            level.setLevelId(entry.getInt("levelId"));
+            level.setCleared(entry.getBoolean("cleared"));
+            level.setNoOfRows(entry.getInt("noOfRows"));
+
+            // enum fix
+            level.setLevelType(Level.LevelType.valueOf(entry.getString("levelType")));
+
+            // map fix
+            JsonValue mapNode = entry.get("colorIntegerMap");
+            HashMap<Integer, Integer> map = new HashMap<>();
+
+            if (mapNode != null) {
+                for (JsonValue child = mapNode.child; child != null; child = child.next) {
+                    map.put(Integer.parseInt(child.name), child.asInt());
+                }
+            }
+
+            level.setColorIntegerMap(map);
+
+            levels.add(level);
+        }
         levels.sort(Comparator.comparingInt(Level::getLevelId));
-
     }
 
     public Level getByIndex(int index) {

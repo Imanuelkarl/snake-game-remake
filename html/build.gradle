@@ -43,8 +43,8 @@ gwt {
   sourceLevel = '1.11'
 
   devMode {
-    port = 8080
-    startupUrl = "http://127.0.0.1:8080/index.html"
+    port = 8081
+    startupUrl = "http://127.0.0.1:8081/index.html"
   }
   superDev {
     modules = ["com.darealfungames.snakevsblock.GdxDefinitionSuperdev"]
@@ -57,9 +57,6 @@ dependencies {
   implementation "com.badlogicgames.gdx:gdx:$gdxVersion:sources"
   implementation "com.google.jsinterop:jsinterop-annotations:2.1.0:sources"
   implementation project(':core')
-
-  implementation "com.github.intrigus.gdx-freetype-gwt:gdx-freetype-gwt:1.9.10"
-  implementation "com.github.intrigus.gdx-freetype-gwt:gdx-freetype-gwt:1.9.10:sources"
 
 }
 

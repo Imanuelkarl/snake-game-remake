@@ -87,9 +87,7 @@ public class MenuUi {
         System.out.println("Adding UI elements to stage...");
         start = System.nanoTime();
 
-        menuUiFactory.coinBar.setAmount(saveService.getCoins());
-        menuUiFactory.diamondBar.setAmount(saveService.getDiamonds());
-        menuUiFactory.healthBar.setAmount(saveService.getHealths());
+
 
 
         stage.addActor(menuUiFactory.headerBackground);
@@ -121,6 +119,7 @@ public class MenuUi {
     private void setupViewPager() {
         if(GameInstance.getInstance().menuViewManager==null){
             GameInstance.getInstance().setupViewPager();
+
         }
         viewPager = GameInstance.getInstance().menuViewManager;
         pagerAdapter = GameInstance.getInstance().menuViewManagerAdapter;
@@ -177,7 +176,9 @@ public class MenuUi {
         stage.addActor(viewPager);
     }
     public void update(float deltaTime){
-
+        menuUiFactory.coinBar.setAmount(saveService.getCoins());
+        menuUiFactory.diamondBar.setAmount(saveService.getDiamonds());
+        menuUiFactory.healthBar.setAmount(saveService.getHealths());
         stage.act(deltaTime);
         stage.draw();
     }

@@ -116,7 +116,7 @@ public class ShopView extends BaseActorView {
 
     private void showPurchaseSuccess(String itemName) {
         // Show toast or dialog
-        System.out.println("Purchased: " + itemName);
+
     }
 
     private void showInsufficientCurrency() {

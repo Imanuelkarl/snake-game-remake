@@ -3,6 +3,12 @@
 <module rename-to="html">
   <inherits name="com.darealfungames.snakevsblock.GdxDefinition" />
   <collapse-all-properties />
+    <!-- Enable logging -->
+    <inherits name="com.google.gwt.logging.Logging"/>
+    <set-property name="gwt.logging.enabled" value="TRUE"/>
+    <set-property name="gwt.logging.consoleHandler" value="ENABLED"/>
+    <set-property name="gwt.logging.developmentModeHandler" value="ENABLED"/>
+
   <add-linker name="xsiframe"/>
   <set-configuration-property name="devModeRedirectEnabled" value="true"/>
   <set-configuration-property name="xsiframe.failIfScriptTag" value="FALSE"/>

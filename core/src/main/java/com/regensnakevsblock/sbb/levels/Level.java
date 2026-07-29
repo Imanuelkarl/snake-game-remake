@@ -17,6 +17,9 @@ public class Level {
         this.levelId =levelId;
         GameInstance.getInstance().getById(levelId);
     }
+    public Level(){
+        this.levelId =1;
+    }
     private int noOfBlocks;
     private boolean cleared;
     private Map<Integer,Integer> colorIntegerMap;

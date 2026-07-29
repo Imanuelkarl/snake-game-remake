@@ -35,21 +35,23 @@ public class MainGame implements Screen {
     private boolean gameOver = false;
 
     private final int gameSize;
+    public static WorldState.GameMode gameMode;
 
     private Stage stage;
 
 
-    public MainGame(MyGame game) {
+    public MainGame(MyGame game, WorldState.GameMode gameMode) {
         this.game = game;
         this.camera = new OrthographicCamera();
         gameSize= Constants.SCREEN_SIZE;
         camera.setToOrtho(false,  (float) (gameSize * Gdx.graphics.getWidth()) /Gdx.graphics.getHeight(),gameSize);
         // Initialize game world
-        initializeWorld();
+        MainGame.gameMode =gameMode;
+        initializeWorld(gameMode);
     }
 
-    private void initializeWorld() {
-        worldState = new WorldState(camera,game,WorldState.GameMode.ENDLESS);
+    private void initializeWorld(WorldState.GameMode gameMode) {
+        worldState = new WorldState(camera,game,gameMode);
         worldController = new WorldController(worldState);
         worldRenderer = new WorldRenderer( worldState);
         int gameSize = Constants.SCREEN_SIZE;
@@ -112,7 +114,7 @@ public class MainGame implements Screen {
     public void restartGame() {
         gameOver = false;
         isPaused = false;
-        initializeWorld();
+        initializeWorld(this.worldState.getGameMode());
     }
 
     @Override

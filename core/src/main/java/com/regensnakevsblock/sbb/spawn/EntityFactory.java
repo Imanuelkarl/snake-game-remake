@@ -16,10 +16,9 @@ public class EntityFactory {
         Block block = new Block(Assets2.getInstance().blockTexture,0,0,30,30,score);
         block.setValue(score);
         block.setPosition(pos);
-        int powerDet = RandomEngine.getRandom(0,4);
+        int powerDet = RandomEngine.getRandom(0,15);
         if(powerDet==3){
             int powerUpType = RandomEngine.getRandom(0,3);
-            System.out.println(powerUpType);
             block.setPowerUp(true, PowerUpDimensions.intToEnum(powerUpType));
             block.setValue(20);
         }

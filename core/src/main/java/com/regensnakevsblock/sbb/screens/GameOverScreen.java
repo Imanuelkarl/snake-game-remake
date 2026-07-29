@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.regensnakevsblock.sbb.MyGame;
+import com.regensnakevsblock.sbb.config.GameInstance;
 import com.regensnakevsblock.sbb.ui.GameOverUi;
 import com.regensnakevsblock.sbb.uiactions.GameOverListener;
 
@@ -12,9 +13,9 @@ public class GameOverScreen implements Screen, GameOverListener {
 
     private GameOverUi gameOverUi;
 
-    public GameOverScreen(MyGame game) {
+    public GameOverScreen(MyGame game,boolean levelIsWon) {
         this.game = game;
-        gameOverUi = new GameOverUi(this);
+        gameOverUi = new GameOverUi(this,levelIsWon);
         Gdx.input.setInputProcessor(gameOverUi.getStage());
     }
     @Override
@@ -58,7 +59,7 @@ public class GameOverScreen implements Screen, GameOverListener {
 
     @Override
     public void restartButtonClicked() {
-        game.setScreen(new MainGame(game));
+        game.setScreen(new MainGame(game,MainGame.gameMode));
     }
 
     @Override
@@ -75,6 +76,13 @@ public class GameOverScreen implements Screen, GameOverListener {
     public void multiplyButtonClicked() {
 
     }
+
+    @Override
+    public void nextLevelButtonClicked() {
+        GameInstance.getSaveService().saveSelectedLevel(GameInstance.getSaveService().getSelectedLevel() + 1);
+        game.setScreen(new MainGame(game,MainGame.gameMode));
+    }
+
     public void setCoins(int coins){
         gameOverUi.setCoins(coins);
     }

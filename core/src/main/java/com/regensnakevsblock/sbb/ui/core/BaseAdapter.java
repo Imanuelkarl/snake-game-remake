@@ -83,6 +83,10 @@ public abstract class BaseAdapter<T, V extends BaseView> {
         return items.size();
     }
 
+    public List<T> getItems() {
+        return items;
+    }
+
     public abstract V createView(int position);
     public abstract void bindView(V view, int position);
     public abstract void notifyDataSetChanged();

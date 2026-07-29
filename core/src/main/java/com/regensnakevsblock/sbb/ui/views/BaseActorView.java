@@ -9,6 +9,7 @@ public abstract class BaseActorView extends Group implements BaseView {
     protected boolean isVisible = false;
     public BaseActorView(Group parent){
         this.parent=parent;
+        this.setSize(parent.getWidth(),parent.getHeight());
     }
     public void setParentView(Group parent){
         this.parent=parent;

@@ -14,9 +14,9 @@ public class AtlasGenerator {
 
         TexturePacker.process(
             settings,
-            "assets/raw/home",      // input
+            "lwjgl3/raw/game_over",      // input
             "assets/ui",             // output
-            "home"                  // atlas name
+            "game_over"                  // atlas name
         );
     }
 }

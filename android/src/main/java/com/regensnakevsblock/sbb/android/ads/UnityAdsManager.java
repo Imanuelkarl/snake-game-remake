@@ -1,8 +1,10 @@
 package com.regensnakevsblock.sbb.android.ads;
 
 import android.app.Activity;
+import android.util.Log;
 
 import com.badlogic.gdx.Gdx;
+import com.regensnakevsblock.sbb.config.Constants;
 import com.regensnakevsblock.sbb.service.ads.AdsService;
 import com.regensnakevsblock.sbb.service.ads.RewardListener;
 import com.unity3d.ads.IUnityAdsInitializationListener;
@@ -16,11 +18,11 @@ public class UnityAdsManager implements AdsService {
     private RewardListener rewardListener;
 
     // ================= CONFIG =================
-    private static final String GAME_ID = "1234567"; // replace later
-    private static final boolean TEST_MODE = true;
 
-    private static final String REWARDED_PLACEMENT = "rewardedVideo";
-    private static final String INTERSTITIAL_PLACEMENT = "video";
+    private static final boolean TEST_MODE = false;
+
+    private static final String REWARDED_PLACEMENT = "Rewarded_Android";
+    private static final String INTERSTITIAL_PLACEMENT = "Interstitial_Android";
 
     // ================= STATE =================
     private boolean rewardedLoaded = false;
@@ -35,7 +37,7 @@ public class UnityAdsManager implements AdsService {
     // ================= INIT =================
     @Override
     public void initialize() {
-        UnityAds.initialize(activity, GAME_ID, TEST_MODE,
+        UnityAds.initialize(activity, Constants.unityGameId, TEST_MODE,
             new IUnityAdsInitializationListener() {
                 @Override
                 public void onInitializationComplete() {
@@ -80,10 +82,11 @@ public class UnityAdsManager implements AdsService {
     @Override
     public void loadInterstitial() {
         if (!initialized) return;
-
+        Log.d("Unity Ads","Ads are loading now...");
         UnityAds.load(INTERSTITIAL_PLACEMENT, new IUnityAdsLoadListener() {
             @Override
             public void onUnityAdsAdLoaded(String placementId) {
+                Log.d("Unity Ads","Ads is Loaded!!");
                 interstitialLoaded = true;
             }
 

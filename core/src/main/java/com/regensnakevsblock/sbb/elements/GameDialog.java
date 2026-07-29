@@ -4,6 +4,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.math.Vector2;
@@ -20,11 +21,8 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
 import com.regensnakevsblock.sbb.assets.Assets2;
-import com.regensnakevsblock.sbb.config.GameInstance;
 import com.regensnakevsblock.sbb.enumaretors.AnimationType;
 import com.regensnakevsblock.sbb.utils.ActorFactory;
-import com.regensnakevsblock.sbb.utils.FontActor;
-import com.regensnakevsblock.sbb.utils.SimpleBitmapFont;
 
 public class GameDialog extends Group {
 
@@ -48,9 +46,9 @@ public class GameDialog extends Group {
     private TextureRegion bgTexture;
     private TextureRegion titleTexture;
     private TextureRegion closeTexture;
-    SimpleBitmapFont simpleBitmapFont;
+    BitmapFont bitmapFont;
     private CloseListener closeListener;
-    private FontActor titleFont;
+    private Label titleFont;
 
     public GameDialog(Stage stage) {
 
@@ -64,16 +62,13 @@ public class GameDialog extends Group {
         titleTexture = assets.noHeaderDialog;
         closeTexture = assets.closeTexture;
 
-        simpleBitmapFont=GameInstance.getInstance().getSimpleBitmapFont();
-
-        // Optional: Enable debug to see character boxes
-        simpleBitmapFont.setDebugMode(false);
+        bitmapFont = Assets2.getInstance().font;
         initialize();
     }
     public void draw(Batch batch,CharSequence text,float x, float y, float scaleX, float scaleY){
-        simpleBitmapFont.setScale(scaleX,scaleY);
+        bitmapFont.getData().setScale(scaleX,scaleY);
         if(isOpen) {
-            simpleBitmapFont.draw(batch, text, x, y);
+            bitmapFont.draw(batch, text, x, y);
         }
     }
 
@@ -136,8 +131,8 @@ public class GameDialog extends Group {
         titleLabel.setSize(titleBackground.getWidth(), titleBackground.getHeight());
         titleLabel.setPosition(titleBackground.getX(), titleBackground.getY());
 
-        simpleBitmapFont.setScale(0.3f,0.45f);
-        titleFont = new FontActor(simpleBitmapFont, "");
+        bitmapFont.getData().setScale(0.3f,0.45f);
+        titleFont = ActorFactory.createTextLabel(bitmapFont, "");
         titleFont.setSize(titleBackground.getWidth(), titleBackground.getHeight());
         //titleFont.setAlignment(FontActor.CENTER);
         titleFont.setPosition(titleBackground.getX(), titleBackground.getY());
@@ -594,9 +589,6 @@ public class GameDialog extends Group {
         buildBackground();
         buildTitle();
         buildButtons();
-    }
-    public void setFont(SimpleBitmapFont font){
-        titleFont.setFont(font);
     }
 
     public void setTitle(String title) {

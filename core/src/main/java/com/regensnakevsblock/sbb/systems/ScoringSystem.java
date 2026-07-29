@@ -1,5 +1,6 @@
 package com.regensnakevsblock.sbb.systems;
 
+import com.regensnakevsblock.sbb.config.GameInstance;
 import com.regensnakevsblock.sbb.levels.Level;
 import com.regensnakevsblock.sbb.world.WorldState;
 
@@ -21,6 +22,7 @@ public class ScoringSystem extends GlobalSystems{
             if (worldState.getLevel().getLevelType() == Level.LevelType.BLOCKS) {
                 if (worldState.totalBlocksDestroyed() >= worldState.getLevel().getNoOfBlocks()) {
                     worldState.setPaused(true);
+                    worldState.setLevelCleared();
                     System.out.println("Victory !!!.\n\n total blocks destroyed " + worldState.totalBlocksDestroyed());
                     return;
                 }
@@ -45,6 +47,7 @@ public class ScoringSystem extends GlobalSystems{
 
                 if (allMet) {
                     worldState.setPaused(true);
+                    worldState.setLevelCleared();
                     System.out.println("Victory !!! (Colored Blocks)");
                 }
             }

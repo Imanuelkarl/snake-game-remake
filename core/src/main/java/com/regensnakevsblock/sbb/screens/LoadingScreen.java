@@ -6,36 +6,35 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.regensnakevsblock.sbb.MyGame;
 import com.regensnakevsblock.sbb.assets.Assets2;
 import com.regensnakevsblock.sbb.config.GameInstance;
-import com.regensnakevsblock.sbb.utils.SimpleBitmapFont;
 
 public class LoadingScreen extends InputAdapter implements Screen {
 
     private final MyGame game;
     private SpriteBatch batch;
     private OrthographicCamera camera;
-    private SimpleBitmapFont font;
     private Texture background;
     private Texture logo;
     private float progress;
     private Texture barBg;
     private Texture barFill;
     private Texture knob;
+    BitmapFont bitmapFont;
     float screenWidth = 800;
     float screenHeight = 480;
 
     public LoadingScreen(MyGame game) {
         this.game = game;
         this.batch = game.getBatch();
+
         this.camera = new OrthographicCamera();
         camera.setToOrtho(false, screenWidth, screenHeight);
-        font = new SimpleBitmapFont(
-            Gdx.files.internal("fonts/ImageFonts/FontsHDTwo.fnt"),
-            Gdx.files.internal("fonts/ImageFonts/FontsHDTwo.png")
-        );
+        bitmapFont=new BitmapFont(Gdx.files.internal("fonts/ImageFonts/FontsHDTwo.fnt"));
+
         logo = new Texture("SnakeBlockLogo.png");
         background = new Texture("game_bg_light.png");
         barBg = new Texture("progressBarBg.png");
@@ -91,7 +90,7 @@ public class LoadingScreen extends InputAdapter implements Screen {
 // Clamp so it doesn't go outside
         knobX = Math.max(barX - knobSize / 2f, knobX);
         knobX = Math.min(barX + barWidth - knobSize / 2f, knobX);
-        float textY = barY + barHeight + 15;
+        float textY = barY + barHeight + 40;
 
         batch.begin();
         batch.draw(background, 0, -camera.viewportHeight/2, camera.viewportWidth, camera.viewportHeight*2);
@@ -107,11 +106,9 @@ public class LoadingScreen extends InputAdapter implements Screen {
         // ===== LOGO =====
         batch.draw(logo, logoX, logoY, logoWidth, logoHeight);
 
-// ===== LOADING TEXT =====
-        font.setScale(0.3f,0.15f);
-        font.draw(batch, "LOADING... " + (int)(progress * 100) + "%",
+        bitmapFont.getData().setScale(0.3f,0.15f);
+        bitmapFont.draw(batch, "LOADING... " + (int)(progress * 100) + "%",
             screenWidth / 2f - 150, textY);
-
         batch.end();
         // When loading is complete, switch to menu screen
         if (Assets2.getInstance().isLoaded()) {
@@ -149,7 +146,7 @@ public class LoadingScreen extends InputAdapter implements Screen {
 
     @Override
     public void dispose() {
-        font.dispose();
+        bitmapFont.dispose();
     }
 
 }

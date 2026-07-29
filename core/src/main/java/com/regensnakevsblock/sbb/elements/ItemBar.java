@@ -1,28 +1,29 @@
 package com.regensnakevsblock.sbb.elements;
 
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.regensnakevsblock.sbb.assets.Assets2;
 import com.regensnakevsblock.sbb.config.GameInstance;
 import com.regensnakevsblock.sbb.utils.ActorFactory;
-import com.regensnakevsblock.sbb.utils.FontActor;
-import com.regensnakevsblock.sbb.utils.SimpleBitmapFont;
 
 public class ItemBar extends Group {
 
     private Image background;
     private Image itemIcon;
     private ImageButton addButton;
-    private FontActor amountDisplay;
+    private Label amountDisplay;
     private TextureRegion backgroundTexture;
 
     private TextureRegion itemTexture;
     private TextureRegion addItemTexture;
-    private SimpleBitmapFont font;
+    private BitmapFont font;
 
     private String amount = "0";
 
@@ -31,6 +32,7 @@ public class ItemBar extends Group {
 
     private float width;
     private float height;
+    private GlyphLayout layout;
 
     public ItemBar(float x,float y, float width, float height) {
         Assets2 assets = Assets2.getInstance();
@@ -42,7 +44,7 @@ public class ItemBar extends Group {
         backgroundTexture=assets.sliderBackgroundTexture;
         itemTexture=assets.defaultItemTexture;
         addItemTexture=assets.addButtonTexture;
-
+        layout=new GlyphLayout();
         build();
         layout();
     }
@@ -59,15 +61,9 @@ public class ItemBar extends Group {
         // Add Button
         addButton = ActorFactory.createButton(addItemTexture,0,0,width,height);
         addActor(addButton);
-        if(GameInstance.getInstance().getSimpleBitmapFont()==null){
-            font = GameInstance.getInstance().getSimpleBitmapFont();
-            //GameInstance.getInstance().setSimpleBitmapFont(font);
-        }
-        else{
-            font=GameInstance.getInstance().getSimpleBitmapFont();
-        }
-        font.setScale(0.25f,0.25f);
-        amountDisplay = new FontActor(font, amount);
+        font=Assets2.getInstance().font;
+        font.getData().setScale(0.25f,0.25f);
+        amountDisplay = ActorFactory.createTextLabel(Assets2.getInstance().font, amount);
         addActor(amountDisplay);
     }
 
@@ -98,11 +94,11 @@ public class ItemBar extends Group {
         float amountWidth = height*0.7f;  // Estimated width for the amount text
         float amountHeight = height * 0.4f;
 
-
+        layout.setText(font,amount);
         amountDisplay.setSize(amountWidth, amountHeight);
         amountDisplay.setPosition(
             itemIcon.getX() - amountWidth - amountGap,  // Left of item icon with small gap
-            centerY - font.getHeight(amount)/3
+            centerY
         );
     }
     public void setBackgroundTexture(Texture texture){
@@ -133,7 +129,9 @@ public class ItemBar extends Group {
 
     public void setAmount(Long value) {
         this.amount = String.valueOf(value);
-        this.amountDisplay.setWidth(font.getWidth(String.valueOf(value)));
+        font.getData().setScale(0.2f);
+        layout.setText(font, amount);
+        this.amountDisplay.setWidth(layout.width);
         this.amountDisplay.setText(String.valueOf(value));
 
         // Optional: adjust amount display width based on text length
