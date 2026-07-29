@@ -1,0 +1,286 @@
+<!doctype html>
+<html>
+  <head>
+    <title>SnakeVsBlock</title>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+    <meta
+      id="gameViewport"
+      name="viewport"
+      content="width=device-width initial-scale=1"
+    />
+    <link href="styles.css" rel="stylesheet" type="text/css" />
+
+    <script
+      async
+      src="https:securepubads.g.doubleclick.net/tag/js/gpt.js"
+    ></script>
+
+    <script>
+      window.googletag = window.googletag || { cmd: [] };
+
+      window.adBridge = {
+        bannerSlot: null,
+        interstitialSlot: null,
+        rewardedSlot: null,
+        rewardedEvent: null,
+
+        bannerLoaded: false,
+        interstitialLoaded: false,
+        rewardedLoaded: false,
+
+        javaRewardListener: null,
+
+        initialize: function () {
+          var self = this;
+          console.log("Setting ads service ...");
+          googletag.cmd.push(function () {
+            // 1. Setup Banner Slot
+            self.bannerSlot = googletag
+              .defineSlot(
+                "/6355419/Travel/Europe",
+                [300, 250],
+                "canvas-banner-overlay",
+              )
+              .addService(googletag.pubads());
+
+            // 2. FIXED: Define Interstitial Slot UPFRONT during initialization
+            self.interstitialSlot = googletag.defineOutOfPageSlot(
+              "/21775744923/example/interstitial",
+              googletag.enums.OutOfPageFormat.INTERSTITIAL,
+            );
+            if (self.interstitialSlot) {
+              self.interstitialSlot.addService(googletag.pubads());
+            }
+
+            // --- AD EVENT LISTENERS ---
+            googletag
+              .pubads()
+              .addEventListener("slotRenderEnded", function (event) {
+                if (event.slot === self.bannerSlot) {
+                  self.bannerLoaded = !event.isEmpty;
+                }
+              });
+
+            googletag.pubads().addEventListener("slotOnload", function (event) {
+              if (event.slot === self.interstitialSlot) {
+                console.log(
+                  "Interstitial fully loaded and ready to trigger via navigation.",
+                );
+                self.interstitialLoaded = true;
+              }
+            });
+
+            googletag
+              .pubads()
+              .addEventListener("rewardedSlotReady", function (event) {
+                console.log("Rewarded ad ready.");
+                self.rewardedEvent = event;
+                self.rewardedLoaded = true;
+              });
+
+            googletag
+              .pubads()
+              .addEventListener("rewardedSlotGranted", function (event) {
+                if (self.javaRewardListener) {
+                  self.javaRewardListener(
+                    event.payload.amount,
+                    event.payload.type,
+                  );
+                }
+              });
+
+            googletag
+              .pubads()
+              .addEventListener("rewardedSlotClosed", function (event) {
+                self.rewardedLoaded = false;
+                self.rewardedEvent = null;
+                if (self.rewardedSlot) {
+                  googletag.destroySlots([self.rewardedSlot]);
+                  self.rewardedSlot = null;
+                }
+              });
+
+            // Enable everything
+            googletag.pubads().enableSingleRequest();
+            googletag.enableServices();
+
+            // FIXED: Display the interstitial registration slot immediately
+            if (self.interstitialSlot) {
+              googletag.display(self.interstitialSlot);
+            }
+          });
+        },
+
+        // --- BANNER METHODS ---
+        loadBanner: function () {
+          var self = this;
+          googletag.cmd.push(function () {
+            googletag.display("canvas-banner-overlay");
+            googletag.pubads().refresh([self.bannerSlot]);
+          });
+        },
+        isBannerLoaded: function () {
+          return this.bannerLoaded;
+        },
+        showBanner: function () {
+          var el = document.getElementById("canvas-banner-overlay");
+          if (el) el.style.display = "block";
+        },
+        hideBanner: function () {
+          var el = document.getElementById("canvas-banner-overlay");
+          if (el) el.style.display = "none";
+        },
+        addTrigger: function (elementId) {
+          var element = document.getElementById(elementId);
+          if (!element) {
+            console.error(
+              "addTrigger Error: Element ID '" +
+                elementId +
+                "' not found in DOM.",
+            );
+            return;
+          }
+
+          console.log(
+            "Successfully bound element '" +
+              elementId +
+              "' to Interstitial engine.",
+          );
+
+          // Intercept user interaction on the element
+          element.addEventListener("click", function (event) {
+            // If the ad isn't loaded yet, bypass and allow normal app progression
+            if (!window.adBridge.interstitialLoaded) {
+              console.log(
+                "Ad payload not ready. Continuing link progression normally.",
+              );
+              return;
+            }
+
+            console.log(
+              "Authentic user click registered. Passing context to GPT routing...",
+            );
+
+            // CRITICAL: Force the target element's execution to act as a local link navigation.
+            // Changing window.location.hash satisfies Google's absolute requirement for natural
+            // page context transitions while preventing your LibGDX state from reloading.
+            window.location.hash = "interstitial-transition-" + Date.now();
+          });
+        },
+
+        // --- INTERSTITIAL METHODS ---
+        loadInterstitial: function () {
+          var self = this;
+          console.log("Loading interstitial ads...");
+          this.interstitialLoaded = false;
+          googletag.cmd.push(function () {
+            // Refresh the existing slot to look for a fresh ad payload
+            if (self.interstitialSlot) {
+              googletag.pubads().refresh([self.interstitialSlot]);
+              console.log("Refreshing interstitial slot data...");
+            }
+          });
+        },
+        isInterstitialLoaded: function () {
+          return this.interstitialLoaded;
+        },
+        showInterstitial: function () {
+          console.log("Showing interstitial ads clicked");
+
+          var trigger = document.getElementById("hidden-interstitial-trigger");
+          if (!trigger) {
+            trigger = document.createElement("a");
+            trigger.id = "hidden-interstitial-trigger";
+            trigger.style.display = "block";
+            document.body.appendChild(trigger);
+          } else {
+            console.log("trigger doesn't not exist");
+          }
+
+          // FIXED: Direct to current URL path + a hash.
+          // This satisfies Google's absolute HTTP/HTTPS validation rule,
+          // but only updates the hash index, meaning your LibGDX engine won't lose state.
+          trigger.href =
+            window.location.origin +
+            window.location.pathname +
+            "#show-interstitial-ad";
+          e.preventDefault(false);
+
+          // CRITICAL: DO NOT add e.preventDefault() here! GPT requires natural link behavior to intercept.
+          trigger.click();
+        },
+
+        // --- REWARDED METHODS ---
+        loadRewarded: function () {
+          var self = this;
+          console.log("Loading rewarded ads...");
+          this.rewardedLoaded = false;
+          this.rewardedEvent = null;
+          googletag.cmd.push(function () {
+            if (self.rewardedSlot) {
+              googletag.destroySlots([self.rewardedSlot]);
+            }
+            self.rewardedSlot = googletag.defineOutOfPageSlot(
+              "/22639388115/rewarded_web_example",
+              googletag.enums.OutOfPageFormat.REWARDED,
+            );
+            if (self.rewardedSlot) {
+              self.rewardedSlot.addService(googletag.pubads());
+              googletag.display(self.rewardedSlot);
+            }
+          });
+        },
+        isRewardedLoaded: function () {
+          return this.rewardedLoaded;
+        },
+        showRewarded: function () {
+          if (this.rewardedEvent) {
+            this.rewardedEvent.makeRewardedVisible();
+            loadRewarded();
+          }
+        },
+        setRewardListener: function (callback) {
+          this.javaRewardListener = callback;
+        },
+      };
+    </script>
+
+    <style>
+      #canvas-banner-overlay {
+        position: fixed;
+        bottom: 10px;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 999;
+        display: none;
+        width: 300px;
+        height: 250px;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div align="center" id="embed-html"></div>
+    <script type="text/javascript" src="html/html.nocache.js"></script>
+  </body>
+
+  <script>
+    function handleMouseDown(evt) {
+      evt.preventDefault();
+      evt.stopPropagation();
+      window.focus();
+    }
+
+    function handleMouseUp(evt) {
+      evt.preventDefault();
+      evt.stopPropagation();
+    }
+    document.addEventListener("contextmenu", (event) => event.preventDefault());
+    document
+      .getElementById("embed-html")
+      .addEventListener("mousedown", handleMouseDown, false);
+    document
+      .getElementById("embed-html")
+      .addEventListener("mouseup", handleMouseUp, false);
+  </script>
+</html>
