@@ -58,16 +58,29 @@ public class SkinAdapter extends BaseAdapter<SkinData, SkinCard> {
 
     }
     public void purchaseSkin(SkinData skin, int position) {
-        if(skin.price< GameInstance.getSaveService().getCoins()){
-            for(int i=0;i<items.size();i++){
-                items.get(i).isEquipped =false;
+        if(skin.currency.equals("coins")){
+            if(skin.price< GameInstance.getSaveService().getCoins()){
+                for(int i=0;i<items.size();i++){
+                    items.get(i).isEquipped =false;
+                }
+                skin.isOwned = true;
+                equipSkin(skin,position);
+                GameInstance.getSaveService().saveSkinAsPurchased(skin.id);
+                GameInstance.getSaveService().saveCoins(GameInstance.getSaveService().getCoins()-skin.price);
+            }else{
+                notEnoughCoins = true;
             }
-            skin.isOwned = true;
-            equipSkin(skin,position);
-            //GameInstance.getSaveService().saveCoins(GameInstance.getSaveService().getCoins()-skin.price);
-
         }else{
-            notEnoughCoins = true;
+            if(skin.price< GameInstance.getSaveService().getDiamonds()){
+                for(int i=0;i<items.size();i++){
+                    items.get(i).isEquipped =false;
+                }
+                skin.isOwned = true;
+                equipSkin(skin,position);
+                GameInstance.getSaveService().saveCoins(GameInstance.getSaveService().getDiamonds()-skin.price);
+            }else{
+                notEnoughCoins = true;
+            }
         }
     }
 

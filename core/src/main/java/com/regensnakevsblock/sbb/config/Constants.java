@@ -40,6 +40,7 @@ public class Constants {
     public static final String unityGameId= "6156095";
     public static final String unityBannerAdId = "";
     public static final String unityInterstitialAdId = "";
+    public static String[] POWER_UPS = {"magnet","hammer","multiplier","freeze"};
     public static final String unityRewardedAdId = "";
     //public static float[][] Snake_Texture_Colors={{1f,0f,0f},{1f,1f,0.6f},{0f,1f,0f},{0f,1f,1f},{0f,0f,1f},{1f,0.7f,1f},{1f,0.1f,0.6f},{1f,1f,1f},{0.3f,0.3f,0.3f},{0.8f,0.6f,0.02f},{1f,0.8f,0.4f},{1f,0.8f,0.4f}};
     public static float[][] Snake_Texture_Colors = {
@@ -99,8 +100,34 @@ public class Constants {
         {0.580f, 0.460f, 0.210f}, // 47. Grinning sun
         {0.460f, 0.320f, 0.500f}  // 48. Moon
     };
+    public static String[] tutorialInstructions ={
+        "Swipe Left to avoid blocks",
+        "Swipe Right to avoid Blocks",
+        "Swipe into win item to collect length",
+        "Move to the center to Destroy small blocks",
+        "Win PowerUp"
+    };
+    public static String[] successMessage = {
+        "Great Job",
+        "You are a natural!!",
+        "Nice moves",
+        "You're Killing it",
+        "Almost there"
+    };
+
+    public static int calculatePowerUpTime(int level){
+        return 3*level*1000;
+    }
 
     public static void initialize() {
         // Initialize any constant values
+    }
+
+    public static String getUpgradeItem(int upgradeLevel) {
+        return upgradeLevel<8?"coins":"diamonds";
+    }
+
+    public static float calculatePowerUpPrice(int upgradeLevel) {
+        return upgradeLevel<8?100*upgradeLevel+2400:upgradeLevel*10;
     }
 }

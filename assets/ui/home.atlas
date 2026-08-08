@@ -6,161 +6,161 @@ filter: Linear, Linear
 repeat: none
 LevelsButton
   rotate: false
-  xy: 515, 819
+  xy: 517, 605
   size: 256, 90
   orig: 256, 90
   offset: 0, 0
   index: -1
 PlayButtonUpdate
   rotate: false
-  xy: 1, 22
+  xy: 1, 1
   size: 256, 256
   orig: 256, 256
   offset: 0, 0
   index: -1
 SnakeBlockLogo
   rotate: false
-  xy: 1, 818
-  size: 512, 204
-  orig: 512, 204
+  xy: 1, 797
+  size: 512, 221
+  orig: 512, 221
   offset: 0, 0
   index: -1
 acceptTerms
   rotate: false
-  xy: 517, 707
+  xy: 517, 697
   size: 256, 110
   orig: 256, 110
   offset: 0, 0
   index: -1
 checkedCircle
   rotate: false
-  xy: 517, 257
+  xy: 517, 253
   size: 96, 96
   orig: 96, 96
   offset: 0, 0
   index: -1
 difficultyLabel
   rotate: false
-  xy: 517, 433
+  xy: 517, 429
   size: 256, 44
   orig: 256, 44
   offset: 0, 0
   index: -1
 easyLabel
   rotate: false
-  xy: 773, 842
+  xy: 773, 838
   size: 128, 50
   orig: 128, 50
   offset: 0, 0
   index: -1
 hardLabel
   rotate: false
-  xy: 615, 303
+  xy: 615, 299
   size: 128, 50
   orig: 128, 50
   offset: 0, 0
   index: -1
 highScoreBg
   rotate: false
-  xy: 517, 609
+  xy: 515, 809
   size: 256, 96
   orig: 256, 96
   offset: 0, 0
   index: -1
 highScoreLabel
   rotate: false
-  xy: 1, 1
+  xy: 259, 2
   size: 128, 19
   orig: 128, 19
   offset: 0, 0
   index: -1
 highScoreTrophy
   rotate: false
-  xy: 1, 280
+  xy: 1, 259
   size: 256, 266
   orig: 256, 266
   offset: 0, 0
   index: -1
 highScoreTrophy2
   rotate: false
-  xy: 773, 894
+  xy: 773, 890
   size: 128, 128
   orig: 128, 128
   offset: 0, 0
   index: -1
 levelBg
   rotate: false
-  xy: 1, 548
+  xy: 1, 527
   size: 256, 268
   orig: 256, 268
   offset: 0, 0
   index: -1
 licenseAndCredits
   rotate: false
-  xy: 259, 26
+  xy: 773, 820
   size: 128, 16
   orig: 128, 16
   offset: 0, 0
   index: -1
 mediumLabel
   rotate: false
-  xy: 517, 479
+  xy: 517, 475
   size: 256, 60
   orig: 256, 60
   offset: 0, 0
   index: -1
 privacyPolicy
   rotate: false
-  xy: 517, 390
+  xy: 517, 386
   size: 256, 41
   orig: 256, 41
   offset: 0, 0
   index: -1
 rejectTerms
   rotate: false
-  xy: 515, 911
+  xy: 515, 907
   size: 256, 111
   orig: 256, 111
   offset: 0, 0
   index: -1
 settingsHeader
   rotate: false
-  xy: 517, 541
+  xy: 517, 537
   size: 256, 66
   orig: 256, 66
   offset: 0, 0
   index: -1
 settingsIconNew
   rotate: false
-  xy: 259, 560
+  xy: 259, 539
   size: 256, 256
   orig: 256, 256
   offset: 0, 0
   index: -1
 shareIconNew
   rotate: false
-  xy: 259, 302
+  xy: 259, 281
   size: 256, 256
   orig: 256, 256
   offset: 0, 0
   index: -1
 skinIconNew
   rotate: false
-  xy: 259, 44
+  xy: 259, 23
   size: 256, 256
   orig: 256, 256
   offset: 0, 0
   index: -1
 termsOfService
   rotate: false
-  xy: 517, 355
+  xy: 517, 351
   size: 256, 33
   orig: 256, 33
   offset: 0, 0
   index: -1
 uncheckedCircle
   rotate: false
-  xy: 903, 926
+  xy: 903, 922
   size: 96, 96
   orig: 96, 96
   offset: 0, 0

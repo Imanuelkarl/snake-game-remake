@@ -20,6 +20,7 @@ public class SpawnSystem extends GlobalSystems {
     @Override
     public void update(float delta) {
         if (worldState.isPaused() || worldState.isGameOver()) return;
+        if(worldState.getGameMode()== WorldState.GameMode.TUTORIAL) return;
 
         spawnDistanceTracker += worldState.getGameSpeed()*100* worldState.getMoveFactor() * delta;
 

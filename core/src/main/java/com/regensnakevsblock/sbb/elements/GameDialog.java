@@ -20,7 +20,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
-import com.regensnakevsblock.sbb.assets.Assets2;
+import com.regensnakevsblock.sbb.assets.Assets;
 import com.regensnakevsblock.sbb.enumaretors.AnimationType;
 import com.regensnakevsblock.sbb.utils.ActorFactory;
 
@@ -55,14 +55,14 @@ public class GameDialog extends Group {
         this.stage = stage;
         if(stage==null) return;
 
-        Assets2 assets = Assets2.getInstance();
+        Assets assets = Assets.getInstance();
 
         // Default textures
         bgTexture = assets.noHeaderDialog;
         titleTexture = assets.noHeaderDialog;
         closeTexture = assets.closeTexture;
 
-        bitmapFont = Assets2.getInstance().font;
+        bitmapFont = Assets.getInstance().font;
         initialize();
     }
     public void draw(Batch batch,CharSequence text,float x, float y, float scaleX, float scaleY){

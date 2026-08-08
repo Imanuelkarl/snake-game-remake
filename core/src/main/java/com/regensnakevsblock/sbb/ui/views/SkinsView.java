@@ -3,18 +3,14 @@ package com.regensnakevsblock.sbb.ui.views;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.scenes.scene2d.Group;
-import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
-import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
-import com.regensnakevsblock.sbb.assets.Assets2;
+import com.regensnakevsblock.sbb.assets.Assets;
 import com.regensnakevsblock.sbb.config.GameInstance;
 import com.regensnakevsblock.sbb.elements.GameDialog;
 import com.regensnakevsblock.sbb.ui.adapters.SkinAdapter;
 import com.regensnakevsblock.sbb.ui.cards.SkinCard;
-import com.regensnakevsblock.sbb.ui.cards.SnakePreview;
 import com.regensnakevsblock.sbb.ui.core.ListManager;
 import com.regensnakevsblock.sbb.ui.data.SkinData;
 import com.regensnakevsblock.sbb.utils.ActorFactory;
@@ -98,7 +94,7 @@ public class SkinsView extends BaseActorView {
         noCoinsPop.setFontScale(0.6f);
 
         noCoinsPop.setWrap(true);
-        noCoinsPop.setText("You don't have enough coins to buy this skin");
+        noCoinsPop.setText("Insufficient Coin");
 
     }
     private void setupDialog(Stage stage){
@@ -107,7 +103,7 @@ public class SkinsView extends BaseActorView {
         dialog.setTitleEnabled(false);
         dialog.addContentActor(noCoinsPop);
 
-        dialog.setBackground(Assets2.getInstance().dialogQuarterSizeOpen);
+        dialog.setBackground(Assets.getInstance().dialogQuarterSizeOpen);
         dialog.open();
     }
 

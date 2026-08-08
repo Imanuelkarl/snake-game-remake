@@ -12,11 +12,12 @@ public class UpgradeData {
     public int maxLevel;
     public int upgradeCost;
     public float currentValue;
+    public String upgradeItem;
     public float nextValue;
     public TextureRegion item;
 
     public UpgradeData(String id, String name, String description, int currentLevel, int maxLevel,
-                       int upgradeCost, float currentValue, float nextValue, TextureRegion item) {
+                       int upgradeCost, float currentValue, float nextValue, TextureRegion item,String upgradeItem) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -26,5 +27,10 @@ public class UpgradeData {
         this.currentValue = currentValue;
         this.nextValue = nextValue;
         this.item = item;
+        this.upgradeItem = upgradeItem;
+    }
+
+    public void setCurrentLevel(int i) {
+        this.currentLevel=i;
     }
 }

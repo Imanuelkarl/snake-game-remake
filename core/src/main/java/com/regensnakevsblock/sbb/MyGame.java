@@ -1,13 +1,16 @@
 package com.regensnakevsblock.sbb;
 
 import com.badlogic.gdx.Game;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.regensnakevsblock.sbb.assets.Assets2;
+import com.regensnakevsblock.sbb.assets.Assets;
 import com.regensnakevsblock.sbb.config.Constants;
 import com.regensnakevsblock.sbb.screens.CrossFadeTransition;
+import com.regensnakevsblock.sbb.screens.HomeScreen;
+import com.regensnakevsblock.sbb.screens.LevelsScreen;
 import com.regensnakevsblock.sbb.screens.SplashScreen;
 import com.regensnakevsblock.sbb.screens.TransitionScreen;
 import com.regensnakevsblock.sbb.service.SaveService;
@@ -38,15 +41,20 @@ public class MyGame extends Game {
 
         // Set up game configuration
         Constants.initialize();
-        Assets2.getInstance().setAssetManager(assetManager);
+        Assets.getInstance().setAssetManager(assetManager);
 
         // Start with loading screen
         setScreen(new SplashScreen(this));
     }
-    public Screen getFormerScreen() {
-        if (screenStack.size() > 1) {
-            screenStack.pop();
-            return screenStack.get(screenStack.size() - 1);
+    public Screen getFormerScreen(Screen screen) {
+
+        if(screen instanceof HomeScreen){
+            System.out.println("it is home screen");
+            return new HomeScreen(this);
+        }
+        if(screen instanceof LevelsScreen){
+            System.out.println("it is level screen");
+            return new LevelsScreen(this);
         }
         return null;
     }
@@ -66,8 +74,11 @@ public class MyGame extends Game {
 
     @Override
     public void setScreen(Screen screen) {
-        screenStack.add(screen);
+
         super.setScreen(screen);
+    }
+    public void addToScreenStack(Screen screen){
+        screenStack.add(screen);
     }
 
     public void setScreenWithFade(Screen screen, float duration) {
@@ -106,5 +117,15 @@ public class MyGame extends Game {
 
     public PurchaseService getPurchaseService() {
         return purchaseService;
+    }
+    public void backPressed(){
+
+        if(!screenStack.isEmpty()){
+            screenStack.pop();
+
+        }else{
+            Gdx.app.exit();
+        }
+        System.out.println("Back was pressed");
     }
 }

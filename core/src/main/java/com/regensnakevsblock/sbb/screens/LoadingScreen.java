@@ -9,7 +9,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.regensnakevsblock.sbb.MyGame;
-import com.regensnakevsblock.sbb.assets.Assets2;
+import com.regensnakevsblock.sbb.assets.Assets;
 import com.regensnakevsblock.sbb.config.GameInstance;
 
 public class LoadingScreen extends InputAdapter implements Screen {
@@ -42,8 +42,8 @@ public class LoadingScreen extends InputAdapter implements Screen {
         knob = new Texture("progressBarKnob.png");
 
         // Start asset loading
-        Assets2.getInstance().loadAllUI();
-        Assets2.getInstance().loadAllAssets();
+        Assets.getInstance().loadAllUI();
+        Assets.getInstance().loadAllAssets();
         if(game.getPurchaseService()!=null){
             game.getPurchaseService().loadStoreItems();
         }
@@ -60,7 +60,7 @@ public class LoadingScreen extends InputAdapter implements Screen {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         // Update asset loading progress
-        progress = Assets2.getInstance().getProgress();
+        progress = Assets.getInstance().getProgress();
         batch.setProjectionMatrix(camera.combined);
         camera.update();
 
@@ -111,12 +111,12 @@ public class LoadingScreen extends InputAdapter implements Screen {
             screenWidth / 2f - 150, textY);
         batch.end();
         // When loading is complete, switch to menu screen
-        if (Assets2.getInstance().isLoaded()) {
-            Assets2.getInstance().assignAssets(); // REQUIRED
+        if (Assets.getInstance().isLoaded()) {
+            Assets.getInstance().assignAssets(); // REQUIRED
             GameInstance.getInstance().loadSkinData(game);
             GameInstance.getInstance().load();
         }
-        if(Assets2.getInstance().isLoaded()&&GameInstance.getInstance().isSkinDataLoaded()){
+        if(Assets.getInstance().isLoaded()&&GameInstance.getInstance().isSkinDataLoaded()){
 
             game.setScreen(new HomeScreen(game));
         }

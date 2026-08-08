@@ -14,7 +14,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Array;
-import com.regensnakevsblock.sbb.assets.Assets2;
+import com.regensnakevsblock.sbb.assets.Assets;
 
 public class BottomNavigation extends Group {
 
@@ -55,7 +55,7 @@ public class BottomNavigation extends Group {
         this.items = new Array<>();
         this.listeners = new Array<>();
 
-        Assets2 assets = Assets2.getInstance();
+        Assets assets = Assets.getInstance();
 
         // Default textures - you should replace these with your actual default textures
         backgroundTexture = assets.bottomNavBg;

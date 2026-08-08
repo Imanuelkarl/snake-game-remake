@@ -38,13 +38,12 @@ package com.regensnakevsblock.sbb.utils;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.Color;
-import com.regensnakevsblock.sbb.assets.Assets2;
 
 public class FontFactory {
 
     public static BitmapFont getRoboto(int size, boolean medium) {
         // Always return preloaded bitmap font (GWT-safe)
-        BitmapFont font =  new BitmapFont(Gdx.files.internal("fonts/ImageFonts/custom.fnt"));//Assets2.getInstance().font;
+        BitmapFont font =  new BitmapFont(Gdx.files.internal("fonts/ImageFonts/custom.fnt"));//Assets.getInstance().font;
         //BitmapFont font =;
         // Optional: apply size scaling instead of regenerating fonts
         font.getData().setScale(size*0.015f); // adjust base scale as needed
@@ -54,6 +53,6 @@ public class FontFactory {
     }
 
     public static void dispose() {
-        // Do nothing (font is managed by Assets2)
+        // Do nothing (font is managed by Assets)
     }
 }

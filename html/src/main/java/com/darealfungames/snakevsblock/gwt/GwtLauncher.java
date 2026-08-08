@@ -36,9 +36,9 @@ public class GwtLauncher extends GwtApplication {
             adsService.initialize();
             adsService.loadInterstitial();
             adsService.loadRewarded();
-            WebPurchaseService webPurchaseService = new WebPurchaseService();
+            //WebPurchaseService webPurchaseService = new WebPurchaseService();
             game.setAdsService(adsService);
-            game.setPurchaseService(webPurchaseService);
+            //game.setPurchaseService(webPurchaseService);
             return game;
         }
 }

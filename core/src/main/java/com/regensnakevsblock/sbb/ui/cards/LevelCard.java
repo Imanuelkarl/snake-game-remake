@@ -4,7 +4,7 @@ import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
-import com.regensnakevsblock.sbb.assets.Assets2;
+import com.regensnakevsblock.sbb.assets.Assets;
 import com.regensnakevsblock.sbb.ui.core.BaseView;
 import com.regensnakevsblock.sbb.ui.core.ListItemView;
 import com.regensnakevsblock.sbb.ui.data.LevelData;
@@ -29,19 +29,19 @@ public class LevelCard extends Group implements ListItemView<LevelData>, BaseVie
 
 
         // Background
-        background = ActorFactory.createButton(Assets2.getInstance().levelCardBg, 22.5f,30,140,140);
+        background = ActorFactory.createButton(Assets.getInstance().levelCardBg, 22.5f,30,140,140);
         addActor(background);
 
         index = ActorFactory.createTextLabel(70,60,90);
         addActor(index);
 
-        locked = ActorFactory.createUiImage(Assets2.getInstance().levelLockTexture,70,60,50,60);
+        locked = ActorFactory.createUiImage(Assets.getInstance().levelLockTexture,70,60,50,60);
         addActor(locked);
 
-        cleared = ActorFactory.createUiImage(Assets2.getInstance().levelMarkedTexture,70,60,50,60);
+        cleared = ActorFactory.createUiImage(Assets.getInstance().levelMarkedTexture,70,60,50,60);
         addActor(cleared);
 
-        selectedBg = ActorFactory.createUiImage(Assets2.getInstance().levelSelectedBg,12.5f,20,160,160);
+        selectedBg = ActorFactory.createUiImage(Assets.getInstance().levelSelectedBg,12.5f,20,160,160);
         addActor(selectedBg);
 
 

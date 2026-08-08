@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 public class SpawnRules {
 
-    private static final int MAX_BLOCKS = 5;
+    public static final int MAX_BLOCKS = 5;
     private static final int MAX_LINES = 3;
     private static final int MAX_WIN_BODIES = 3;
     private static final int MAX_SCORE_CAP = 20;

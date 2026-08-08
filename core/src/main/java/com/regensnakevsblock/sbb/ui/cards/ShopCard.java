@@ -6,8 +6,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
-import com.regensnakevsblock.sbb.assets.Assets2;
-import com.regensnakevsblock.sbb.config.GameInstance;
+import com.regensnakevsblock.sbb.assets.Assets;
 import com.regensnakevsblock.sbb.ui.core.BaseView;
 import com.regensnakevsblock.sbb.ui.core.ListItemView;
 import com.regensnakevsblock.sbb.ui.data.ShopItemData;
@@ -39,11 +38,11 @@ public class ShopCard extends Group implements ListItemView<ShopItemData>, BaseV
 
     private void setupUI() {
         // Background
-        background = new Image(new TextureRegionDrawable(Assets2.getInstance().cardBackgroundTexture));
+        background = new Image(new TextureRegionDrawable(Assets.getInstance().cardBackgroundTexture));
         addActor(background);
 
         // Icon
-        icon = new Image(new TextureRegionDrawable(Assets2.getInstance().defaultItemTexture));
+        icon = new Image(new TextureRegionDrawable(Assets.getInstance().defaultItemTexture));
         addActor(icon);
 
         // Name
@@ -59,17 +58,17 @@ public class ShopCard extends Group implements ListItemView<ShopItemData>, BaseV
         //addActor(descriptionLabel);
 
         //Price Background
-        priceBackground = new Image(new TextureRegionDrawable(Assets2.getInstance().priceBarTexture));//card background for now
+        priceBackground = new Image(new TextureRegionDrawable(Assets.getInstance().priceBarTexture));//card background for now
         //addActor(priceBackground);
 
-        actionButton = ActorFactory.createButton(Assets2.getInstance().priceBarTexture,12.5f,20,220,80);
+        actionButton = ActorFactory.createButton(Assets.getInstance().priceBarTexture,12.5f,20,220,80);
         addActor(actionButton);
         // Price
         Label.LabelStyle priceStyle = new Label.LabelStyle();
         priceLabel = ActorFactory.createTextLabel("",45, priceStyle);
         //addActor(priceLabel);
 
-        priceText = ActorFactory.createTextLabel(Assets2.getInstance().font,"");
+        priceText = ActorFactory.createTextLabel(Assets.getInstance().font,"");
         priceText.setSize(70,30);
         addActor(priceText);
 

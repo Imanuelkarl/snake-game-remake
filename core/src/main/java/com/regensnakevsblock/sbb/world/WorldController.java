@@ -11,6 +11,7 @@ import com.regensnakevsblock.sbb.systems.MovementSystem;
 import com.regensnakevsblock.sbb.systems.PowerUpSystem;
 import com.regensnakevsblock.sbb.systems.ScoringSystem;
 import com.regensnakevsblock.sbb.systems.SpawnSystem;
+import com.regensnakevsblock.sbb.systems.TutorialSystem;
 
 import java.util.ArrayList;
 
@@ -21,6 +22,7 @@ public class WorldController  {
     private SpawnSystem spawnSystem;
     private PowerUpSystem powerUpSystem;
     private ScoringSystem scoringSystem;
+    private TutorialSystem tutorialSystem;
     private DifficultySystem difficultySystem;
 
     private OrthographicCamera camera;
@@ -32,22 +34,12 @@ public class WorldController  {
     float timer = 0f;
     float interval = 0.2f;
 
-    float timeToMax = 220f;
-    float increaseRate = (maxSpeed - startSpeed) / timeToMax;
+    float timeToMax = 150f;
+    final float increaseRate;
     private boolean goLeft;
-
-    public boolean isGoRight() {
-        return goRight;
-    }
-
     public void setGoRight(boolean goRight) {
         this.goRight = goRight;
     }
-
-    public boolean isGoLeft() {
-        return goLeft;
-    }
-
     public void setGoLeft(boolean goLeft) {
         this.goLeft = goLeft;
     }
@@ -67,7 +59,9 @@ public class WorldController  {
         this.powerUpSystem = new PowerUpSystem(worldState);
         this.scoringSystem = new ScoringSystem(worldState);
         this.difficultySystem = new DifficultySystem(worldState);
+        this.tutorialSystem = new TutorialSystem(worldState);
         setup();
+        increaseRate = (maxSpeed - startSpeed) / timeToMax;
     }
 
     public void update(float deltaTime) {
@@ -77,18 +71,27 @@ public class WorldController  {
         collisionSystem.update(deltaTime);
         powerUpSystem.update(deltaTime);
         scoringSystem.update(deltaTime);
+        tutorialSystem.update(deltaTime);
         //difficultySystem.update(deltaTime);
         // Keyboard snake movement
         initialXValue=keyboardMoveSnakePosition();
         // Update world state
 
 
-        if (speed < maxSpeed) {
+
+        if(worldState.getGameMode()== WorldState.GameMode.ENDLESS){
             speed += increaseRate * deltaTime *worldState.getMoveFactor();
-            if (speed > maxSpeed) {
-                speed = maxSpeed;
+        }else if(worldState.getGameMode()== WorldState.GameMode.LEVELS){
+            if(speed<maxSpeed){
+                speed += increaseRate * deltaTime *worldState.getMoveFactor();
+                if(speed>=maxSpeed){
+                    speed += maxSpeed;
+                }
             }
+        } else {
+            speed=3;
         }
+
 
         worldState.setMinScore(Math.max(1, Math.min(worldState.getSnake().getLength()/2+1,worldState.getMaxScore()-10)));
         worldState.setGameSpeed(speed);
@@ -96,21 +99,28 @@ public class WorldController  {
 
     }
     public void setup(){
-        switch (GameInstance.getSaveService().getDifficulty()){
-            case 1:
-                speed = 5f;
-                maxSpeed =25f;
-                break;
-            case 2:
-                speed =7;
-                maxSpeed =32f;
-                break;
-            default:
-                speed =3f;
-                maxSpeed =20f;
-                break;
+        if(worldState.getGameMode()== WorldState.GameMode.ENDLESS){
+            switch (GameInstance.getSaveService().getDifficulty()){
+                case 1:
+                    speed = 5f;
+                    maxSpeed =25f;
+                    break;
+                case 2:
+                    speed =7;
+                    maxSpeed =32f;
+                    break;
+                default:
+                    speed =3f;
+                    maxSpeed =20f;
+                    break;
 
+            }
+        }else{
+            speed = 5f;
+            maxSpeed =30;
+            timeToMax= 200;
         }
+
     }
 
     public void usePowerUp(int powerUpId) {

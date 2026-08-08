@@ -4,7 +4,6 @@ package com.regensnakevsblock.sbb.systems;
 import com.badlogic.gdx.math.Rectangle;
 import com.regensnakevsblock.sbb.entities.Block;
 import com.regensnakevsblock.sbb.entities.Line;
-import com.regensnakevsblock.sbb.entities.Pickup;
 import com.regensnakevsblock.sbb.entities.Row;
 import com.regensnakevsblock.sbb.entities.WinBody;
 import com.regensnakevsblock.sbb.world.WorldState;
@@ -34,8 +33,8 @@ public class MovementSystem extends GlobalSystems {
                 float width= worldState.getBlockDimension();
                 float height= worldState.getBlockDimension();
                 line.setWidth(width/16);
-                Rectangle left = new Rectangle(x-width/8, y+height/16,width/8,height-height/16);
-                Rectangle right = new Rectangle(x+ line.getWidth(),y+height/16,width/8, height-height/16);
+                Rectangle left = new Rectangle(x-width/16, y+height/16,width/16,height-height/16);
+                Rectangle right = new Rectangle(x+ line.getWidth(),y+height/16,width/16, height-height/16);
                 line.setLeftCollision(left);
                 line.setRightCollision(right);
                 Rectangle bounds = new Rectangle(x, y,width,height/8);

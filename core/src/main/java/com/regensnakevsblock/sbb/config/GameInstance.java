@@ -2,16 +2,13 @@ package com.regensnakevsblock.sbb.config;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.utils.Array;
-import com.badlogic.gdx.utils.Json;
 //import com.google.gson.Gson;
 import com.badlogic.gdx.utils.JsonReader;
 import com.badlogic.gdx.utils.JsonValue;
 import com.badlogic.gdx.utils.Timer;
 import com.regensnakevsblock.sbb.MyGame;
-import com.regensnakevsblock.sbb.assets.Assets2;
+import com.regensnakevsblock.sbb.assets.Assets;
 import com.regensnakevsblock.sbb.levels.Level;
 import com.regensnakevsblock.sbb.service.SaveService;
 import com.regensnakevsblock.sbb.service.ads.AdsService;
@@ -23,6 +20,7 @@ import com.regensnakevsblock.sbb.ui.data.LevelData;
 import com.regensnakevsblock.sbb.ui.data.ShopCategory;
 import com.regensnakevsblock.sbb.ui.data.ShopItemData;
 import com.regensnakevsblock.sbb.ui.data.SkinData;
+import com.regensnakevsblock.sbb.ui.data.UpgradeData;
 import com.regensnakevsblock.sbb.ui.views.AchievementsView;
 import com.regensnakevsblock.sbb.ui.views.LevelsView;
 import com.regensnakevsblock.sbb.ui.views.ShopView;
@@ -31,7 +29,6 @@ import com.regensnakevsblock.sbb.ui.views.UpgradesView;
 import com.regensnakevsblock.sbb.utils.TextureTools;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -43,6 +40,8 @@ public class GameInstance {
     private static SaveService saveService;
     public LevelsView levelsView;
     public List<LevelData> levelsData;
+
+    public List<UpgradeData> upgradeDataList = new ArrayList<>();
     public MyGame game;
 
     public List<LevelData> getLevelData() {
@@ -50,7 +49,7 @@ public class GameInstance {
             return levelsData;
         }
         List<LevelData> levelDataList = new ArrayList<>();
-        int currentLevel = saveService.getSelectedLevel();
+        saveService.saveSelectedLevel(saveService.getMaxLevel());
         int maxLevel = saveService.getMaxLevel();
         for(int i=0;i<levels.size();i++){
             Level level = levels.get(i);
@@ -107,6 +106,16 @@ public class GameInstance {
         return instance;
     }
 
+    public List<UpgradeData> getUpgradeDataList() {
+        if(upgradeDataList.isEmpty()){
+            upgradeDataList= new ArrayList<>();
+            for (int i = 0; i < Constants.POWER_UPS.length; i++) {
+               upgradeDataList.add(generateUpgradeData(Constants.POWER_UPS[i].toUpperCase()));
+            }
+        }
+        return upgradeDataList;
+    }
+
     public static SaveService getSaveService() {
         return saveService;
     }
@@ -125,9 +134,9 @@ public class GameInstance {
         }
     }
     private TextureRegion quantityToTexture(String item, Long quantity){
-        TextureRegion coins = Assets2.getInstance().coinPilesTexture;
-        TextureRegion diamonds = Assets2.getInstance().diamondPilesTexture;
-        TextureRegion portions = Assets2.getInstance().portionPilesTexture;
+        TextureRegion coins = Assets.getInstance().coinPilesTexture;
+        TextureRegion diamonds = Assets.getInstance().diamondPilesTexture;
+        TextureRegion portions = Assets.getInstance().portionPilesTexture;
 
         TextureRegion coinPile1 = TextureTools.resolveRegion(coins,2,2,0,0,0);
         TextureRegion coinPile2 = TextureTools.resolveRegion(coins,2,2,0,1,0);
@@ -291,7 +300,7 @@ public class GameInstance {
     private List<SkinData> createSkinData() {
 
         List<SkinData> skins = new ArrayList<>();
-        Texture texture = Assets2.getInstance().snakeSkins;
+        Texture texture = Assets.getInstance().snakeSkins;
         int columns = 6;
         int rows = 8;
 
@@ -304,14 +313,18 @@ public class GameInstance {
             int row = i / columns;
 
             TextureRegion region = TextureTools.resolveRegion(texture,rows,columns,col,row,12);
-
+            saveService.saveSkinAsPurchased("skin_"+0);
+            boolean isOwned = saveService.getSkinIsPurchased(i);
+            int price = i<30?(i+1)*1000+(i+1)*50:(i+1)*5+(10*(i-30));
+            String currency = i<30?"coins":"diamonds";
             skins.add(new SkinData(
                 "skin_" + i,
                 "Skin " + (i + 1),
                 region,
-                (i + 1) * 1000,
+                price,
+                isOwned,
                 i == 0,
-                i == 0
+                currency
             ));
         }
 
@@ -348,7 +361,7 @@ public class GameInstance {
             level.setLevelId(entry.getInt("levelId"));
             level.setCleared(entry.getBoolean("cleared"));
             level.setNoOfRows(entry.getInt("noOfRows"));
-
+            level.setNoOfBlocks(entry.getInt("noOfBlocks"));
             // enum fix
             level.setLevelType(Level.LevelType.valueOf(entry.getString("levelType")));
 
@@ -379,6 +392,28 @@ public class GameInstance {
             if (l.getLevelId() == id) return l;
         }
         return null;
+    }
+    private TextureRegion getPowerUpRegion(String name){
+        TextureRegion powerUps= Assets.getInstance().powerUpTexture;;
+        switch (name.toLowerCase()) {
+            case "magnet":
+                return TextureTools.resolveRegion(powerUps,2,2,1,0,0);
+            case "hammer":
+                return TextureTools.resolveRegion(powerUps,2,2,0,0,0);
+            case "freeze":
+                return TextureTools.resolveRegion(powerUps,2,2,1,1,0);
+            case "multiplier":
+                return TextureTools.resolveRegion(powerUps,2,2,0,1,0);
+            default:
+                return new TextureRegion(powerUps);
+        }
+    }
+    public UpgradeData generateUpgradeData(String name){
+        int speed= Constants.calculatePowerUpTime(getSaveService().getUpgradeLevel(name));
+        float cost = Constants.calculatePowerUpPrice(getSaveService().getUpgradeLevel(name)) ;
+        String upgradeItem = Constants.getUpgradeItem(getSaveService().getUpgradeLevel(name));
+        TextureRegion region = getPowerUpRegion(name);
+        return new UpgradeData(name.toLowerCase(),name.toUpperCase(),"Upgrade life time for "+name.toUpperCase(),getSaveService().getUpgradeLevel(name),12, (int) cost,speed,0,region,upgradeItem);
     }
 
     public int size() {

@@ -1,12 +1,10 @@
 package com.regensnakevsblock.sbb.ui.views;
 
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
-import com.regensnakevsblock.sbb.assets.Assets2;
+import com.regensnakevsblock.sbb.assets.Assets;
 import com.regensnakevsblock.sbb.config.GameInstance;
-import com.regensnakevsblock.sbb.service.purchase.PurchaseService;
 import com.regensnakevsblock.sbb.ui.adapters.ShopAdapter;
 import com.regensnakevsblock.sbb.ui.cards.ShopCard;
 import com.regensnakevsblock.sbb.ui.core.ListManager;
@@ -53,9 +51,9 @@ public class ShopView extends BaseActorView {
     }
 
     private void loadData() {
-        TextureRegion coins = Assets2.getInstance().coinPilesTexture;
-        TextureRegion diamonds = Assets2.getInstance().diamondPilesTexture;
-        TextureRegion portions = Assets2.getInstance().portionPilesTexture;
+        TextureRegion coins = Assets.getInstance().coinPilesTexture;
+        TextureRegion diamonds = Assets.getInstance().diamondPilesTexture;
+        TextureRegion portions = Assets.getInstance().portionPilesTexture;
 
         TextureRegion coinPile1 = TextureTools.resolveRegion(coins,2,2,0,0,0);
         TextureRegion coinPile2 = TextureTools.resolveRegion(coins,2,2,0,1,0);

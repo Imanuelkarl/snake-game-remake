@@ -1,0 +1,62 @@
+
+blocksStyles.png
+size: 2048, 1024
+format: RGBA8888
+filter: Linear, Linear
+repeat: none
+blocks
+  rotate: false
+  xy: 515, 352
+  size: 256, 102
+  orig: 256, 102
+  offset: 0, 0
+  index: -1
+blocks_bricks
+  rotate: false
+  xy: 1, 683
+  size: 512, 243
+  orig: 512, 243
+  offset: 0, 0
+  index: -1
+blocks_candy
+  rotate: false
+  xy: 515, 456
+  size: 512, 233
+  orig: 512, 233
+  offset: 0, 0
+  index: -1
+blocks_elements
+  rotate: false
+  xy: 1, 1
+  size: 512, 205
+  orig: 512, 205
+  offset: 0, 0
+  index: -1
+blocks_metal
+  rotate: false
+  xy: 1, 444
+  size: 512, 237
+  orig: 512, 237
+  offset: 0, 0
+  index: -1
+blocks_solid
+  rotate: false
+  xy: 1029, 696
+  size: 512, 230
+  orig: 512, 230
+  offset: 0, 0
+  index: -1
+blocks_wood
+  rotate: false
+  xy: 515, 691
+  size: 512, 235
+  orig: 512, 235
+  offset: 0, 0
+  index: -1
+blocks_wool
+  rotate: false
+  xy: 1, 208
+  size: 512, 234
+  orig: 512, 234
+  offset: 0, 0
+  index: -1

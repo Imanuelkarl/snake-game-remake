@@ -19,9 +19,8 @@ import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.viewport.FitViewport;
-import com.regensnakevsblock.sbb.assets.Assets2;
+import com.regensnakevsblock.sbb.assets.Assets;
 import com.regensnakevsblock.sbb.config.Constants;
-import com.regensnakevsblock.sbb.config.GameInstance;
 import com.regensnakevsblock.sbb.elements.GameDialog;
 import com.regensnakevsblock.sbb.elements.ImageCheckBoxGroup;
 import com.regensnakevsblock.sbb.service.SaveService;
@@ -55,17 +54,21 @@ public class HomeUi {
         this.homeUiFactory=new HomeUiFactory(stage);
         saveService = new SaveService();
         //saveService.clearData();
+        if(saveService.isFirstTimePlaying()){
+            saveService.saveHealths(5L);
+            saveService.saveFirstTimePlaying(false);
+        }
         setup();
         build();
     }
 
     private void build() {
-        bitmapFont = Assets2.getInstance().font;
+        bitmapFont = Assets.getInstance().font;
 
         Table header = homeUiFactory.createHeaderTable();
-        header.setBackground(new TextureRegionDrawable(Assets2.getInstance().upLayout));
-        ImageButton closeBtn = ActorFactory.createButton(Assets2.getInstance().closeTexture, stage.getWidth()-70, stage.getHeight()-70, 60, 60);
-        ImageButton minimizeBtn = ActorFactory.createButton(Assets2.getInstance().sliderFillTexture, stage.getWidth()-140,stage.getHeight()-40,60,20);
+        header.setBackground(new TextureRegionDrawable(Assets.getInstance().upLayout));
+        ImageButton closeBtn = ActorFactory.createButton(Assets.getInstance().closeTexture, stage.getWidth()-70, stage.getHeight()-70, 60, 60);
+        ImageButton minimizeBtn = ActorFactory.createButton(Assets.getInstance().sliderFillTexture, stage.getWidth()-140,stage.getHeight()-40,60,20);
 
 
         closeBtn.addListener(new ClickListener() {
@@ -92,7 +95,7 @@ public class HomeUi {
         ImageButton shareButton = homeUiFactory.createShareButton();
         ImageButton snakeSkinButton = homeUiFactory.createSnakeSkinButton();
         Group highScoreGroup = homeUiFactory.highScoreGroup(saveService.getHighScore());
-        Image background = ActorFactory.createUiImage(Assets2.getInstance().backgroundTexture,0,0,stage.getWidth(),stage.getHeight());
+        Image background = ActorFactory.createUiImage(Assets.getInstance().backgroundTexture,0,0,stage.getWidth(),stage.getHeight());
         //Set Buttons Actions/ Listeners
         playButton.addListener(new ClickListener() {
             @Override
@@ -167,12 +170,12 @@ public class HomeUi {
        dialog = new GameDialog(stage);
 
        dialog.setDialogSize(dialog.getWidth(),stage.getHeight()/2.5f);
-       dialog.setTitleTexture(Assets2.getInstance().settingHeader);
+       dialog.setTitleTexture(Assets.getInstance().settingHeader);
        dialog.setTitle("");
        dialog.setTitleEnabled(true);
 
-        Image musicIcon=ActorFactory.createUiImage(Assets2.getInstance().musicTexture , stage.getWidth()/4,dialog.getHeight()*0.55f, stage.getWidth()/12,stage.getWidth()/12);
-        Image soundIcon = ActorFactory.createUiImage(Assets2.getInstance().soundTexture,stage.getWidth()/4,dialog.getHeight()*0.47f,stage.getWidth()/12, stage.getWidth()/12);
+        Image musicIcon=ActorFactory.createUiImage(Assets.getInstance().musicTexture , stage.getWidth()/4,dialog.getHeight()*0.55f, stage.getWidth()/12,stage.getWidth()/12);
+        Image soundIcon = ActorFactory.createUiImage(Assets.getInstance().soundTexture,stage.getWidth()/4,dialog.getHeight()*0.47f,stage.getWidth()/12, stage.getWidth()/12);
         Slider musicVolumeSlider = ActorFactory.createCustomSlider(stage.getWidth()/2.5f, dialog.getHeight()*0.55f,stage.getWidth()/3,stage.getHeight()/40);
         Slider soundVolumeSlider = ActorFactory.createCustomSlider(stage.getWidth()/2.5f, dialog.getHeight()*0.47f,stage.getWidth()/3,stage.getHeight()/40);
 
@@ -190,7 +193,7 @@ public class HomeUi {
             public void changed(ChangeEvent event, Actor actor) {
                 saveService.saveMusicVolume((int) musicVolumeSlider.getValue());
                 musicVolume=(int) musicVolumeSlider.getValue();
-                Assets2.getInstance().backgroundMusic.setVolume((float) musicVolume/100);
+                Assets.getInstance().backgroundMusic.setVolume((float) musicVolume/100);
             }
         });
         dialog.addContentActor(musicIcon);
@@ -264,7 +267,7 @@ public class HomeUi {
         termsOfService.addContentActor(rejectTerms);
     }
     private void setup(){
-        Assets2.getInstance().backgroundMusic.setVolume((float) saveService.getMusicVolume()/100);
+        Assets.getInstance().backgroundMusic.setVolume((float) saveService.getMusicVolume()/100);
         soundVolume=saveService.getSoundVolume();
         musicVolume=saveService.getMusicVolume();
     }

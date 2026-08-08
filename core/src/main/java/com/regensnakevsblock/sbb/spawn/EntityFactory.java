@@ -2,7 +2,7 @@ package com.regensnakevsblock.sbb.spawn;
 
 import static com.regensnakevsblock.sbb.utils.RandomEngine.getRandom;
 
-import com.regensnakevsblock.sbb.assets.Assets2;
+import com.regensnakevsblock.sbb.assets.Assets;
 import com.regensnakevsblock.sbb.config.PowerUpDimensions;
 import com.regensnakevsblock.sbb.entities.Block;
 import com.regensnakevsblock.sbb.entities.Line;
@@ -13,14 +13,18 @@ import com.regensnakevsblock.sbb.world.WorldState;
 public class EntityFactory {
 
     public Block createBlock(int pos, int score) {
-        Block block = new Block(Assets2.getInstance().blockTexture,0,0,30,30,score);
+
+        int powerDet = RandomEngine.getRandom(0,15);
+        return createBlock(pos,score,powerDet,20);
+    }
+    public Block createBlock(int pos, int score,int powerDet,int powerUpScore) {
+        Block block = new Block(Assets.getInstance().blockTexture,0,0,30,30,score);
         block.setValue(score);
         block.setPosition(pos);
-        int powerDet = RandomEngine.getRandom(0,15);
         if(powerDet==3){
             int powerUpType = RandomEngine.getRandom(0,3);
             block.setPowerUp(true, PowerUpDimensions.intToEnum(powerUpType));
-            block.setValue(20);
+            block.setValue(powerUpScore);
         }
         block.setActive(true);
         //block.setColumn(pos);

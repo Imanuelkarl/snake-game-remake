@@ -9,8 +9,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
-import com.regensnakevsblock.sbb.assets.Assets2;
-import com.regensnakevsblock.sbb.config.GameInstance;
+import com.regensnakevsblock.sbb.assets.Assets;
 import com.regensnakevsblock.sbb.utils.ActorFactory;
 
 public class ItemBar extends Group {
@@ -35,7 +34,7 @@ public class ItemBar extends Group {
     private GlyphLayout layout;
 
     public ItemBar(float x,float y, float width, float height) {
-        Assets2 assets = Assets2.getInstance();
+        Assets assets = Assets.getInstance();
         this.setPosition(x,y);
         this.setSize(width,height);
         this.width=width;
@@ -61,9 +60,9 @@ public class ItemBar extends Group {
         // Add Button
         addButton = ActorFactory.createButton(addItemTexture,0,0,width,height);
         addActor(addButton);
-        font=Assets2.getInstance().font;
+        font= Assets.getInstance().font;
         font.getData().setScale(0.25f,0.25f);
-        amountDisplay = ActorFactory.createTextLabel(Assets2.getInstance().font, amount);
+        amountDisplay = ActorFactory.createTextLabel(Assets.getInstance().font, amount);
         addActor(amountDisplay);
     }
 

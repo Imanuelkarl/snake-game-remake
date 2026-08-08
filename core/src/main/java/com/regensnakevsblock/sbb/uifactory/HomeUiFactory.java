@@ -14,7 +14,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
-import com.regensnakevsblock.sbb.assets.Assets2;
+import com.regensnakevsblock.sbb.assets.Assets;
 import com.regensnakevsblock.sbb.elements.GameDialog;
 import com.regensnakevsblock.sbb.elements.ImageCheckBoxGroup;
 import com.regensnakevsblock.sbb.utils.ActorFactory;
@@ -45,8 +45,8 @@ public class HomeUiFactory {
         resize(stage.getWidth(), stage.getHeight());
         playButtonSize=290f;
         actionButtonSize=120.5f;
-        logoHeight =230f;
-        logoWidth =602f;
+        logoHeight =240f;
+        logoWidth =550f;
         font = new BitmapFont(Gdx.files.internal("fonts/ImageFonts/highScoreNumbers.fnt"));
         layout = new GlyphLayout();
         initButtonLayout();
@@ -62,7 +62,7 @@ public class HomeUiFactory {
     // Button creation methods
     public ImageButton createSettingsButton() {
         return createButton(
-            Assets2.getInstance().settingsButtonTexture,
+            Assets.getInstance().settingsButtonTexture,
             width / 3 - width / 4,
             height / 32,
             actionButtonSize,
@@ -73,7 +73,7 @@ public class HomeUiFactory {
     public ImageButton createPlayButton() {
 
         return createButton(
-            Assets2.getInstance().playButtonTexture,
+            Assets.getInstance().playButtonTexture,
             width / 2 - playButtonSize/2,
             height *0.4f,
             playButtonSize,
@@ -92,7 +92,7 @@ public class HomeUiFactory {
 
     public ImageButton createSnakeSkinButton() {
         return createButton(
-            Assets2.getInstance().snakeSkinButtonTexture,
+            Assets.getInstance().snakeSkinButtonTexture,
             2 * width / 3 - 2 * width / 8,
             height / 32,
             actionButtonSize,
@@ -102,7 +102,7 @@ public class HomeUiFactory {
 
     public ImageButton createShareButton() {
         return createButton(
-            Assets2.getInstance().shareButtonTexture,
+            Assets.getInstance().shareButtonTexture,
             3 * width / 3 - 3 * width / 12,
             height / 32,
             actionButtonSize,
@@ -203,7 +203,7 @@ public class HomeUiFactory {
     // Image creation methods
     public Image createLogoImage() {
         return createUiImage(
-            Assets2.getInstance().logoTexture,
+            Assets.getInstance().logoTexture,
             (width-logoWidth)/2,
             height *0.75f,
             logoWidth,
@@ -215,7 +215,7 @@ public class HomeUiFactory {
         dialog.setDialogSize(stage.getWidth(), stage.getHeight()/3);
         dialog.setTitleEnabled(false);
         dialog.setCloseButtonEnabled(false);
-        dialog.setBackground(Assets2.getInstance().dialogHalfSize);
+        dialog.setBackground(Assets.getInstance().dialogHalfSize);
         return dialog;
     }
 
@@ -253,7 +253,7 @@ public class HomeUiFactory {
 
     public ImageButton createTermsAndConditionButton() {
         return createButton(
-            Assets2.getInstance().tosTexture,
+            Assets.getInstance().tosTexture,
             topRowStartX, topRowY,
             smallBtnW, mediumBtnH
         );
@@ -261,7 +261,7 @@ public class HomeUiFactory {
 
     public ImageButton createPrivacyPolicyButton() {
         return createButton(
-            Assets2.getInstance().privacyPolicyTexture,
+            Assets.getInstance().privacyPolicyTexture,
             topRowStartX + smallBtnW + defaultSpacing, topRowY,
             smallBtnW, mediumBtnH
         );
@@ -269,7 +269,7 @@ public class HomeUiFactory {
 
     public ImageButton createAcceptButton() {
         return createButton(
-            Assets2.getInstance().acceptTerms,
+            Assets.getInstance().acceptTerms,
             bottomRowStartX, bottomRowY,
             largeBtnW, largeBtnH
         );
@@ -277,7 +277,7 @@ public class HomeUiFactory {
 
     public ImageButton createRejectButton() {
         return createButton(
-            Assets2.getInstance().rejectTerms,
+            Assets.getInstance().rejectTerms,
             bottomRowRejectStartX , bottomRowY,
             largeBtnW, largeBtnH
         );
@@ -307,11 +307,11 @@ public class HomeUiFactory {
     }
     public ImageButton createLevelsButton() {
 
-        return createButton(Assets2.getInstance().levelsButtonTexture, width/2 -width/4, height/4, width/2, height/12);
+        return createButton(Assets.getInstance().levelsButtonTexture, width/2 -width/4, height/4, width/2, height/12);
     }
 
     public ImageCheckBoxGroup createDifficultyGroup(){
-        ImageCheckBoxGroup group = new ImageCheckBoxGroup(Assets2.getInstance().checkedTexture, Assets2.getInstance().uncheckedTexture);
+        ImageCheckBoxGroup group = new ImageCheckBoxGroup(Assets.getInstance().checkedTexture, Assets.getInstance().uncheckedTexture);
         group.setSize(width- width/16, 200);
         group.setPosition(width/32, height/3.5f);
         group.setLayoutType(
@@ -322,14 +322,14 @@ public class HomeUiFactory {
         float scale = Gdx.graphics.getWidth() / 1920f; // Scale based on reference resolution
         group.setCheckboxSize(80f * scale); // 64px checkbox on 1080p
         group.setItemSize(300f * scale, 80f * scale);
-        group.addItem(Assets2.getInstance().easyTexture);
-        group.addItem(Assets2.getInstance().mediumTexture);
-        group.addItem(Assets2.getInstance().hardTexture);
+        group.addItem(Assets.getInstance().easyTexture);
+        group.addItem(Assets.getInstance().mediumTexture);
+        group.addItem(Assets.getInstance().hardTexture);
 
         return group;
     }
     public Image createDifficultyTitle(){
-        return createUiImage(Assets2.getInstance().difficultyTexture, width/2 -width/7, height/2.4f, width/3.5f, height*0.02f);
+        return createUiImage(Assets.getInstance().difficultyTexture, width/2 -width/7, height/2.4f, width/3.5f, height*0.02f);
     }
     public Group highScoreGroup(Long highScore){
         Group group = new Group();
@@ -342,9 +342,9 @@ public class HomeUiFactory {
         float scoreX = gWidth/2-layout.width/2;
         float scoreY =-layout.height/2+40;
         highScoreLabel.setPosition(scoreX+gWidth*0.08f,-layout.height/2+40);
-        Image highScoreBg = createUiImage(Assets2.getInstance().highScoreBackground,0,0,gWidth,gHeight);
-        Image highScoreUiLabel = createUiImage(Assets2.getInstance().highScoreLabel,30+gWidth/4,scoreY+layout.height+20,gWidth/2f,30);
-        Image highScoreTrophy = createUiImage(Assets2.getInstance().highScoreTrophy,20,10,gWidth/4f,gHeight -30);
+        Image highScoreBg = createUiImage(Assets.getInstance().highScoreBackground,0,0,gWidth,gHeight);
+        Image highScoreUiLabel = createUiImage(Assets.getInstance().highScoreLabel,30+gWidth/4,scoreY+layout.height+20,gWidth/2f,30);
+        Image highScoreTrophy = createUiImage(Assets.getInstance().highScoreTrophy,20,10,gWidth/4f,gHeight -30);
         group.setPosition((width-gWidth)/2,height*0.6f);
         group.addActor(highScoreBg);
         group.addActor(highScoreTrophy);

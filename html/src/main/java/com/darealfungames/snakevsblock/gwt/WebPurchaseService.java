@@ -180,7 +180,7 @@ public class WebPurchaseService implements PurchaseService {
         jsonBuilder.append("\"paymentMethod\":\"card\",");
         jsonBuilder.append("\"timestamp\":").append(timestamp);
 
-        String signature = generateSignature(productId, userId, timestamp);
+        String signature =  "mkosddsdlzvjvd;kmvdask;vkm;SDl,s.xz";//generateSignature(productId, userId, timestamp);
         jsonBuilder.append(",\"signature\":\"").append(signature).append("\"");
         jsonBuilder.append("}");
 
@@ -264,7 +264,7 @@ public class WebPurchaseService implements PurchaseService {
         jsonBuilder.append("\"userId\":\"").append(userId).append("\",");
         jsonBuilder.append("\"timestamp\":").append(timestamp);
 
-        String signature = generateSignature(transactionId, userId, timestamp);
+        String signature = "mkosddsdlzvjvd;kmvdask;vkm;SDl,s.xz";// generateSignature(transactionId, userId, timestamp);
         jsonBuilder.append(",\"signature\":\"").append(signature).append("\"");
         jsonBuilder.append("}");
 
@@ -380,7 +380,7 @@ public class WebPurchaseService implements PurchaseService {
         Preferences prefs = Gdx.app.getPreferences("game_prefs");
         String userId = prefs.getString("user_id", null);
         if (userId == null) {
-            userId = UUID.randomUUID().toString();
+            userId =  "mkosddsdlzvjvd;kmvdask;vkm;SDl,s.xz";//java.util.UUID.randomUUID().toString();
             prefs.putString("user_id", userId);
             prefs.flush();
             Gdx.app.log("WebPurchaseService", "Generated new user ID: " + userId);
@@ -390,21 +390,21 @@ public class WebPurchaseService implements PurchaseService {
         return userId;
     }
 
-    private String generateSignature(String id, String userId, long timestamp) {
-        try {
-            String data = "{\"productId\":\"" + id + "\",\"userId\":\"" + userId + "\"}";
-            String payload = data + timestamp;
-            Mac mac = Mac.getInstance("HmacSHA256");
-            SecretKeySpec secretKey = new SecretKeySpec(
-                API_KEY.getBytes(StandardCharsets.UTF_8),
-                "HmacSHA256"
-            );
-            mac.init(secretKey);
-            byte[] signatureBytes = mac.doFinal(payload.getBytes(StandardCharsets.UTF_8));
-            return Base64.getEncoder().encodeToString(signatureBytes);
-        } catch (Exception e) {
-            Gdx.app.error("WebPurchaseService", "Error generating signature", e);
-            return "";
-        }
-    }
+//    private String generateSignature(String id, String userId, long timestamp) {
+//        try {
+//            String data = "{\"productId\":\"" + id + "\",\"userId\":\"" + userId + "\"}";
+//            String payload = data + timestamp;
+//            Mac mac = Mac.getInstance("HmacSHA256");
+//            SecretKeySpec secretKey = new SecretKeySpec(
+//                API_KEY.getBytes(StandardCharsets.UTF_8),
+//                "HmacSHA256"
+//            );
+//            mac.init(secretKey);
+//            byte[] signatureBytes = mac.doFinal(payload.getBytes(StandardCharsets.UTF_8));
+//            return Base64.getEncoder().encodeToString(signatureBytes);
+//        } catch (Exception e) {
+//            Gdx.app.error("WebPurchaseService", "Error generating signature", e);
+//            return "";
+//        }
+//    }
 }

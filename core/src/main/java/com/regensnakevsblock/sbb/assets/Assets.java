@@ -2,126 +2,153 @@ package com.regensnakevsblock.sbb.assets;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.audio.Sound;
-import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.g2d.ParticleEffect;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.utils.Disposable;
 
-public class Assets {
-    public Texture menuBGTexture;
+import java.util.HashMap;
+import java.util.Map;
+
+/**
+ * New asset class that loads UI textures as TextureRegions from atlas files.
+ * Gameplay textures remain as plain Textures loaded via AssetManager.
+ * Atlas files are expected in assets/ui/ with names: global, dialog, bottomNav,
+ * home, main_game, game_over, menu, levels (each .atlas + .png).
+ */
+public class Assets implements Disposable {
+
     private static Assets instance;
-    public Texture snakeSkinButtonTexture;
-    public Texture shareButtonTexture;
-    public Texture addButtonTexture;
-    public Texture reviveAdsTexture;
-    public Texture reviveHealthTexture;
-    public Texture homeButtonTexture;
-    public Texture restartButtonTexture;
-    public Texture resumeButtonTexture;
-    public Texture tapToContinueTexture;
-    public Texture pauseBtnTexture;
-    public Texture logoTexture;
-    public Texture barTexture;
-    public Texture coinTexture;
-    public Texture healthTexture;
-    public Texture diamondTexture;
-    public Texture sliderBackgroundTexture;
-    public Texture sliderFillTexture;
-    public Texture sliderKnobTexture;
-    public Texture boxDialogTexture;
-    //Multiple Textures here already
+
+    // ---- UI TextureRegions (all fields that were Texture become TextureRegion) ----
+    public TextureRegion menuBGTexture;
+    public TextureRegion snakeSkinButtonTexture;
+    public TextureRegion shareButtonTexture;
+    public TextureRegion addButtonTexture;
+    public TextureRegion reviveAdsTexture;
+    public TextureRegion reviveHealthTexture;
+    public TextureRegion homeButtonTexture;
+    public TextureRegion restartButtonTexture;
+    public TextureRegion resumeButtonTexture;
+    public TextureRegion tapToContinueTexture;
+    public TextureRegion pauseBtnTexture;
+    public TextureRegion logoTexture;
+    public TextureRegion barTexture;
+    public TextureRegion coinTexture;
+    public TextureRegion healthTexture;
+    public TextureRegion diamondTexture;
+    public TextureRegion sliderBackgroundTexture;
+    public TextureRegion sliderFillTexture;
+    public TextureRegion sliderKnobTexture;
+    public TextureRegion boxDialogTexture;
+    public TextureRegion pauseHeaderTexture;
+    public TextureRegion soundTexture;
+    public TextureRegion musicTexture;
+    public TextureRegion replayButtonTexture;
+    public TextureRegion upgradeButtonTexture;
+    public TextureRegion home2ButtonTexture;
+    public TextureRegion closeTexture;
+    public TextureRegion defaultTitleTexture;
+    public TextureRegion bottomNavBg;
+    public TextureRegion defaultItemTexture;
+    public TextureRegion selectOverlayTexture;
+    public TextureRegion defaultOverlayTexture;
+    public TextureRegion licenseCreditsTexture;
+    public TextureRegion privacyPolicyTexture;
+    public TextureRegion tosTexture;
+    public TextureRegion giveUpTexture;
+    public TextureRegion continueTexture;
+    public TextureRegion failTexture;
+    public TextureRegion upLayout;
+    public TextureRegion selectedButtonTexture;
+    public TextureRegion equippedBorderTexture;
+    public TextureRegion selectButtonTexture;
+    public TextureRegion buyButtonTexture;
+    public TextureRegion levelsButtonTexture;
+    public TextureRegion priceBarTexture;
+    public TextureRegion coinPilesTexture;
+    public TextureRegion diamondPilesTexture;
+    public TextureRegion portionPilesTexture;
+    public TextureRegion gameOverHeaderTexture;
+    public TextureRegion victoryHeaderTexture;
+    public TextureRegion nextLevelTexture;
+    public TextureRegion scoreTextBoard;
+    public TextureRegion highScoreTextBoard;
+    public TextureRegion upgradeProgressBG;
+    public TextureRegion upgradeProgressFill;
+    public TextureRegion coinsTextBoard;
+    public TextureRegion dialogHalfSize;
+    public TextureRegion dialogQuarterSize;
+    public TextureRegion dialogQuarterSizeOpen;
+    public TextureRegion cardBackgroundTexture;
+    public TextureRegion noHeaderDialog;
+    public TextureRegion keepGoingTexture;
+    public TextureRegion defaultButton;
+    public TextureRegion settingHeader;
+    public TextureRegion powerUpTexture;      // Note: this is still a TextureRegion, loaded from atlas? Actually it's a standalone PNG – we'll keep as Texture? But user may want region. We'll load from atlas if exists, else fallback.
+    public TextureRegion acceptTerms;
+    public TextureRegion rejectTerms;
+    public TextureRegion checkedTexture;
+    public TextureRegion uncheckedTexture;
+    public TextureRegion easyTexture;
+    public TextureRegion mediumTexture;
+    public TextureRegion hardTexture;
+    public TextureRegion difficultyTexture;
+    public TextureRegion highScoreBackground;
+    public TextureRegion highScoreTrophy;
+    public TextureRegion highScoreLabel;
+    public TextureRegion bottomNavItems;
+    public TextureRegion upgradeCardBG;
+    public TextureRegion upgradeItemButton;
+    public TextureRegion levelCardBg;
+    public TextureRegion levelClearedText;
+    public TextureRegion levelLockTexture;
+    public TextureRegion levelMarkedTexture;
+    public TextureRegion levelSelectedBg;
+    public TextureRegion levelPlayButton;
+
+    public TextureRegion levelTaskHeaderBg;
+    public TextureRegion defaultBlock;
+    // Note: finishLineTexture is gameplay, remains Texture (see below)
+
+    // ---- Gameplay Textures (unchanged type: Texture) ----
     public Texture snakeSkins;
-
-    public Texture pauseHeaderTexture;
-    public Texture soundTexture;
-
-    public Texture musicTexture;
-    public Texture replayButtonTexture;
-    public Texture upgradeButtonTexture;
-    public Texture home2ButtonTexture;
-    public Texture closeTexture;
-    public Texture defaultTitleTexture;
-    public Texture bottomNavBg;
-    public Texture defaultItemTexture;
-    public Texture selectOverlayTexture;
-    public Texture defaultOverlayTexture;
-    public Texture fontTexture;
-
-    public Texture licenseCreditsTexture;
-    public Texture privacyPolicyTexture;
-    public Texture tosTexture;
-    public Texture giveUpTexture;
-    public Texture continueTexture;
-    public Texture failTexture;
-    public Texture upLayout;
-    public Texture selectedButtonTexture;
-    public Texture equippedBorderTexture;
-    public Texture selectButtonTexture;
-    public Texture buyButtonTexture;
-    public Texture levelsButtonTexture;
-    public Texture priceBarTexture;
-    //Multiple Textures here already
-    public Texture coinPilesTexture;
-    //Multiple Textures here already
-    public Texture diamondPilesTexture;
-    //Multiple Textures here already
-    public Texture portionPilesTexture;
-    public Texture gameOverHeaderTexture;
-    public Texture scoreTextBoard;
-    public Texture highScoreTextBoard;
-    public Texture upgradeProgressBG;
-    public Texture upgradeProgressFill;
-    public Texture coinsTextBoard;
-    public Texture finishLineTexture;
-    private AssetManager assetManager;
-    //Multiple Textures here already
     public Texture blockTexture;
-
     public Texture lineTexture;
     public Texture backgroundTexture;
+    public Texture fontTexture;
+    public Texture finishLineTexture;     // gameplay, not UI
 
-    public Texture playButtonTexture;
-    public Texture settingsButtonTexture;
-
-    //Dialog Textures
-    public Texture dialogHalfSize;
-    public Texture dialogQuarterSize;
-    public Texture dialogQuarterSizeOpen;
-    public Texture cardBackgroundTexture;
-    public Texture noHeaderDialog;
-    public Texture keepGoingTexture;
-    public Texture defaultButton;
-    public Texture settingHeader;
-    //Multiple Textures here already
-    public Texture powerUpTexture;
-    public Texture acceptTerms;
-    public Texture rejectTerms;
-    //Multiple Textures here already
-    public Texture bottomNavItems;
-    public Texture upgradeCardBG;
-    public Texture upgradeItemButton;
-    public Texture levelCardBg;
-    public Texture levelClearedText;
-    public Texture levelLockTexture;
-    public Texture levelMarkedTexture;
-
+    // ---- Particles & Audio (unchanged) ----
     public ParticleEffect bloodEffect;
-
     public ParticleEffect leftVictoryEffect;
     public ParticleEffect rightVictoryEffect;
-    // Fonts
+    public ParticleEffect confettiCanon;
     public BitmapFont font;
-
-    // Sounds
     public Sound collisionSound;
     public Sound powerUpSound;
     public Sound gameOverSound;
-
-    // Music
+    public Sound winObjectSound;
     public Music backgroundMusic;
+    public TextureRegion[] gameTutorialTitles= new TextureRegion[5];
+    private String suffix ="";
+
+
+
+    // ---- Internal managers ----
+    private AssetManager assetManager;          // for gameplay textures, sounds, particles, music
+    private final Map<String, TextureAtlas> uiAtlases = new HashMap<>();   // groupName -> atlas
+    private final Map<String, TextureRegion> regionCache = new HashMap<>(); // regionName -> region (fast lookup)
+    private final String[] uiGroups = {
+        "global", "dialog", "bottomNav", "home", "main_game", "game_over", "menu", "levels"
+    };
 
     private Assets() {
+        suffix = "_candy";
     }
 
     public static Assets getInstance() {
@@ -135,240 +162,266 @@ public class Assets {
         this.assetManager = assetManager;
     }
 
+    // -------------------------------------------------------------------------
+    // Public UI loading / disposal (separate groups or all together)
+    // -------------------------------------------------------------------------
+
+    /** Load one UI atlas group (e.g., "home"). */
+    public void loadUIGroup(String groupName) {
+        if (uiAtlases.containsKey(groupName)) return;
+        String atlasPath = "ui/" + groupName + ".atlas";
+        if (Gdx.files.internal(atlasPath).exists()) {
+            TextureAtlas atlas = new TextureAtlas(atlasPath);
+            uiAtlases.put(groupName, atlas);
+            // Cache all regions from this atlas
+            for (TextureAtlas.AtlasRegion region : atlas.getRegions()) {
+                regionCache.put(region.name, region);
+            }
+            Gdx.app.log("Assets", "Loaded UI group: " + groupName);
+        } else {
+            Gdx.app.error("Assets", "Atlas not found: " + atlasPath);
+        }
+    }
+    public void loadTutorialUiGroup(String groupName) {
+        if (uiAtlases.containsKey(groupName)) return;
+        String atlasPath = "game/" + groupName + ".atlas";
+        if (Gdx.files.internal(atlasPath).exists()) {
+            TextureAtlas atlas = new TextureAtlas(atlasPath);
+            uiAtlases.put(groupName, atlas);
+            // Cache all regions from this atlas
+            for (TextureAtlas.AtlasRegion region : atlas.getRegions()) {
+                regionCache.put(region.name, region);
+            }
+            Gdx.app.log("Assets", "Loaded UI group: " + groupName);
+        } else {
+            Gdx.app.error("Assets", "Atlas not found: " + atlasPath);
+        }
+    }
+
+    /** Dispose one UI atlas group. */
+    public void disposeUIGroup(String groupName) {
+        TextureAtlas atlas = uiAtlases.remove(groupName);
+        if (atlas != null) {
+            // Remove all regions that came from this atlas
+            for (TextureAtlas.AtlasRegion region : atlas.getRegions()) {
+                regionCache.remove(region.name);
+            }
+            atlas.dispose();
+            Gdx.app.log("Assets", "Disposed UI group: " + groupName);
+        }
+    }
+
+    /** Load all known UI groups (for quick testing). */
+    public void loadAllUI() {
+        for (String group : uiGroups) {
+            loadUIGroup(group);
+        }
+        loadTutorialUiGroup("game_tutorial_title");
+    }
+
+    /** Dispose all UI groups. */
+    public void disposeAllUI() {
+        for (String group : uiGroups) {
+            disposeUIGroup(group);
+        }
+
+    }
+
+    /** Retrieve a TextureRegion by its original PNG name (without extension). */
+    public TextureRegion getUIRegion(String regionName) {
+        TextureRegion region = regionCache.get(regionName);
+        if (region == null) {
+            Gdx.app.error("Assets", "Missing UI region: " + regionName);
+        }
+        return region;
+    }
+
+    // -------------------------------------------------------------------------
+    // Loading all assets (non‑UI via AssetManager + UI atlases)
+    // -------------------------------------------------------------------------
+
     public void loadAllAssets() {
-
-
-        // Game Play Textures folder /game/**
-        assetManager.load("snake_multiple_skins.png", Texture.class);
-        assetManager.load("blocks.png", Texture.class);
-        assetManager.load("lineBG.png",Texture.class);
-        assetManager.load("game/finishLine.png", Texture.class);
-
-        //Global Ui textures /raw/global/**
+        // ---- Non‑UI textures (gameplay) ----
+        assetManager.load("game/snake_multiple_skins.png", Texture.class);
+        assetManager.load("game/blocks"+suffix+".png", Texture.class);
+        assetManager.load("game/lineBG.png", Texture.class);
         assetManager.load("shaderLayer.png", Texture.class);
-        assetManager.load("fonts/ImageFonts/FontsHDTwo.png",Texture.class); //Font should remain in this folder as it is for now
-        assetManager.load("raw/addButton2.png", Texture.class);
-        assetManager.load("raw/snakeCoin.png", Texture.class);
-        assetManager.load("raw/snakeHealthPortion.png", Texture.class);
-        assetManager.load("raw/snakeDiamond.png", Texture.class);
-        assetManager.load("raw/upLayout.png", Texture.class);
-        assetManager.load("raw/menuBG.png", Texture.class);
-        assetManager.load("raw/defaultButton.png", Texture.class);
-        assetManager.load("raw/defaultItemsLook.png", Texture.class);
-        assetManager.load("powerUpTexture.png",Texture.class);
-        assetManager.load("raw/downBGBlue.png", Texture.class);
+        assetManager.load("fonts/ImageFonts/FontsHDTwo.png", Texture.class);
+        assetManager.load("game/finishLine.png", Texture.class);
+        // powerUpTexture is used as UI but not in raw/ – we keep it as TextureRegion but load via AssetManager as Texture then wrap? Let's keep simple: load as Texture and later convert to region? Actually it's a standalone UI element. We'll load it as Texture and then create a region from it.
+        assetManager.load("game/powerUpTexture.png", Texture.class);
 
-        //Pop up dialog box /raw/dialog/**
-        assetManager.load("raw/pauseDialogHeader.png", Texture.class);
-        assetManager.load("raw/Dialog.png", Texture.class);
-        assetManager.load("raw/sound_icon.png", Texture.class);
-        assetManager.load("raw/music_icon.png",Texture.class);
-        assetManager.load("raw/CancelButton.png", Texture.class);
-        assetManager.load("raw/DialogHalf.png", Texture.class);
-        assetManager.load("raw/DialogQuarter.png", Texture.class);
-        assetManager.load("raw/DialogQuarterOpen.png", Texture.class);
-        assetManager.load("raw/DialogNoHeader.png", Texture.class);
-        assetManager.load("raw/keep_going_title.png", Texture.class);
-        assetManager.load("raw/settingsHeader.png", Texture.class);
-        assetManager.load("raw/sliderBackground.png", Texture.class);
-        assetManager.load("raw/sliderFill.png", Texture.class);
-        assetManager.load("raw/sliderKnob.png", Texture.class);
-
-        //Bottom Nav /raw/bottomNav/**
-        assetManager.load("raw/defaultNavItem.png", Texture.class);
-        assetManager.load("raw/selectIndicator.png", Texture.class);
-        assetManager.load("raw/bottomNavItems.png", Texture.class);
-
-        //Home Screen UI Textures /raw/home/**
-        assetManager.load("raw/PlayButtonUpdate.png", Texture.class);
-        assetManager.load("raw/settingsIconNew.png", Texture.class);
-        assetManager.load("raw/skinIconNew.png", Texture.class);
-        assetManager.load("raw/shareIconNew.png", Texture.class);
-        assetManager.load("raw/LevelsButton.png", Texture.class);
-        assetManager.load("raw/termsOfService.png", Texture.class);
-        assetManager.load("raw/privacyPolicy.png", Texture.class);
-        assetManager.load("raw/licenseAndCredits.png", Texture.class);
-        assetManager.load("raw/acceptTerms.png", Texture.class);
-        assetManager.load("raw/rejectTerms.png", Texture.class);
-        assetManager.load("raw/SnakeBlockLogo.png", Texture.class);
-        assetManager.load("raw/scoreBoard.png", Texture.class);
-
-        //Main Game UI Textures /raw/main_game/**
-        assetManager.load("raw/pauseIconNew.png", Texture.class);
-        assetManager.load("raw/watchAds.png", Texture.class);
-        assetManager.load("raw/reviveWithHealth.png", Texture.class);
-        assetManager.load("raw/tapToContinue.png", Texture.class);
-        assetManager.load("raw/homePIcon.png", Texture.class);
-        assetManager.load("raw/restartPIcon.png", Texture.class);
-        assetManager.load("raw/playPIcon.png", Texture.class);
-        assetManager.load("raw/giveUpText.png", Texture.class);
-        assetManager.load("raw/failText.png", Texture.class);
-        assetManager.load("raw/continueText.png", Texture.class);
-
-        //Game Over Screen UI Textures /raw/game_over/**
-        assetManager.load("raw/replayGOButton.png", Texture.class);
-        assetManager.load("raw/upgradeBtnImg.png", Texture.class);
-        assetManager.load("raw/homeGOButton.png", Texture.class);
-        assetManager.load("raw/gameOverTitle.png", Texture.class);
-        assetManager.load("raw/scoreTextBoard.png", Texture.class);
-        assetManager.load("raw/highScoreTextBoard.png", Texture.class);
-        assetManager.load("raw/coinsTextBoard.png", Texture.class);
-
-        //Menu Screen UI Textures /raw/menu/**
-        assetManager.load("raw/equippedBorderBg.png", Texture.class);
-        assetManager.load("raw/cardBackground.png", Texture.class);
-        assetManager.load("raw/selectedButton.png", Texture.class);
-        assetManager.load("raw/selectButton.png", Texture.class);
-        assetManager.load("raw/buyButton.png", Texture.class);
-        assetManager.load("raw/upgradeCardBg.png", Texture.class);
-        assetManager.load("raw/upgradeItemBtn.png", Texture.class);
-        assetManager.load("raw/upgradeProgressBG.png", Texture.class);
-        assetManager.load("raw/upgradeProgressFill.png", Texture.class);
-        assetManager.load("raw/priceBar.png", Texture.class);
-        assetManager.load("raw/coinPiles.png", Texture.class);
-        assetManager.load("raw/diamondPiles.png", Texture.class);
-        assetManager.load("raw/portionPiles.png", Texture.class);
-
-        //Levels Screen UI Textures /raw/levels/**
-        assetManager.load("raw/levelBg.png", Texture.class);
-        assetManager.load("raw/levelClearedText.png", Texture.class);
-        assetManager.load("raw/levelLock.png", Texture.class);
-        assetManager.load("raw/levelMarked.png", Texture.class);
-
-        //Load Particles
+        // ---- Particles ----
         assetManager.load("particles/snakeBlood.p", ParticleEffect.class);
         assetManager.load("particles/left_victory_particle.p", ParticleEffect.class);
         assetManager.load("particles/right_victory_particle.p", ParticleEffect.class);
+        assetManager.load("particles/confetti_cannon.p", ParticleEffect.class);
 
-        // Load sounds
-        assetManager.load("sounds/collision.mp3", Sound.class);
-        assetManager.load("sounds/powerup.mp3", Sound.class);
-        assetManager.load("sounds/gameover.mp3", Sound.class);
+        // ---- Fonts ----
+        assetManager.load("fonts/ImageFonts/FontsHDTwo.fnt", BitmapFont.class);
 
-        // Load music
-        //assetManager.load("music/background.mp3", Music.class);
+        // ---- Sounds ----
+        assetManager.load("sounds/hitObstacle.wav", Sound.class);
+        assetManager.load("sounds/winObject.wav", Sound.class);
+        assetManager.load("sounds/powerUp.wav", Sound.class);
+        assetManager.load("sounds/gameOver.wav", Sound.class);
+
+        // ---- Music (optional) ----
+        assetManager.load("music/backgroundMusic.mp3", Music.class);
     }
 
+    /** Assign all loaded assets to their fields. Must be called after assetManager.finishLoading() and after loading desired UI groups. */
     public void assignAssets() {
-        // Assign loaded assets
-        snakeSkins  = assetManager.get("snake_multiple_skins.png", Texture.class);
-        blockTexture = assetManager.get("blocks.png", Texture.class);
-        lineTexture= assetManager.get("lineBG.png",Texture.class);
+        // ---- Assign gameplay textures ----
+        snakeSkins = assetManager.get("game/snake_multiple_skins.png", Texture.class);
+        blockTexture = assetManager.get("game/blocks"+suffix+".png", Texture.class);
+        lineTexture = assetManager.get("game/lineBG.png", Texture.class);
         backgroundTexture = assetManager.get("shaderLayer.png", Texture.class);
-
-        fontTexture =assetManager.get("fonts/ImageFonts/FontsHDTwo.png", Texture.class);
-
-        // Home Screen Textures
-        playButtonTexture = assetManager.get("raw/PlayButtonUpdate.png", Texture.class);
-        settingsButtonTexture = assetManager.get("raw/settingsIconNew.png", Texture.class);
-        tapToContinueTexture = assetManager.get("raw/tapToContinue.png", Texture.class);
-        snakeSkinButtonTexture=assetManager.get("raw/skinIconNew.png", Texture.class);
-        shareButtonTexture=assetManager.get("raw/shareIconNew.png", Texture.class);
-        addButtonTexture=assetManager.get("raw/addButton2.png", Texture.class);
-        logoTexture=assetManager.get("raw/SnakeBlockLogo.png", Texture.class);
-        barTexture=assetManager.get("raw/scoreBoard.png", Texture.class);
-        coinTexture=assetManager.get("raw/snakeCoin.png",Texture.class);
-        healthTexture=assetManager.get("raw/snakeHealthPortion.png", Texture.class);
-        diamondTexture=assetManager.get("raw/snakeDiamond.png", Texture.class);
-        levelsButtonTexture = assetManager.get("raw/LevelsButton.png", Texture.class);
-
-        acceptTerms = assetManager.get("raw/acceptTerms.png", Texture.class);
-        rejectTerms =assetManager.get("raw/rejectTerms.png", Texture.class);
-
-        // Main Game Textures
-        pauseBtnTexture=assetManager.get("raw/pauseIconNew.png", Texture.class);
-        reviveAdsTexture=assetManager.get("raw/watchAds.png", Texture.class);
-        reviveHealthTexture=assetManager.get("raw/reviveWithHealth.png", Texture.class);
-        homeButtonTexture=assetManager.get("raw/homePIcon.png", Texture.class);
-        restartButtonTexture=assetManager.get("raw/restartPIcon.png", Texture.class);
-        resumeButtonTexture=assetManager.get("raw/playPIcon.png", Texture.class);
-        powerUpTexture=assetManager.get("powerUpTexture.png",Texture.class);
+        fontTexture = assetManager.get("fonts/ImageFonts/FontsHDTwo.png", Texture.class);
         finishLineTexture = assetManager.get("game/finishLine.png", Texture.class);
 
-        pauseHeaderTexture=assetManager.get("raw/pauseDialogHeader.png", Texture.class);
-        boxDialogTexture=assetManager.get("raw/Dialog.png", Texture.class);
-        closeTexture=assetManager.get("raw/CancelButton.png", Texture.class);
+        // ---- powerUpTexture: convert loaded Texture to a TextureRegion ----
+        Texture powerUpTex = assetManager.get("game/powerUpTexture.png", Texture.class);
+        powerUpTexture = new TextureRegion(powerUpTex);
 
-        dialogHalfSize =assetManager.get("raw/DialogHalf.png", Texture.class);
-        dialogQuarterSize = assetManager.get("raw/DialogQuarter.png", Texture.class);
-        dialogQuarterSizeOpen =assetManager.get("raw/DialogQuarterOpen.png", Texture.class);
-        noHeaderDialog= assetManager.get("raw/DialogNoHeader.png", Texture.class);
-        keepGoingTexture =assetManager.get("raw/keep_going_title.png", Texture.class);
-        settingHeader =assetManager.get("raw/settingsHeader.png", Texture.class);
-
-        //Text Assets
-        giveUpTexture =assetManager.get("raw/giveUpText.png", Texture.class);
-        failTexture =assetManager.get("raw/failText.png", Texture.class);
-        continueTexture =assetManager.get("raw/continueText.png", Texture.class);
-        tosTexture =assetManager.get("raw/termsOfService.png", Texture.class);
-        privacyPolicyTexture =assetManager.get("raw/privacyPolicy.png", Texture.class);
-        licenseCreditsTexture =assetManager.get("raw/licenseAndCredits.png", Texture.class);
-
-
-        soundTexture=assetManager.get("raw/sound_icon.png", Texture.class);
-        musicTexture=assetManager.get("raw/music_icon.png", Texture.class);
-        defaultButton= assetManager.get("raw/defaultButton.png", Texture.class);
-
-        sliderBackgroundTexture=assetManager.get("raw/sliderBackground.png", Texture.class);
-        sliderFillTexture=assetManager.get("raw/sliderFill.png", Texture.class);
-        sliderKnobTexture= assetManager.get("raw/sliderKnob.png", Texture.class);
-
-        //Game Over Textures
-        replayButtonTexture=assetManager.get("raw/replayGOButton.png", Texture.class);
-        upgradeButtonTexture=assetManager.get("raw/upgradeBtnImg.png", Texture.class);
-        home2ButtonTexture=assetManager.get("raw/homeGOButton.png", Texture.class);
-        gameOverHeaderTexture =assetManager.get("raw/gameOverTitle.png", Texture.class);
-        scoreTextBoard = assetManager.get("raw/scoreTextBoard.png", Texture.class);
-        highScoreTextBoard = assetManager.get("raw/highScoreTextBoard.png", Texture.class);
-        coinsTextBoard = assetManager.get("raw/coinsTextBoard.png", Texture.class);
-
-        //Menu Screen Textures
-        menuBGTexture=assetManager.get("raw/menuBG.png", Texture.class);
-        equippedBorderTexture = assetManager.get("raw/equippedBorderBg.png", Texture.class);
-        cardBackgroundTexture = assetManager.get("raw/cardBackground.png", Texture.class);
-        selectedButtonTexture = assetManager.get("raw/selectedButton.png", Texture.class);
-        selectButtonTexture = assetManager.get("raw/selectButton.png", Texture.class);
-        buyButtonTexture = assetManager.get("raw/buyButton.png", Texture.class);
-
-        upgradeCardBG=assetManager.get("raw/upgradeCardBg.png", Texture.class);
-        upgradeItemButton =assetManager.get("raw/upgradeItemBtn.png", Texture.class);
-        upgradeProgressBG = assetManager.get("raw/upgradeProgressBG.png", Texture.class);
-        upgradeProgressFill = assetManager.get("raw/upgradeProgressFill.png", Texture.class);
-
-        //shop
-        priceBarTexture= assetManager.get("raw/priceBar.png", Texture.class);
-        coinPilesTexture =assetManager.get("raw/coinPiles.png", Texture.class);
-        diamondPilesTexture =assetManager.get("raw/diamondPiles.png", Texture.class);
-        portionPilesTexture =assetManager.get("raw/portionPiles.png", Texture.class);
-
-        //Bottom Nav
-        bottomNavBg=assetManager.get("raw/downBGBlue.png", Texture.class);
-        upLayout =assetManager.get("raw/upLayout.png", Texture.class);
-        defaultItemTexture=assetManager.get("raw/defaultItemsLook.png", Texture.class);
-        selectOverlayTexture=assetManager.get("raw/selectIndicator.png", Texture.class);
-        defaultOverlayTexture=assetManager.get("raw/defaultNavItem.png", Texture.class);
-        bottomNavItems=assetManager.get("raw/bottomNavItems.png", Texture.class);
-
-        //Level Screen
-        levelCardBg = assetManager.get("raw/levelBg.png", Texture.class);
-        levelClearedText = assetManager.get("raw/levelClearedText.png", Texture.class);
-        levelLockTexture = assetManager.get("raw/levelLock.png", Texture.class);
-        levelMarkedTexture = assetManager.get("raw/levelMarked.png", Texture.class);
-
-        //Assign Particles
+        // ---- Particles ----
         bloodEffect = assetManager.get("particles/snakeBlood.p", ParticleEffect.class);
         leftVictoryEffect = assetManager.get("particles/left_victory_particle.p", ParticleEffect.class);
-        rightVictoryEffect =assetManager.get("particles/right_victory_particle.p", ParticleEffect.class);
+        rightVictoryEffect = assetManager.get("particles/right_victory_particle.p", ParticleEffect.class);
+        confettiCanon = assetManager.get("particles/confetti_cannon.p", ParticleEffect.class);
 
-        collisionSound = assetManager.get("sounds/collision.mp3", Sound.class);
-        powerUpSound = assetManager.get("sounds/powerup.mp3", Sound.class);
-        gameOverSound = assetManager.get("sounds/gameover.mp3", Sound.class);
+        // ---- Sounds ----
+        collisionSound = assetManager.get("sounds/hitObstacle.wav", Sound.class);
+        powerUpSound = assetManager.get("sounds/powerUp.wav", Sound.class);
+        winObjectSound = assetManager.get("sounds/winObject.wav", Sound.class);
+        gameOverSound = assetManager.get("sounds/gameOver.wav", Sound.class);
 
-        //backgroundMusic = assetManager.get("music/background.mp3", Music.class);
+        // ---- Music ----
+        backgroundMusic = assetManager.get("music/backgroundMusic.mp3", Music.class);
 
-        // Create font
-        font = new BitmapFont();
+        // ---- Font ----
+        font = assetManager.get("fonts/ImageFonts/FontsHDTwo.fnt", BitmapFont.class);
+
+        // ---- UI TextureRegions (all from atlases) ----
+        // home group
+        playButtonTexture       = getUIRegion("PlayButtonUpdate");
+        settingsButtonTexture   = getUIRegion("settingsIconNew");
+        snakeSkinButtonTexture  = getUIRegion("skinIconNew");
+        shareButtonTexture      = getUIRegion("shareIconNew");
+        logoTexture             = getUIRegion("SnakeBlockLogo");
+        barTexture              = getUIRegion("scoreBoard");
+        levelsButtonTexture     = getUIRegion("LevelsButton");
+        acceptTerms             = getUIRegion("acceptTerms");
+        rejectTerms             = getUIRegion("rejectTerms");
+        tosTexture              = getUIRegion("termsOfService");
+        privacyPolicyTexture    = getUIRegion("privacyPolicy");
+        licenseCreditsTexture   = getUIRegion("licenseAndCredits");
+        checkedTexture          = getUIRegion("checkedCircle");
+        uncheckedTexture        = getUIRegion("uncheckedCircle");
+        easyTexture             = getUIRegion("easyLabel");
+        mediumTexture           = getUIRegion("mediumLabel");
+        hardTexture             = getUIRegion("hardLabel");
+        difficultyTexture       = getUIRegion("difficultyLabel");
+        highScoreBackground     = getUIRegion("highScoreBg");
+        highScoreTrophy         = getUIRegion("highScoreTrophy");
+        highScoreLabel          = getUIRegion("highScoreLabel");
+
+
+
+        // main_game group
+        pauseBtnTexture         = getUIRegion("pauseIconNew");
+        reviveAdsTexture        = getUIRegion("watchAds");
+        reviveHealthTexture     = getUIRegion("reviveWithHealth");
+        homeButtonTexture       = getUIRegion("homePIcon");
+        restartButtonTexture    = getUIRegion("restartPIcon");
+        resumeButtonTexture     = getUIRegion("playPIcon");
+        tapToContinueTexture    = getUIRegion("tapToContinue");
+        giveUpTexture           = getUIRegion("giveUpText");
+        failTexture             = getUIRegion("failText");
+        continueTexture         = getUIRegion("continueText");
+        defaultBlock = getUIRegion("defaultBlock");
+        levelTaskHeaderBg = getUIRegion("levelTaskBg");
+
+        //tutorial
+        gameTutorialTitles[0] = getUIRegion("swipeLeft");
+        gameTutorialTitles[1] = getUIRegion("swipeRight");
+        gameTutorialTitles[2] = getUIRegion("winBodyCollect");
+        gameTutorialTitles[3] = getUIRegion("destroyLowestBlock");
+        gameTutorialTitles[4] = getUIRegion("winPowerUp");
+
+
+        // dialog group
+        pauseHeaderTexture      = getUIRegion("pauseDialogHeader");
+        boxDialogTexture        = getUIRegion("Dialog");
+        closeTexture            = getUIRegion("CancelButton");
+        dialogHalfSize          = getUIRegion("DialogHalf");
+        dialogQuarterSize       = getUIRegion("DialogQuarter");
+        dialogQuarterSizeOpen   = getUIRegion("DialogQuarterOpen");
+        noHeaderDialog          = getUIRegion("DialogNoHeader");
+        keepGoingTexture        = getUIRegion("keep_going_title");
+        settingHeader           = getUIRegion("settingsHeader");
+        soundTexture            = getUIRegion("sound_icon");
+        musicTexture            = getUIRegion("music_icon");
+        sliderBackgroundTexture = getUIRegion("sliderBackground");
+        sliderFillTexture       = getUIRegion("sliderFill");
+        sliderKnobTexture       = getUIRegion("sliderKnob");
+        defaultButton           = getUIRegion("defaultButton");
+
+        // game_over group
+        replayButtonTexture     = getUIRegion("replayGOButton");
+        upgradeButtonTexture    = getUIRegion("upgradeBtnImg");
+        home2ButtonTexture      = getUIRegion("homeGOButton");
+        gameOverHeaderTexture   = getUIRegion("gameOverTitle");
+        scoreTextBoard          = getUIRegion("scoreTextBoard");
+        highScoreTextBoard      = getUIRegion("highScoreTextBoard");
+        coinsTextBoard          = getUIRegion("coinsTextBoard");
+        victoryHeaderTexture   = getUIRegion("victoryTitle");
+        nextLevelTexture        = getUIRegion("nextLevelButton");
+
+
+        // menu group
+        menuBGTexture           = getUIRegion("menuBG");
+        equippedBorderTexture   = getUIRegion("equippedBorderBg");
+        cardBackgroundTexture   = getUIRegion("cardBackground");
+        selectedButtonTexture   = getUIRegion("selectedButton");
+        selectButtonTexture     = getUIRegion("selectButton");
+        buyButtonTexture        = getUIRegion("buyButton");
+        upgradeCardBG           = getUIRegion("upgradeCardBg");
+        upgradeItemButton       = getUIRegion("upgradeItemBtn");
+        upgradeProgressBG       = getUIRegion("upgradeProgressBG");
+        upgradeProgressFill     = getUIRegion("upgradeProgressFill");
+        priceBarTexture         = getUIRegion("priceBar");
+        coinPilesTexture        = getUIRegion("coinPiles");
+        diamondPilesTexture     = getUIRegion("diamondPiles");
+        portionPilesTexture     = getUIRegion("portionPiles");
+
+        // bottomNav group
+        bottomNavBg             = getUIRegion("downBGBlue");
+        upLayout                = getUIRegion("upLayout");
+        defaultItemTexture      = getUIRegion("defaultItemsLook");
+        selectOverlayTexture    = getUIRegion("selectIndicator");
+        defaultOverlayTexture   = getUIRegion("defaultNavItem");
+        bottomNavItems          = getUIRegion("bottomNavItems");
+
+        // levels group
+        levelCardBg             = getUIRegion("levelBg");
+        levelClearedText        = getUIRegion("levelClearedText");
+        levelLockTexture        = getUIRegion("levelLock");
+        levelMarkedTexture      = getUIRegion("levelMarked");
+        levelSelectedBg         = getUIRegion("selectFrame");
+        levelPlayButton         = getUIRegion("levelsPlayButton2");
+
+
+        // global group (if any)
+        addButtonTexture        = getUIRegion("addButton2");
+        coinTexture             = getUIRegion("snakeCoin");
+        healthTexture           = getUIRegion("snakeHealthPortion");
+        diamondTexture          = getUIRegion("snakeDiamond");
     }
+
+    // -------------------------------------------------------------------------
+    // Progress & disposal
+    // -------------------------------------------------------------------------
 
     public float getProgress() {
         return assetManager.getProgress();
@@ -378,12 +431,28 @@ public class Assets {
         return assetManager.update();
     }
 
+    @Override
     public void dispose() {
+        // Dispose UI atlases
+        disposeAllUI();
+        // Dispose AssetManager (gameplay textures, sounds, particles)
         assetManager.dispose();
-        font.dispose();
+        // Dispose font
+        if (font != null) font.dispose();
+        // Dispose the powerUpTexture's underlying texture if we created a region from it
+        if (powerUpTexture != null && powerUpTexture.getTexture() != null) {
+            powerUpTexture.getTexture().dispose();
+        }
     }
+
     public static void logMemory() {
         Gdx.app.log("Memory", "Java Heap: " + (Gdx.app.getJavaHeap() / 1024 / 1024) + " MB");
         Gdx.app.log("Memory", "Native Heap: " + (Gdx.app.getNativeHeap() / 1024 / 1024) + " MB");
     }
+
+    // ---- Temporary fields to keep compatibility with old field names (added for clarity) ----
+    // The following fields were referenced in the original Assets class but not declared above.
+    // They are now added here to avoid compilation errors. Remove if not needed.
+    public TextureRegion playButtonTexture;
+    public TextureRegion settingsButtonTexture;
 }

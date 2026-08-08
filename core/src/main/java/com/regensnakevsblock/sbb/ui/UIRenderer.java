@@ -19,9 +19,8 @@ import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
-import com.regensnakevsblock.sbb.assets.Assets2;
+import com.regensnakevsblock.sbb.assets.Assets;
 import com.regensnakevsblock.sbb.elements.GameDialog;
-import com.regensnakevsblock.sbb.levels.Level;
 import com.regensnakevsblock.sbb.screens.GameOverScreen;
 import com.regensnakevsblock.sbb.screens.HomeScreen;
 import com.regensnakevsblock.sbb.screens.MainGame;
@@ -42,6 +41,8 @@ public class UIRenderer implements RewardListener {
     private final Group pauseGroup;
     private final Group gameOverGroup;
     private Label scoreLabel;
+    private Label highScoreLabel;
+
 
     private GameDialog dialog;
     private GameDialog reviveDialog;
@@ -73,7 +74,7 @@ public class UIRenderer implements RewardListener {
         batch.setProjectionMatrix(worldState.getCamera().combined);
         pauseGroup.setVisible(worldState.isPaused());
         //gameOverGroup.setVisible(worldState.isGameOver());
-        scoreLabel.setFontScale(0.7f);
+        scoreLabel.setFontScale(1.2f);
         scoreLabel.setText(worldState.getScore());
 
         if(worldState.isGameOver()&&!reviveIsOpen){
@@ -90,17 +91,27 @@ public class UIRenderer implements RewardListener {
 
         dialog.setTitle("");
         dialog.setCloseButtonEnabled(false);
-        dialog.setTitleTexture(Assets2.getInstance().pauseHeaderTexture);
+        dialog.setTitleTexture(Assets.getInstance().pauseHeaderTexture);
 
         reviveDialog = new GameDialog(stage);
         reviveDialog.setDialogSize(stage.getWidth(), stage.getHeight()/3);
         reviveDialog.setTitleEnabled(false);
         reviveDialog.setCloseButtonEnabled(false);
-        reviveDialog.setBackground(Assets2.getInstance().dialogHalfSize);
+        reviveDialog.setBackground(Assets.getInstance().dialogHalfSize);
 
 
         scoreLabel = createTextLabel(80,stage.getWidth()/24,
             stage.getHeight() - stage.getHeight()/32 );
+
+        highScoreLabel = createTextLabel(80,stage.getWidth()/24+60,
+            stage.getHeight() - stage.getHeight()/32 -80 );
+
+        highScoreLabel.setColor(Color.GOLD);
+        highScoreLabel.setFontScale(0.6f);
+        highScoreLabel.setText(String.valueOf(saveService.getHighScore()));
+
+        Image trophy= ActorFactory.createUiImage(Assets.getInstance().highScoreTrophy,stage.getWidth()/24,
+            stage.getHeight() - stage.getHeight()/32-100,40,40);
 
 
 
@@ -108,18 +119,18 @@ public class UIRenderer implements RewardListener {
         float segment =dialog.getWidth()/3;
         float size=width/7;
         ImageButton homeButton = ActorFactory.createButton(
-            Assets2.getInstance().homeButtonTexture,
+            Assets.getInstance().homeButtonTexture,
             (segment/2) -size/2 +pad,dialog.getHeight()*0.3f,
             size,size
         );
         ImageButton restartButton = ActorFactory.createButton(
-            Assets2.getInstance().restartButtonTexture,
+            Assets.getInstance().restartButtonTexture,
             width/2f-size/2,dialog.getHeight()*0.3f,
 
             size,size
         );
         ImageButton resumeButton = ActorFactory.createButton(
-            Assets2.getInstance().resumeButtonTexture,
+            Assets.getInstance().resumeButtonTexture,
             width-segment/2-size/2-pad,dialog.getHeight()*0.3f,
             size,size
         );
@@ -128,20 +139,20 @@ public class UIRenderer implements RewardListener {
         float segmentMiddle = stage.getWidth()/4;
         float reviveY=stage.getHeight()/2-reviveBtnHeight/2;
         ImageButton reviveWithAdsButton = ActorFactory.createButton(
-            Assets2.getInstance().defaultButton,
+            Assets.getInstance().defaultButton,
             segmentMiddle-reviveBtnWidth/2,reviveY
             ,
             reviveBtnWidth,
             reviveBtnHeight
         );
         ImageButton reviveWithHealthButton = ActorFactory.createButton(
-            Assets2.getInstance().defaultButton,
+            Assets.getInstance().defaultButton,
             stage.getWidth()-segmentMiddle-reviveBtnWidth/2,
             reviveY,
             reviveBtnWidth,
             reviveBtnHeight
         );
-        Image portion = ActorFactory.createUiImage(Assets2.getInstance().healthTexture, stage.getWidth()-segmentMiddle-reviveBtnHeight/4,reviveY+reviveBtnHeight/4,reviveBtnHeight/2,reviveBtnHeight/2);
+        Image portion = ActorFactory.createUiImage(Assets.getInstance().healthTexture, stage.getWidth()-segmentMiddle-reviveBtnHeight/4,reviveY+reviveBtnHeight/4,reviveBtnHeight/2,reviveBtnHeight/2);
         Label reviveWithAdsText = ActorFactory.createTextLabel(
             40
             ,
@@ -152,15 +163,15 @@ public class UIRenderer implements RewardListener {
             40, portion.getX()-pad,
             reviveY+reviveBtnHeight/2
         );
-        reviveWithHealthText.setText("1 ");
+        reviveWithHealthText.setText(worldState.getHealthScore());
         ImageButton tapToContinueButton = ActorFactory.createButton(
-            Assets2.getInstance().giveUpTexture,
+            Assets.getInstance().giveUpTexture,
             stage.getWidth()/2 - stage.getWidth()/11,
             stage.getHeight()/2 - stage.getHeight()/8,
             stage.getWidth()/6,
             stage.getWidth()/18
         );
-        Image keepMovingTitle = ActorFactory.createUiImage(Assets2.getInstance().keepGoingTexture,
+        Image keepMovingTitle = ActorFactory.createUiImage(Assets.getInstance().keepGoingTexture,
             stage.getWidth()/2 - stage.getWidth()/4,
             stage.getHeight()/2 +stage.getHeight()/10,
             stage.getWidth()/2,
@@ -223,13 +234,18 @@ public class UIRenderer implements RewardListener {
         reviveWithHealthButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                reviveDialog.addCloseListener(new GameDialog.CloseListener() {
-                    @Override
-                    public void onPopupClosed() {
-                        worldState.reviveSnake(10);
-                        reviveIsOpen=false;
-                    }
-                });
+                if(worldState.getHealthScore()<=saveService.getHealths()){
+                    saveService.saveHealths(saveService.getHealths()-(long)worldState.getHealthScore());
+                    reviveDialog.addCloseListener(new GameDialog.CloseListener() {
+                        @Override
+                        public void onPopupClosed() {
+                            worldState.reviveWithHealth();
+                            reviveIsOpen=false;
+                        }
+                    });
+                }else{
+                    endGame();
+                }
 
                 reviveDialog.close();
 
@@ -254,16 +270,7 @@ public class UIRenderer implements RewardListener {
                     }
                     else{
                         reviveDialog.addCloseListener(() -> {
-                            GameOverScreen gameOverScreen =new GameOverScreen(worldState.getGame(),false);
-                            gameOverScreen.setScore(worldState.getScore());
-                            gameOverScreen.setCoins(worldState.getCoins());
-                            if(worldState.getGame().getAdsService()!=null){
-                                if(worldState.getGame().getAdsService().isInterstitialLoaded()){
-                                    worldState.getGame().getAdsService().showInterstitial();
-                                }
-                            }
-                            worldState.getGame().setScreen(gameOverScreen);
-                            reviveIsOpen=false;
+                            endGame();
                         });
 
                         reviveDialog.close();
@@ -272,6 +279,18 @@ public class UIRenderer implements RewardListener {
 
             }
         });
+        if(worldState.getGame().getAdsService()==null||!worldState.getGame().getAdsService().isRewardedLoaded()){
+                reviveWithAdsButton.remove();
+                reviveWithAdsText.remove();
+                reviveWithHealthButton.setX(stage.getWidth()-segmentMiddle-reviveBtnWidth/2-reviveBtnWidth+pad*2);
+                reviveWithHealthText.setX(portion.getX()-pad-reviveBtnWidth+pad*2);
+                portion.setX(stage.getWidth()-segmentMiddle-reviveBtnHeight/4-reviveBtnWidth+pad*2);
+
+        }else{
+            reviveWithHealthButton.setX(stage.getWidth()-segmentMiddle-reviveBtnWidth/2);
+            reviveWithHealthText.setX(portion.getX()-pad);
+            portion.setX(stage.getWidth()-segmentMiddle-reviveBtnHeight/4);
+        }
         pauseButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -299,16 +318,7 @@ public class UIRenderer implements RewardListener {
                 reviveDialog.addCloseListener(new GameDialog.CloseListener() {
                     @Override
                     public void onPopupClosed() {
-                        GameOverScreen gameOverScreen =new GameOverScreen(worldState.getGame(),false);
-                        gameOverScreen.setScore(worldState.getScore());
-                        gameOverScreen.setCoins(worldState.getCoins());
-                        if(worldState.getGame().getAdsService()!=null){
-                            if(worldState.getGame().getAdsService().isInterstitialLoaded()){
-                                worldState.getGame().getAdsService().showInterstitial();
-                            }
-                        }
-                        worldState.getGame().setScreen(gameOverScreen);
-                        reviveIsOpen=false;
+                        endGame();
                     }
                 });
 
@@ -317,11 +327,11 @@ public class UIRenderer implements RewardListener {
             }
         });
 
-        //Image boxDialog = createImage(Assets2.getInstance().boxDialogTexture,stage.getWidth()/16, stage.getHeight()/3.5f, stage.getWidth() -stage.getWidth()/8, stage.getHeight()/2.3f);
-        //Image boxDialogHeader = createImage(Assets2.getInstance().pauseHeaderTexture,stage.getWidth()/4, stage.getHeight()/1.55f, stage.getWidth()/2f, stage.getHeight()/10);
+        //Image boxDialog = createImage(Assets.getInstance().boxDialogTexture,stage.getWidth()/16, stage.getHeight()/3.5f, stage.getWidth() -stage.getWidth()/8, stage.getHeight()/2.3f);
+        //Image boxDialogHeader = createImage(Assets.getInstance().pauseHeaderTexture,stage.getWidth()/4, stage.getHeight()/1.55f, stage.getWidth()/2f, stage.getHeight()/10);
 
-        Image musicIcon=ActorFactory.createUiImage(Assets2.getInstance().musicTexture ,width/4,dialog.getHeight()*0.55f,width/12,width/12);
-        Image soundIcon = ActorFactory.createUiImage(Assets2.getInstance().soundTexture,width/4,dialog.getHeight()*0.43f,width/12, width/12);
+        Image musicIcon=ActorFactory.createUiImage(Assets.getInstance().musicTexture ,width/4,dialog.getHeight()*0.55f,width/12,width/12);
+        Image soundIcon = ActorFactory.createUiImage(Assets.getInstance().soundTexture,width/4,dialog.getHeight()*0.43f,width/12, width/12);
         Slider musicVolumeSlider = createCustomSlider(stage.getWidth()/2.5f, dialog.getHeight()*0.55f,stage.getWidth()/3,stage.getHeight()/40);
         Slider soundVolumeSlider = createCustomSlider(stage.getWidth()/2.5f, dialog.getHeight()*0.43f,stage.getWidth()/3,stage.getHeight()/40);
 
@@ -341,7 +351,7 @@ public class UIRenderer implements RewardListener {
             public void changed(ChangeEvent event, Actor actor) {
                 saveService.saveMusicVolume((int) musicVolumeSlider.getValue());
                 musicVolume=(int) musicVolumeSlider.getValue();
-                Assets2.getInstance().backgroundMusic.setVolume((float) musicVolume/100);
+                Assets.getInstance().backgroundMusic.setVolume((float) musicVolume/100);
             }
         });
         dialog.addContentActor(musicIcon);
@@ -354,9 +364,28 @@ public class UIRenderer implements RewardListener {
 
         stage.addActor(pauseButton);
         stage.addActor(scoreLabel);
+        stage.addActor(trophy);
+        stage.addActor(highScoreLabel);
         stage.addActor(pauseGroup);
         //stage.addActor(gameOverGroup);
     }
+    private void endGame(){
+        GameOverScreen gameOverScreen =new GameOverScreen(worldState.getGame(),false);
+        gameOverScreen.setScore(worldState.getScore());
+        gameOverScreen.setCoins(worldState.getCoins());
+        if(saveService.getPlayCount()>10&&saveService.getPlayCount()%3==0){
+            if(worldState.getGame().getAdsService()!=null){
+                if(worldState.getGame().getAdsService().isInterstitialLoaded()){
+                    worldState.getGame().getAdsService().showInterstitial();
+                }
+            }
+
+        }
+        saveService.savePlayCount();
+        worldState.getGame().setScreen(gameOverScreen);
+        reviveIsOpen=false;
+    }
+
     private Texture createWhiteTexture() {
         Pixmap pixmap = new Pixmap(1, 1, Pixmap.Format.RGBA8888);
         pixmap.setColor(Color.WHITE);
@@ -373,7 +402,7 @@ public class UIRenderer implements RewardListener {
     }
     private ImageButton createPauseButton(){
         return ActorFactory.createButton(
-            Assets2.getInstance().pauseBtnTexture,
+            Assets.getInstance().pauseBtnTexture,
             stage.getWidth() - stage.getWidth()/8 - stage.getWidth()/32,
             stage.getHeight() - stage.getWidth()/8 - stage.getWidth()/32,
             stage.getWidth()/8,
@@ -397,13 +426,13 @@ public class UIRenderer implements RewardListener {
     private Slider createCustomSlider(float x, float y, float width, float height) {
 
         TextureRegionDrawable background =
-            new TextureRegionDrawable(new TextureRegion(Assets2.getInstance().sliderBackgroundTexture));
+            new TextureRegionDrawable(new TextureRegion(Assets.getInstance().sliderBackgroundTexture));
 
         TextureRegionDrawable fill =
-            new TextureRegionDrawable(new TextureRegion(Assets2.getInstance().sliderFillTexture));
+            new TextureRegionDrawable(new TextureRegion(Assets.getInstance().sliderFillTexture));
 
         TextureRegionDrawable knob =
-            new TextureRegionDrawable(new TextureRegion(Assets2.getInstance().sliderKnobTexture));
+            new TextureRegionDrawable(new TextureRegion(Assets.getInstance().sliderKnobTexture));
 
         // track thickness
         background.setMinHeight(height);

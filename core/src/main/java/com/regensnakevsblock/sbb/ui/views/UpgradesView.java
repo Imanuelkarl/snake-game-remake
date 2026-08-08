@@ -1,18 +1,20 @@
 package com.regensnakevsblock.sbb.ui.views;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.scenes.scene2d.Group;
+import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.utils.Align;
-import com.regensnakevsblock.sbb.assets.Assets2;
+import com.regensnakevsblock.sbb.assets.Assets;
+import com.regensnakevsblock.sbb.config.Constants;
+import com.regensnakevsblock.sbb.config.GameInstance;
+import com.regensnakevsblock.sbb.elements.GameDialog;
 import com.regensnakevsblock.sbb.ui.adapters.UpgradeAdapter;
 import com.regensnakevsblock.sbb.ui.cards.UpgradeCard;
 import com.regensnakevsblock.sbb.ui.core.ListManager;
 import com.regensnakevsblock.sbb.ui.data.UpgradeData;
 import com.regensnakevsblock.sbb.utils.ActorFactory;
-import com.regensnakevsblock.sbb.utils.TextureTools;
 
 public class UpgradesView extends BaseActorView {
     private ListManager<UpgradeData, UpgradeCard> listManager;
@@ -21,6 +23,8 @@ public class UpgradesView extends BaseActorView {
     private Label coinsLabel;
     private float width;
     private float height;
+    private Label noCoinsPop;
+    private GameDialog dialog;
 
     public UpgradesView(Group group) {
         super(group);
@@ -45,7 +49,17 @@ public class UpgradesView extends BaseActorView {
 
         loadingGroup.addActor(loadingText);
         addActor(loadingGroup);
+}
+    private void setupDialog(Stage stage){
+        dialog = new GameDialog(stage);
+        dialog.setDialogSize(width,height/8);
+        dialog.setTitleEnabled(false);
+        dialog.addContentActor(noCoinsPop);
+
+        dialog.setBackground(Assets.getInstance().dialogQuarterSizeOpen);
+        dialog.open();
     }
+
 
     private void hideLoading() {
         if (loadingGroup != null) {
@@ -54,17 +68,16 @@ public class UpgradesView extends BaseActorView {
     }
 
     private void setupUI() {
-        // Title
-        titleLabel = ActorFactory.createTextLabel(24,20, Gdx.graphics.getHeight() - 50);
-        titleLabel.setText("UPGRADES");
-        titleLabel.setPosition(20, Gdx.graphics.getHeight() - 50);
-        addActor(titleLabel);
+
 
         // Player coins display
-        coinsLabel = ActorFactory.createTextLabel(24,Gdx.graphics.getWidth() - 150, Gdx.graphics.getHeight() - 50);
-        coinsLabel.setText("COINS 5000");
-        coinsLabel.setPosition(Gdx.graphics.getWidth() - 150, Gdx.graphics.getHeight() - 50);
-        addActor(coinsLabel);
+
+        Label.LabelStyle style = new Label.LabelStyle();
+        style.fontColor= Color.FIREBRICK;
+        noCoinsPop = ActorFactory.createTextLabel("24",style,20, Gdx.graphics.getHeight() - 50);
+        noCoinsPop.setFontScale(0.6f);
+        noCoinsPop.setWrap(true);
+        noCoinsPop.setText("Insufficient Coins");
     }
 
     private void setupTransform(){
@@ -85,41 +98,46 @@ public class UpgradesView extends BaseActorView {
 
         addActor(listManager);
 
-        adapter.setOnUpgradeListener((upgrade, position) -> {
-            // Check if player has enough coins
-            // Apply upgrade
-            upgrade.currentLevel++;
-            upgrade.currentValue = upgrade.nextValue;
-            upgrade.nextValue *= 1.2f; // 20% increase per level
-            upgrade.upgradeCost = (int)(upgrade.upgradeCost * 1.5f);
+        adapter.setOnUpgradeListener(this::upgradeItem);
+    }
 
-            adapter.updateUpgrade(position, upgrade);
-            updateCoinsDisplay();
-        });
+    void upgradeItem(UpgradeData upgrade,int position){
+            if(upgrade.upgradeItem.equals("coins")) {
+                if ((upgrade.upgradeCost <= GameInstance.getSaveService().getCoins() )) {
+
+                    upgrade(upgrade);
+                } else {
+                    adapter.notEnoughCoins = true;
+                    noCoinsPop.setText("Insufficient Coins");
+                }
+            }else{
+                if((upgrade.upgradeCost<= GameInstance.getSaveService().getDiamonds())){
+                upgrade(upgrade);
+            }else{
+                adapter.notEnoughCoins=true;
+                noCoinsPop.setText("Insufficient Diamonds");
+            }}
+    }
+    void upgrade(UpgradeData upgrade){
+            upgrade.currentLevel++;
+            upgrade.currentValue = Constants.calculatePowerUpTime(upgrade.currentLevel);
+            upgrade.upgradeCost = (int)Constants.calculatePowerUpPrice(upgrade.currentLevel);
+            upgrade.upgradeItem =upgrade.currentLevel>=8?"diamonds":"coins";
+            GameInstance.getSaveService().saveUpgrade(upgrade.name,upgrade.currentLevel);
+            if (upgrade.upgradeItem.equals("coins")) {
+                GameInstance.getSaveService().saveCoins(GameInstance.getSaveService().getCoins() - upgrade.upgradeCost);
+            } else {
+                GameInstance.getSaveService().saveCoins(GameInstance.getSaveService().getDiamonds() - upgrade.upgradeCost);
+            };
     }
 
     private void loadData() {
-        TextureRegion powerUps= Assets2.getInstance().powerUpTexture;;
-        TextureRegion magnetPowerUp = TextureTools.resolveRegion(powerUps,2,2,1,0,0);
-        TextureRegion hammerPowerUp = TextureTools.resolveRegion(powerUps,2,2,0,0,0);
-        TextureRegion freezePowerUp = TextureTools.resolveRegion(powerUps,2,2,1,1,0);
-        TextureRegion multiplierPowerUp=TextureTools.resolveRegion(powerUps,2,2,0,1,0);
-        java.util.List<UpgradeData> upgrades = new java.util.ArrayList<>();
-        upgrades.add(new UpgradeData("upg_1", "MAGNET", "Increases sword damage",
-            1, 10, 500, 100, 120, magnetPowerUp));
-        upgrades.add(new UpgradeData("upg_2", "HAMMER", "Regenerate health faster",
-            0, 5, 300, 0, 5,hammerPowerUp));
-        upgrades.add(new UpgradeData("upg_3", "MULTIPLIER", "Increase critical hit chance",
-            2, 10, 800, 15, 18,multiplierPowerUp));
-        upgrades.add(new UpgradeData("upg_4", "FREEZE", "Faster movement",
-            1, 8, 400, 5, 6,freezePowerUp));
-
-        adapter.setData(upgrades);
+        adapter.setData(GameInstance.getInstance().getUpgradeDataList());
     }
 
     private void updateCoinsDisplay() {
         // Update coins label with current player coins
-        coinsLabel.setText("Coins: " + getPlayerCoins());
+        //coinsLabel.setText("Coins: " + getPlayerCoins());
     }
 
     private int getPlayerCoins() {
@@ -137,7 +155,13 @@ public class UpgradesView extends BaseActorView {
         this.width = width;
         this.height = height;
         setupTransform();
+        noCoinsPop.setPosition(60,60);
+        noCoinsPop.setWidth(width*0.75f);
         listManager.renderAllItems();
+        if(adapter.notEnoughCoins){
+            setupDialog(this.getRoot().getStage());
+            adapter.notEnoughCoins=false;
+        }
     }
 
     @Override

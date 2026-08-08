@@ -40,24 +40,8 @@ public class Block {
     private Rectangle rightCollision;
     private int value;
     private boolean active;
-
-
-    private int colorX;
     private TextureRegion region;
-
-    private int colorY;
-    public int getColorY() {
-        return colorY;
-    }
-    public void setColorY(int colorY) {
-        this.colorY = colorY;
-    }
-    public int getColorX() {
-        return colorX;
-    }
-    public void setColorX(int colorX) {
-        this.colorX = colorX;
-    }
+    private int colorId;
 
 
     public int getPosition() {
@@ -93,27 +77,25 @@ public class Block {
         this.rightCollision=new Rectangle(x+width,y,width/2,height);
         this.value = value;
         this.active = true;
-        int posX = getRandom(0, 4);
-        int posY = getRandom(0, 1);
+        colorId = getRandom(0,8);
         int cols = 5;
         int rows = 2;
-
+        int posX=(int)getBlockPosition(colorId).x;
+        int posY= (int)getBlockPosition(colorId).y;
         int tileWidth  = texture.getWidth() / cols;
         int tileHeight = texture.getHeight() / rows;
-        this.colorX = posX;
-        this.colorY = posY;
         texture.setFilter(Texture.TextureFilter.Nearest, Texture.TextureFilter.Nearest);
         this.region = new TextureRegion(
             texture,
-            posX * tileWidth + 1,
-            posY * tileHeight + 1,
+            posY * tileWidth + 1,
+            posX * tileHeight + 1,
             tileWidth - 2,
             tileHeight - 2
         );
     }
 
     public int getColor(){
-        return colorY*2 +colorX;
+        return colorId;
 
     }
     public static Vector2 getBlockPosition(int position){

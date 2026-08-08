@@ -1,11 +1,16 @@
 package com.regensnakevsblock.sbb.ui.cards;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.scenes.scene2d.Group;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.ProgressBar;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
+import com.badlogic.gdx.utils.Align;
+import com.regensnakevsblock.sbb.assets.Assets;
+import com.regensnakevsblock.sbb.config.Constants;
 import com.regensnakevsblock.sbb.ui.core.BaseView;
 import com.regensnakevsblock.sbb.ui.core.ListItemView;
 import com.regensnakevsblock.sbb.ui.data.AchievementData;
@@ -14,12 +19,20 @@ import com.regensnakevsblock.sbb.utils.ActorFactory;
 public class AchievementCard extends Group implements ListItemView<AchievementData>, BaseView {
     private Label titleLabel;
     private Label descriptionLabel;
+    private ProgressBar progressBar;
+    private Image background;
+
+    private Label nameLabel;
     private Label progressLabel;
     private Label rewardLabel;
-    private ProgressBar progressBar;
-    private Label claimButton;
-    private AchievementData currentData;
+    public ImageButton claimButton;
+    private Image currencyIcon;
+    private Group buttonGroup;
+    private float width =700;
+    private float height=300;
     private int currentPosition;
+
+    private AchievementData currentData;
 
     public AchievementCard() {
         setupUI();
@@ -40,32 +53,54 @@ public class AchievementCard extends Group implements ListItemView<AchievementDa
         descriptionLabel.setPosition(10, 50);
         addActor(descriptionLabel);
 
-        // Progress label
-        Label.LabelStyle progressStyle = new Label.LabelStyle();
-        progressStyle.fontColor = Color.CYAN;
-        progressLabel = ActorFactory.createTextLabel("", progressStyle);
-        progressLabel.setPosition(10, 30);
-        addActor(progressLabel);
 
-        // Reward label
-        Label.LabelStyle rewardStyle = new Label.LabelStyle();
-        rewardStyle.fontColor = Color.YELLOW;
-        rewardLabel = ActorFactory.createTextLabel( "", rewardStyle);
-        rewardLabel.setPosition(200, 30);
-        addActor(rewardLabel);
+        float widthRatio = (float) (Constants.SCREEN_SIZE * Gdx.graphics.getWidth()) /Gdx.graphics.getHeight();
+        width = widthRatio-20;
+        background = new Image(new TextureRegionDrawable(Assets.getInstance().upgradeCardBG));
+        background.setSize(width-40, 260);
+        background.setPosition(20,20);
+        addActor(background);
+
+
+        Image icon = new Image(new TextureRegionDrawable(Assets.getInstance().coinTexture));
+        icon.setSize(height-100, height-100);
+        icon.setPosition(20,20);
+        addActor(icon);
+        // Name
+        nameLabel = ActorFactory.createTextLabel(36, 280, 80);
+        nameLabel.setPosition(55, height-60);
+        addActor(nameLabel);
+
+
+
+        //Upgrade button
+        claimButton = ActorFactory.createButton(Assets.getInstance().defaultButton, 0,0,230,90);
+
+        //Currency to purchase with
+        currencyIcon = ActorFactory.createUiImage(Assets.getInstance().coinTexture, 50,5,30,30);
+
+        // Cost
+        rewardLabel =  ActorFactory.createTextLabel(30, 110, 20);
+        rewardLabel.setAlignment(Align.center);
+
+
+        buttonGroup=new Group();
+        buttonGroup.addActor(claimButton);
+        buttonGroup.addActor(currencyIcon);
+        buttonGroup.addActor(rewardLabel);
+        buttonGroup.setPosition((width-40)-220,180);
+        addActor(buttonGroup);
+        float progressStartX = (width-80)/3;
 
         // Progress bar
-        /*progressBar = new ProgressBar(0, 1, 0.01f, false, new Skin());
-        progressBar.setSize(200, 10);
-        progressBar.setPosition(10, 15);
-        addActor(progressBar);*/
+        progressBar =ActorFactory.createProgressBar(Assets.getInstance().upgradeProgressBG, Assets.getInstance().upgradeProgressFill,250,40);
+        progressBar.setSize(width-width/3, 15);
+        progressBar.setPosition(progressStartX, 50);
+        addActor(progressBar);
 
-        // Claim button
-        TextButton.TextButtonStyle buttonStyle = new TextButton.TextButtonStyle();
-        claimButton = ActorFactory.createTextLabel("CLAIM");
-        claimButton.setSize(80, 25);
-        claimButton.setPosition(210, 10);
-        addActor(claimButton);
+        progressLabel =  ActorFactory.createTextLabel(24, 280, 80);
+        progressLabel.setPosition((width-80)/3 *2, 55);
+        addActor(progressLabel);
     }
 
     @Override
@@ -79,14 +114,13 @@ public class AchievementCard extends Group implements ListItemView<AchievementDa
         float percentage = (float) achievement.progress / achievement.target;
         progressLabel.setText(achievement.progress + "/" + achievement.target);
         rewardLabel.setText("+" + achievement.reward);
-        //progressBar.setValue(percentage);
+        progressBar.setValue(percentage);
 
         if (achievement.isCompleted && !achievement.isClaimed) {
             claimButton.setVisible(true);
             claimButton.setColor(Color.GREEN);
         } else if (achievement.isClaimed) {
             claimButton.setVisible(true);
-            claimButton.setText("CLAIMED");
             claimButton.setColor(Color.GRAY);
         } else {
             claimButton.setVisible(false);

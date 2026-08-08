@@ -1,0 +1,44 @@
+game_tutorial_title.png
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+swipeRight
+  rotate: false
+  xy: 780, 72
+  size: 636, 275
+  orig: 636, 275
+  offset: 0, 0
+  index: -1
+  // advance: 636
+swipeLeft
+  rotate: false
+  xy: 85, 92
+  size: 640, 259
+  orig: 640, 259
+  offset: 0, 0
+  index: -1
+  // advance: 640
+winBodyCollect
+  rotate: false
+  xy: 82, 396
+  size: 653, 252
+  orig: 653, 252
+  offset: 0, 0
+  index: -1
+  // advance: 653
+destroyLowestBlock
+  rotate: false
+  xy: 785, 383
+  size: 628, 270
+  orig: 628, 270
+  offset: 0, 0
+  index: -1
+  // advance: 628
+winPowerUp
+  rotate: false
+  xy: 406, 689
+  size: 672, 256
+  orig: 672, 256
+  offset: 0, 0
+  index: -1
+  // advance: 672

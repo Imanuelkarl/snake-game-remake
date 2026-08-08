@@ -13,7 +13,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Slider;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.ObjectMap;
-import com.regensnakevsblock.sbb.assets.Assets2;
+import com.regensnakevsblock.sbb.assets.Assets;
 
 public class ActorFactory {
 
@@ -105,7 +105,7 @@ public class ActorFactory {
                 @Override
                 public void draw(Batch batch, float x, float y, float width, float height) {
                     // Draw the fill shifted right by fillOffset, and reduce its width
-                    originalFill.draw(batch, x + fillOffset, y+originalFill.getMinHeight()*2, width , originalFill.getMinHeight());
+                    originalFill.draw(batch, x + fillOffset, y+height/16, width , originalFill.getMinHeight());
                 }
             };
         }
@@ -149,18 +149,18 @@ public class ActorFactory {
         return createProgressBar(bgTexture, fillTexture, null, null, 0, 1, 0.01f, width,height,false,5);
     }
     public static ProgressBar createProgressBar(Texture bgTexture, Texture fillTexture,Texture knobTexture,float width, float height) {
-        return createProgressBar(bgTexture, fillTexture, knobTexture, null, 0, 1, 0.01f,width,height, false,50);
+        return createProgressBar(bgTexture, fillTexture, knobTexture, null, 0, 1, 0.01f,width,height, false,5);
     }
     public static Slider createCustomSlider(float x, float y, float width, float height) {
 
         TextureRegionDrawable background =
-            new TextureRegionDrawable(new TextureRegion(Assets2.getInstance().sliderBackgroundTexture));
+            new TextureRegionDrawable(new TextureRegion(Assets.getInstance().sliderBackgroundTexture));
 
         TextureRegionDrawable fill =
-            new TextureRegionDrawable(new TextureRegion(Assets2.getInstance().sliderFillTexture));
+            new TextureRegionDrawable(new TextureRegion(Assets.getInstance().sliderFillTexture));
 
         TextureRegionDrawable knob =
-            new TextureRegionDrawable(new TextureRegion(Assets2.getInstance().sliderKnobTexture));
+            new TextureRegionDrawable(new TextureRegion(Assets.getInstance().sliderKnobTexture));
 
         // track thickness
         background.setMinHeight(height);

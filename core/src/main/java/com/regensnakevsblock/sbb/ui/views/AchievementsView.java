@@ -47,7 +47,7 @@ public class AchievementsView extends BaseActorView {
         listManager.setSize(Gdx.graphics.getWidth() - 40, Gdx.graphics.getHeight() - 100);
         listManager.setPosition(20, 20);
 
-        //addActor(listManager);
+        addActor(listManager);
 
         adapter.setOnItemClickListener((achievement, position) -> {
             if (achievement.isCompleted && !achievement.isClaimed) {
@@ -58,14 +58,14 @@ public class AchievementsView extends BaseActorView {
 
     private void loadData() {
         java.util.List<AchievementData> achievements = new java.util.ArrayList<>();
-        achievements.add(new AchievementData("ach_1", "First Blood", "Kill 10 enemies",
-            7, 10, 500, false, false));
-        achievements.add(new AchievementData("ach_2", "Rich Player", "Collect 10,000 coins",
-            2500, 10000, 2000, false, false));
-        achievements.add(new AchievementData("ach_3", "Master Swordsman", "Reach level 10",
-            5, 10, 1000, false, false));
-        achievements.add(new AchievementData("ach_4", "Explorer", "Visit 5 different locations",
-            3, 5, 1500, false, false));
+//        achievements.add(new AchievementData("ach_1", "First Blood", "Kill 10 enemies",
+//            7, 10, 500, false, false));
+//        achievements.add(new AchievementData("ach_2", "Rich Player", "Collect 10,000 coins",
+//            2500, 10000, 2000, false, false));
+//        achievements.add(new AchievementData("ach_3", "Master Swordsman", "Reach level 10",
+//            5, 10, 1000, false, false));
+//        achievements.add(new AchievementData("ach_4", "Explorer", "Visit 5 different locations",
+//            3, 5, 1500, false, false));
 
         adapter.setData(achievements);
         updateTotalRewards();
@@ -74,8 +74,9 @@ public class AchievementsView extends BaseActorView {
         loadingText.setPosition(50, height / 2f, Align.center);
         listManager.setSize(width,height);
         listManager.setPosition(0, 0);
-        listManager.setLayout( 1, 100);
+        listManager.setLayout( 1, 300);
     }
+
 
     private void claimReward(AchievementData achievement, int position) {
         if (achievement.isCompleted && !achievement.isClaimed) {

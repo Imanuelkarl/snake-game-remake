@@ -105,7 +105,7 @@ public class SaveService {
     }
 
     public boolean isFirstTimePlaying() {
-        return getBooleanValue("firstTime");
+        return getBooleanValue("firstTime",true);
     }
 
     public void saveFirstTimePlaying(boolean firstTimePlaying) {
@@ -132,6 +132,9 @@ public class SaveService {
     private void saveBooleanData(String key, boolean value) {
         myPreferences.putBoolean(key,value);
         myPreferences.flush();
+    }
+    private boolean getBooleanValue(String key, boolean defaultValue) {
+        return myPreferences.getBoolean(key,defaultValue);
     }
     private boolean getBooleanValue(String key) {
         return myPreferences.getBoolean(key);
@@ -189,4 +192,34 @@ public class SaveService {
         return myPreferences.getInteger("difficulty",0);
     }
 
+    public void saveUpgrade(String name, int currentLevel) {
+        myPreferences.putInteger(name,currentLevel);
+        myPreferences.flush();
+    }
+    public void savePlayCount(){
+        myPreferences.putInteger("playCount",getPlayCount()+1);
+        myPreferences.flush();
+    }
+    public int getPlayCount(){
+        return myPreferences.getInteger("playCount",0);
+    }
+    public int getUpgradeLevel(String name){
+        return myPreferences.getInteger(name,1);
+    }
+
+    public boolean getSkinIsPurchased(int i) {
+        return myPreferences.getBoolean("skin_"+i,false);
+    }
+
+    public void saveSkinAsPurchased(String id) {
+        myPreferences.putBoolean(id,true);
+        myPreferences.flush();
+    }
+
+    public void saveTutorialIsPlayed(boolean b) {
+        saveBooleanData("tutorialIsPlayed",b);
+    }
+    public boolean getTutorialIsPlayed(){
+        return getBooleanValue("tutorialIsPlayed",false);
+    }
 }

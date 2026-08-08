@@ -6,7 +6,8 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.regensnakevsblock.sbb.MyGame;
-import com.regensnakevsblock.sbb.assets.Assets2;
+import com.regensnakevsblock.sbb.assets.Assets;
+import com.regensnakevsblock.sbb.config.GameInstance;
 import com.regensnakevsblock.sbb.ui.HomeUi;
 import com.regensnakevsblock.sbb.uiactions.HomeUiListener;
 import com.regensnakevsblock.sbb.world.WorldState;
@@ -28,9 +29,9 @@ public class HomeScreen implements Screen, HomeUiListener {
         batch =new SpriteBatch();
         Gdx.input.setInputProcessor(homeUi.getStage());
         this.camera = new OrthographicCamera();
-        Assets2.getInstance().backgroundMusic.setLooping(true);
-        Assets2.getInstance().backgroundMusic.play();
-        Assets2.logMemory();
+        Assets.getInstance().backgroundMusic.setLooping(true);
+        Assets.getInstance().backgroundMusic.play();
+        Assets.logMemory();
     }
 
     @Override
@@ -71,7 +72,12 @@ public class HomeScreen implements Screen, HomeUiListener {
 
     @Override
     public void onPlayClicked() {
-        game.setScreen(new MainGame(game, WorldState.GameMode.ENDLESS));
+        game.addToScreenStack(this);
+        if(!GameInstance.getSaveService().getTutorialIsPlayed()){
+            game.setScreen(new MainGame(game, WorldState.GameMode.TUTORIAL));
+        }else {
+            game.setScreen(new MainGame(game, WorldState.GameMode.ENDLESS));
+        }
     }
 
     @Override

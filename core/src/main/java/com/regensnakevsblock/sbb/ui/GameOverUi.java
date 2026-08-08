@@ -1,7 +1,6 @@
 package com.regensnakevsblock.sbb.ui;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.ParticleEffect;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -9,10 +8,8 @@ import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.viewport.FitViewport;
-import com.badlogic.gdx.utils.viewport.ScreenViewport;
-import com.regensnakevsblock.sbb.assets.Assets2;
+import com.regensnakevsblock.sbb.assets.Assets;
 import com.regensnakevsblock.sbb.config.Constants;
-import com.regensnakevsblock.sbb.elements.GameDialog;
 import com.regensnakevsblock.sbb.screens.MainGame;
 import com.regensnakevsblock.sbb.service.SaveService;
 import com.regensnakevsblock.sbb.uiactions.GameOverListener;
@@ -49,16 +46,16 @@ public class GameOverUi {
         int gameSize = Constants.SCREEN_SIZE;
         camera=new OrthographicCamera();
         soundVolume = saveService.getSoundVolume();
-        Assets2.getInstance().backgroundMusic.pause();
-        Assets2.getInstance().gameOverSound.play((float) soundVolume /100);
+        Assets.getInstance().backgroundMusic.pause();
+        Assets.getInstance().gameOverSound.play((float) soundVolume /100);
         int WORLD_WIDTH=/*Constants.SCREEN_WIDTH;*/(gameSize * Gdx.graphics.getWidth()) /Gdx.graphics.getHeight();
         FitViewport viewport = new FitViewport(WORLD_WIDTH, gameSize, camera);
         this.stage = new Stage(viewport);
         this.levelIsWon=levelIsWon;
 
         // Initialize confetti effect if level is won
-        if(levelIsWon && Assets2.getInstance().confettiCanon != null) {
-            confettiEffect = new ParticleEffect(Assets2.getInstance().confettiCanon);
+        if(levelIsWon && Assets.getInstance().confettiCanon != null) {
+            confettiEffect = new ParticleEffect(Assets.getInstance().confettiCanon);
 
             // Position at center of screen
             float centerX = stage.getWidth() / 2f;
@@ -128,6 +125,9 @@ public class GameOverUi {
                 stage.addActor(factory.createGameOverTitle());
                 stage.addActor(restartButton);
             }
+        }else{
+            stage.addActor(factory.createGameOverTitle());
+            stage.addActor(restartButton);
         }
         stage.addActor(factory.createScoreBox());
         stage.addActor(factory.createHighScoreBox());

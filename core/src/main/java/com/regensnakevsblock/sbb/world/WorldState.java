@@ -1,20 +1,23 @@
 package com.regensnakevsblock.sbb.world;
 
 
+import static com.regensnakevsblock.sbb.utils.RandomEngine.getRandom;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.regensnakevsblock.sbb.MyGame;
-import com.regensnakevsblock.sbb.assets.Assets2;
+import com.regensnakevsblock.sbb.assets.Assets;
+import com.regensnakevsblock.sbb.config.Constants;
 import com.regensnakevsblock.sbb.config.GameInstance;
 import com.regensnakevsblock.sbb.entities.Block;
 import com.regensnakevsblock.sbb.entities.Row;
 import com.regensnakevsblock.sbb.entities.Snake;
 import com.regensnakevsblock.sbb.enumaretors.PowerUp;
 import com.regensnakevsblock.sbb.levels.Level;
-import com.regensnakevsblock.sbb.levels.TestLevelProvider;
 import com.regensnakevsblock.sbb.screens.GameOverScreen;
 import com.regensnakevsblock.sbb.service.SaveService;
+import com.regensnakevsblock.sbb.systems.TutorialData;
 import com.regensnakevsblock.sbb.utils.TextureTools;
 
 import java.util.ArrayList;
@@ -66,7 +69,9 @@ public class WorldState {
     private boolean finishLineSpawned = false;
     private HitListener hitListener;
     float powerUpTimeRemaining =3000;
+    float powerUpLifeTime = 3000;
     private HashMap<Integer, TextureRegion> levelBlocks;
+    private int healthScore=1;
 
     public boolean isFinishLineSpawned() {
         return finishLineSpawned;
@@ -83,6 +88,9 @@ public class WorldState {
     public Level getLevel() {
         return level;
     }
+    public float getPowerUpLifeTime() {
+        return powerUpLifeTime;
+    }
 
     public float getPowerUpTimeRemaining() {
         return powerUpTimeRemaining;
@@ -95,9 +103,20 @@ public class WorldState {
     private boolean showTaskIntro;
     private float taskIntroTime;
 
+    private TutorialData tutorialData;
+
+    public TutorialData getTutorialData() {
+        return tutorialData;
+    }
+
+    public void setTutorialData(TutorialData tutorialData) {
+        this.tutorialData = tutorialData;
+    }
+
     public boolean isShowTaskIntro() {
         return showTaskIntro;
     }
+
 
     public void startTaskIntro() {
         showTaskIntro = true;
@@ -138,9 +157,17 @@ public class WorldState {
         return startGame;
     }
 
+    public void reviveWithHealth() {
+        reviveSnake(10);
+        this.healthScore*=2;
+    }
+    public int getHealthScore(){
+        return healthScore;
+    }
+
     public enum GameMode{
         ENDLESS,
-        LEVELS
+        TUTORIAL, LEVELS
     }
 
     public WorldState(OrthographicCamera camera,MyGame game,GameMode gameMode){
@@ -153,12 +180,13 @@ public class WorldState {
         this.moveFactor=1;
         this.gameSpeed=5.0f;
         rows= new ArrayList<>();
+        tutorialData=new TutorialData();
         blockDimension=camera.viewportWidth/5;
         snakeRadius=blockDimension/7;
         snake = new Snake(camera.viewportWidth / 2-snakeRadius, camera.viewportHeight / 2);
         snake.addSegments(5);
         this.blocksDestroyedColor=new HashMap<>();
-        this.gameMode = gameMode;
+        this.gameMode =gameMode;
         saveService = new SaveService();
         if(gameMode==GameMode.LEVELS){
             level = GameInstance.getInstance().getById(saveService.getSelectedLevel());//TestLevelProvider.createTestLevels().get(1);
@@ -166,13 +194,26 @@ public class WorldState {
         }else{
             startGame=true;
         }
+        if(this.gameMode==GameMode.TUTORIAL){
+
+            initializeTutorialData();
+        }
+
+
         nextRowY=camera.viewportHeight+blockDimension ;
+    }
+    public void initializeTutorialData(){
+        tutorialData.currentStage=0;
+        tutorialData.maxClearedStage=5;
+        tutorialData.noOfStages=Constants.tutorialInstructions.length;
+        tutorialData.stageTitle=Constants.tutorialInstructions[tutorialData.currentStage];
+        tutorialData.stageSuccessMessage= Constants.successMessage[getRandom(0,Constants.successMessage.length-1)];
     }
     private void buildLevel(){
         if(level.getLevelType()== Level.LevelType.BLOCKS){
             levelBlocks=new HashMap<>();
-            //TextureRegion blockTexture = TextureTools.resolveRegion(Assets2.getInstance().blockTexture,2,5,(int)Block.getBlockPosition(0).x,(int)Block.getBlockPosition(0).y,0,0);
-            levelBlocks.put(0,Assets2.getInstance().defaultBlock);
+            //TextureRegion blockTexture = TextureTools.resolveRegion(Assets.getInstance().blockTexture,2,5,(int)Block.getBlockPosition(0).x,(int)Block.getBlockPosition(0).y,0,0);
+            levelBlocks.put(0, Assets.getInstance().defaultBlock);
         }
         if(level.getLevelType()== Level.LevelType.COLORED_BLOCKS){
             levelBlocks=new HashMap<>();
@@ -180,7 +221,7 @@ public class WorldState {
 
                 int colorId = entry.getKey();
                 int required = entry.getValue();
-                TextureRegion blockTexture = TextureTools.resolveRegion(Assets2.getInstance().blockTexture,2,5,(int)Block.getBlockPosition(colorId).y,(int)Block.getBlockPosition(colorId).x,0,0);
+                TextureRegion blockTexture = TextureTools.resolveRegion(Assets.getInstance().blockTexture,2,5,(int)Block.getBlockPosition(colorId).y,(int)Block.getBlockPosition(colorId).x,0,0);
                 levelBlocks.put(colorId,blockTexture);
             }
         }
@@ -264,6 +305,9 @@ public class WorldState {
     }
 
     public void setPowerUp(PowerUp powerUp) {
+        powerUpLifeTime = Constants.calculatePowerUpTime(saveService.getUpgradeLevel(powerUp.name()));
+        System.out.println("The power up name is "+powerUp.name() +" and the time is "+powerUpLifeTime);
+        powerUpTimeRemaining = powerUpLifeTime;
         this.powerUp = powerUp;
     }
 

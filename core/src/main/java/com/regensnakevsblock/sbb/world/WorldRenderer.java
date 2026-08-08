@@ -14,12 +14,8 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
-import com.badlogic.gdx.scenes.scene2d.Group;
-import com.badlogic.gdx.scenes.scene2d.ui.Image;
-import com.badlogic.gdx.scenes.scene2d.ui.Label;
-import com.regensnakevsblock.sbb.assets.Assets2;
+import com.regensnakevsblock.sbb.assets.Assets;
 import com.regensnakevsblock.sbb.config.Constants;
-import com.regensnakevsblock.sbb.config.GameInstance;
 import com.regensnakevsblock.sbb.entities.Block;
 import com.regensnakevsblock.sbb.entities.Line;
 import com.regensnakevsblock.sbb.entities.Row;
@@ -27,7 +23,6 @@ import com.regensnakevsblock.sbb.entities.Snake;
 import com.regensnakevsblock.sbb.entities.SnakeSection;
 import com.regensnakevsblock.sbb.entities.WinBody;
 import com.regensnakevsblock.sbb.levels.Level;
-import com.regensnakevsblock.sbb.utils.ActorFactory;
 import com.regensnakevsblock.sbb.utils.FontFactory;
 import com.regensnakevsblock.sbb.utils.TextureTools;
 
@@ -59,58 +54,87 @@ public class WorldRenderer implements HitListener {
     private final TextureRegion freezePowerUp;
     private final TextureRegion multiplierPowerUp;
 
+    // --- Shared "collected" flight animation: an icon flies from where it was
+    // picked up to its spot on the HUD counter, shrinking as it travels.
+    // Used for the objective-block collect effect below, and the intro
+    // objective card reuses the same easedLerp() tween for its fly-to-HUD move.
+    private static final float COLLECT_FLY_DURATION = 0.5f;
+    private final ArrayList<FlyingIcon> flyingCollectIcons = new ArrayList<>();
+
+    private static final class FlyingIcon {
+        final TextureRegion region;
+        final float startX, startY, startSize;
+        final float endX, endY, endSize;
+        float elapsed = 0f;
+
+        FlyingIcon(TextureRegion region, float startX, float startY, float startSize,
+                   float endX, float endY, float endSize) {
+            this.region = region;
+            this.startX = startX; this.startY = startY; this.startSize = startSize;
+            this.endX = endX; this.endY = endY; this.endSize = endSize;
+        }
+    }
+
+    // Last known "remaining" count per color key / for the total-blocks case,
+    // used only to detect a decrease and spawn a flying icon when it happens.
+    private final Map<Integer, Integer> previousColorRemaining = new HashMap<>();
+    private int previousBlocksRemaining = -1;
+    private boolean blocksDecreased = false;
+
     public WorldRenderer(WorldState worldState) {
         this.camera= worldState.getCamera();
         this.worldState = worldState;
         this.batch = new SpriteBatch();
 
-        this.blockTexture= Assets2.getInstance().blockTexture;
-        this.lineTexture= Assets2.getInstance().lineTexture;
+        this.blockTexture= Assets.getInstance().blockTexture;
+        this.lineTexture= Assets.getInstance().lineTexture;
         radius= worldState.getBlockDimension()/7;
         this.snake=worldState.getSnake();
         snake.setRadius(radius);
-        bitmapFont=Assets2.getInstance().font;
+        bitmapFont= Assets.getInstance().font;
         snakeSkinId = worldState.getSnakeSkinId();
         int col = snakeSkinId % 6;
         int row = snakeSkinId / 6;
 
-        this.snakeTexture = TextureTools.resolveRegion(Assets2.getInstance().snakeSkins,8,6,col,row,12);
+        this.snakeTexture = TextureTools.resolveRegion(Assets.getInstance().snakeSkins,8,6,col,row,12);
         this.rows=worldState.getRows();
-        /*//this.scoreFont = FontFactory.getRoboto(34, true);   // Score / High score
-        //this.blockFont = FontFactory.getRoboto(60, false);   // Block numbers*/
         this.smallFont = FontFactory.getRoboto(20, false);
 
-        TextureRegion powerUps= Assets2.getInstance().powerUpTexture;;
+        TextureRegion powerUps= Assets.getInstance().powerUpTexture;;
         this.magnetPowerUp = TextureTools.resolveRegion(powerUps,2,2,1,0,0);
         this.hammerPowerUp = TextureTools.resolveRegion(powerUps,2,2,0,0,0);
         this.freezePowerUp = TextureTools.resolveRegion(powerUps,2,2,1,1,0);
         this.multiplierPowerUp=TextureTools.resolveRegion(powerUps,2,2,0,1,0);
 
-        this.bloodEffect = Assets2.getInstance().bloodEffect;
+        this.bloodEffect = Assets.getInstance().bloodEffect;
         ParticleEmitter emitter=bloodEffect.findEmitter(bloodEffect.getEmitters().get(0).getName());
         emitter.getTint().setColors(Constants.Snake_Texture_Colors[snakeSkinId]);;
         bloodEffect.setDuration(3000);
         worldState.startTaskIntro();
-        // Check for missing characters
         worldState.setOnHitListener(this);
     }
-    private float easeOutBack(float x) {
-        float c1 = 1.70158f;
-        float c3 = c1 + 1f;
 
-        return 1 + c3 * (float)Math.pow(x - 1, 3)
-            + c1 * (float)Math.pow(x - 1, 2);
+    /** Eased lerp shared by the intro card's fly-to-HUD move and the collected-icon flight. */
+    private float easedLerp(float a, float b, float t){
+        return MathUtils.lerp(a, b, Interpolation.exp10Out.apply(t));
     }
 
-    private float lerp(float a, float b, float t){
-        return a + (b - a) * t;
-    }
-    private void renderTaskIntro() {
+    /** Advances and draws one flying icon; returns true once it has arrived. */
+    private boolean updateAndDrawFlight(FlyingIcon anim, float dt){
+        anim.elapsed += dt;
+        float t = Math.min(anim.elapsed / COLLECT_FLY_DURATION, 1f);
 
+        float x = easedLerp(anim.startX, anim.endX, t);
+        float y = easedLerp(anim.startY, anim.endY, t);
+        float size = easedLerp(anim.startSize, anim.endSize, t);
+
+        batch.draw(anim.region, x - size/2f, y - size/2f, size, size);
+        return t >= 1f;
+    }
+
+    private void renderObjectiveHud() {
         if(worldState.getGameMode() != WorldState.GameMode.LEVELS)
             return;
-
-        float time = worldState.getTaskIntroTime();
 
         float centerX = worldState.getScreenWidth()/2f;
         float centerY = worldState.getScreenHeight()/2f;
@@ -118,240 +142,132 @@ public class WorldRenderer implements HitListener {
         float hudX = worldState.getScreenWidth()/5f;
         float hudY = worldState.getScreenHeight()-140;
 
-        float cardWidth =
-            worldState.getScreenWidth()/1.75f;
-
+        float cardWidth = worldState.getScreenWidth()/1.75f;
         float cardHeight = 160;
+
+        boolean introActive = worldState.isShowTaskIntro();
 
         float x;
         float y;
         float scale;
 
-        // Phase 1: pop in
-        if(time < 1.5f){
+        if(introActive){
+            float time = worldState.getTaskIntroTime();
 
-            float t = Math.min(time / 0.5f,1f);
+            // Phase 1: pop in
+            if(time < 1.5f){
+                float t = Math.min(time / 0.5f,1f);
+                scale = Interpolation.swingOut.apply(t);
+                x = centerX - cardWidth/2f;
+                y = centerY - cardHeight/2f;
+            }
+            // Phase 2: fly to HUD
+            else{
+                float t = Math.min((time - 1.5f)/1f,1f);
+                float startX = centerX - cardWidth/2f;
+                float startY = centerY - cardHeight/2f;
 
-            scale = Interpolation.swingOut.apply(t);
+                x = easedLerp(startX, hudX, t);
+                y = easedLerp(startY, hudY, t);
+                scale = easedLerp(1f, 0.85f, t);
+            }
 
-            x = centerX - cardWidth/2f;
-            y = centerY - cardHeight/2f;
-
-        }
-        // Phase 2: fly to HUD
-        else{
-
-            float t =
-                Math.min((time - 1.5f)/1f,1f);
-
-            t = Interpolation.exp10Out.apply(t);
-
-            float startX =
-                centerX - cardWidth/2f;
-
-            float startY =
-                centerY - cardHeight/2f;
-
-            x = MathUtils.lerp(
-                startX,
-                hudX,
-                t
-            );
-
-            y = MathUtils.lerp(
-                startY,
-                hudY,
-                t
-            );
-
-            scale = MathUtils.lerp(
-                1f,
-                0.85f,
-                t
-            );
+            // Dark background behind the popping-in card
+            batch.setColor(0,0,0,0.5f);
+            batch.draw(Assets.getInstance().backgroundTexture, 0, 0, worldState.getScreenWidth(), worldState.getScreenHeight());
+            batch.setColor(Color.WHITE);
+        } else {
+            x = hudX;
+            y = hudY;
+            scale = 1f;
         }
 
-        // Dark background
-        batch.setColor(0,0,0,0.5f);
+        // Draw the card background
+        batch.draw(Assets.getInstance().levelTaskHeaderBg, x, y, cardWidth*scale, cardHeight*scale);
 
-        batch.draw(
-            Assets2.getInstance().backgroundTexture,
-            0,
-            0,
-            worldState.getScreenWidth(),
-            worldState.getScreenHeight()
-        );
-
-        batch.setColor(Color.WHITE);
-
-        // Draw objective card
-        batch.draw(
-            Assets2.getInstance().levelTaskHeaderBg,
-            x,
-            y,
-            cardWidth*scale,
-            cardHeight*scale
-        );
-
-        bitmapFont.getData().setScale(0.25f * scale);
-
-        String title = "OBJECTIVE";
-
-        layout.setText(bitmapFont,title);
-
-        bitmapFont.draw(
-            batch,
-            title,
-            x + (cardWidth*scale-layout.width)/2f,
-            y + cardHeight*scale - 20
-        );
-
-        renderTaskIntroContents(
-            x,
-            y,
-            scale
-        );
+        // Draw the objective content (merged rendering)
+        renderObjectiveContent(x, y, scale, cardWidth, introActive);
 
         bitmapFont.getData().setScale(1f);
+        bitmapFont.setColor(Color.WHITE);
     }
-    private void renderTaskIntroContents(
-        float x,
-        float y,
-        float scale){
 
-        float cardWidth =
-            worldState.getScreenWidth()/1.75f;
+    private void renderObjectiveContent(float x, float y, float scale, float cardWidth, boolean isIntro) {
+        float centerX = x + cardWidth * scale / 2f;
+        Level.LevelType levelType = worldState.getLevel().getLevelType();
 
-        float centerX =
-            x + cardWidth*scale/2f;
-
-        if(worldState.getLevel().getLevelType()
-            == Level.LevelType.FINISH_LINE){
-
-            bitmapFont.getData().setScale(
-                0.25f*scale);
-
-            String text =
-                "GET TO THE FINISH LINE";
-
-            layout.setText(bitmapFont,text);
-
-            bitmapFont.draw(
-                batch,
-                text,
-                centerX-layout.width/2f,
-                y+80*scale
-            );
+        if (levelType == Level.LevelType.FINISH_LINE) {
+            // Finish line always shows the text, regardless of intro/live state
+            bitmapFont.getData().setScale(0.20f * scale);
+            String text = "GET TO THE FINISH LINE";
+            layout.setText(bitmapFont, text);
+            bitmapFont.draw(batch, text, centerX - layout.width/2f, y + 80 * scale);
         }
-
-        else if(worldState.getLevel().getLevelType()
-            == Level.LevelType.BLOCKS){
-
-            float blockSize =
-                worldState.getBlockDimension()
-                    *0.45f
-                    *scale;
-
-            TextureRegion block =
-                worldState.getLevelBlocks()
-                    .values()
-                    .iterator()
-                    .next();
-
-            batch.draw(
-                block,
-                centerX-blockSize/2f,
-                y+40*scale,
-                blockSize,
-                blockSize
-            );
-
-            String text =
-                String.valueOf(
-                    worldState.getLevel()
-                        .getNoOfBlocks());
-
-            bitmapFont.getData().setScale(
-                0.45f*scale);
-
-            layout.setText(bitmapFont,text);
-
-            bitmapFont.draw(
-                batch,
-                text,
-                centerX-layout.width,
-                y+45*scale
-            );
-        }
-
-        else if(worldState.getLevel().getLevelType()
-            == Level.LevelType.COLORED_BLOCKS){
-
-            System.out.println("Animating intro for colored blocks");
-            float blockSize =
-                worldState.getBlockDimension()
-                    *0.35f
-                    *scale;
-
+        else if (levelType == Level.LevelType.BLOCKS || levelType == Level.LevelType.COLORED_BLOCKS) {
+            float blockSize = worldState.getBlockDimension() * (isIntro ? 0.45f : 0.35f) * scale;
+            float blockY = y + 40 * scale;
+            float blockWide = blockSize * worldState.getLevelBlocks().size() * 1.8f;
             int i = 0;
 
-            int total =
-                worldState.getLevel()
-                    .getColorIntegerMap()
-                    .size();
+            if (levelType == Level.LevelType.COLORED_BLOCKS) {
+                for (Map.Entry<Integer, Integer> entry : worldState.getLevel().getColorIntegerMap().entrySet()) {
+                    int colorKey = entry.getKey();
+                    int remaining = entry.getValue() - worldState.getBlocksDestroyedForColor(colorKey);
 
-            float spacing =
-                blockSize*2f;
+                    float bx = centerX - blockWide/2 + blockSize * 1.8f * i;
+                    TextureRegion icon = worldState.getLevelBlocks().get(colorKey);
 
-            float startX =
-                centerX -
-                    ((total-1)*spacing)/2f;
+                    if (!isIntro) {
+                        Integer prevRemaining = previousColorRemaining.put(colorKey, remaining);
+                        if (prevRemaining != null && remaining < prevRemaining) {
+                            spawnCollectFly(icon, bx + blockSize/2f, blockY + blockSize/2f, blockSize);
+                        }
+                    }
 
-            for(Map.Entry<Integer,Integer> entry :
-                worldState.getLevel()
-                    .getColorIntegerMap()
-                    .entrySet()){
+                    drawObjectiveCounter(icon, bx, blockY, blockSize, remaining, scale);
+                    i++;
+                }
+            } else { // BLOCKS type
+                int remaining = worldState.getLevel().getNoOfBlocks() - worldState.totalBlocksDestroyed();
 
-                TextureRegion block =
-                    worldState.getLevelBlocks()
-                        .get(entry.getKey());
+                if (!isIntro) {
+                    blocksDecreased = previousBlocksRemaining >= 0 && remaining < previousBlocksRemaining;
+                    previousBlocksRemaining = remaining;
+                }
 
-                float bx =
-                    startX +
-                        i*spacing;
+                for (Map.Entry<Integer, TextureRegion> entry : worldState.getLevelBlocks().entrySet()) {
+                    float bx = centerX - blockWide/2 + blockSize * 1.5f * i;
+                    TextureRegion icon = entry.getValue();
 
-                batch.draw(
-                    block,
-                    bx,
-                    y+40*scale,
-                    blockSize,
-                    blockSize
-                );
+                    // Only spawn one flying icon per decrease, on the first block type.
+                    if (!isIntro && blocksDecreased && i == 0) {
+                        spawnCollectFly(icon, bx + blockSize/2f, blockY + blockSize/2f, blockSize);
+                    }
 
-                String count =
-                    String.valueOf(
-                        entry.getValue());
-
-                bitmapFont.getData().setScale(
-                    0.3f*scale);
-
-                layout.setText(
-                    bitmapFont,
-                    count
-                );
-
-                bitmapFont.draw(
-                    batch,
-                    count,
-                    bx-layout.width/2f,
-                    y+35*scale
-                );
-
-                i++;
+                    drawObjectiveCounter(icon, bx, blockY, blockSize, remaining, scale);
+                    i++;
+                }
             }
         }
     }
 
+    private void drawObjectiveCounter(TextureRegion icon, float bx, float blockY, float blockSize, int remaining, float scale) {
+        batch.draw(icon, bx, blockY, blockSize, blockSize);
+
+        if (remaining <= 0) {
+            TextureRegion clearedTex = Assets.getInstance().levelMarkedTexture;
+            float markSize = blockSize * 0.65f;
+            batch.draw(clearedTex, bx + blockSize/2f - markSize/2f, blockY + blockSize/2f - markSize/2f, markSize, markSize);
+        } else {
+            String text = String.valueOf(remaining);
+            bitmapFont.getData().setScale(0.35f * scale);
+            bitmapFont.setColor(Color.WHITE);
+            layout.setText(bitmapFont, text);
+            float textX = bx + blockSize/2f - layout.width/2f;
+            float textY = blockY + blockSize/2f + layout.height/2f;
+            bitmapFont.draw(batch, text, textX, textY);
+        }
+    }
 
     public void render() {
         batch.setProjectionMatrix(camera.combined);
@@ -360,19 +276,20 @@ public class WorldRenderer implements HitListener {
         renderSnake();
         renderBloodParticles();
         renderPowerUp();
-        if(worldState.isShowTaskIntro()){
-            renderTaskIntro();
+        renderObjectiveHud();
+        if(!worldState.isShowTaskIntro()){
+            renderFlyingCollectIcons();
         }
-        else{
-            renderLevelTask();
+        if(worldState.getGameMode()== WorldState.GameMode.TUTORIAL){
+           renderTutorialInfo();
         }
         batch.end();
     }
 
-
     public void resize(int width, int height) {
 
     }
+
     private void renderPowerUp(){
         if(worldState.isPowerUpActive()) {
             float size = worldState.getBlockDimension() * 1.1f;
@@ -397,8 +314,8 @@ public class WorldRenderer implements HitListener {
         }
 
     }
-    private void renderRowItems(Batch batch){
 
+    private void renderRowItems(Batch batch){
         for(Row row: rows){
             if (!worldState.isAwake()) {
                 String value = "TAP TO PLAY";
@@ -490,7 +407,7 @@ public class WorldRenderer implements HitListener {
                             winBody.setPosition(winBodyX,row.getY()+radius*2);
 
                         }
-                        TextureRegion coinRegion =TextureTools.resolveRegion(Assets2.getInstance().coinTexture,1,1,0,0,0);
+                        TextureRegion coinRegion =TextureTools.resolveRegion(Assets.getInstance().coinTexture,1,1,0,0,0);
                         batch.draw(winBody.getType()== WinBody.Type.COIN?coinRegion : snakeTexture, winBody.getX(), winBody.getY(), radius * 2, radius * 2);
                         float textX = winBody.getX() + radius - layout.width / 2f;
                         float textY = winBody.getY() + radius * 2f + layout.height ;
@@ -505,11 +422,12 @@ public class WorldRenderer implements HitListener {
                     batch.draw(lineTexture, lineX, row.getY(), line.getWidth(), worldState.getBlockDimension());
                 }
                 if(row.isFinishLine()){
-                    batch.draw(Assets2.getInstance().finishLineTexture,0,row.getY()+worldState.getBlockDimension()*2,camera.viewportWidth,worldState.getBlockDimension());
+                    batch.draw(Assets.getInstance().finishLineTexture,0,row.getY()+worldState.getBlockDimension()*2,camera.viewportWidth,worldState.getBlockDimension());
                 }
             }
         }
     }
+
     private void renderSnake(){
         for(SnakeSection snakeSection : snake.getBody()){
             batch.draw(snakeTexture,snakeSection.getPosition().x,snakeSection.getPosition().y,radius*2,radius*2);
@@ -527,6 +445,7 @@ public class WorldRenderer implements HitListener {
         batch.draw(snakeTexture,snake.getPosition().x,snake.getPosition().y,radius*2,radius*2);
 //      System.out.println("Rendering snake head at position: " + snake.getPosition().x + ", " + snake.getPosition().y + " ");
     }
+
     private void renderBloodParticles() {
         bloodEffect.setPosition(
             snake.getPosition().x + radius,
@@ -539,74 +458,67 @@ public class WorldRenderer implements HitListener {
             bloodEffect.reset();  // Reset or dispose if no longer needed
         }
     }
-    private void renderLevelTask(){
-        if(worldState.getGameMode()==WorldState.GameMode.LEVELS){
-            batch.draw(Assets2.getInstance().levelTaskHeaderBg,worldState.getScreenWidth()/5,worldState.getScreenHeight()-140,worldState.getScreenWidth()/1.75f,160);
-            float textY = worldState.getScreenHeight() -40;
-            if(worldState.getLevel().getLevelType()== Level.LevelType.BLOCKS||(worldState.getLevel().getLevelType()== Level.LevelType.COLORED_BLOCKS)){
-                float blockSize = worldState.getBlockDimension()*0.35f;
-                float blockWide = blockSize*worldState.getLevelBlocks().size()*1.8f;
-                int i =0;
 
-                if(worldState.getLevel().getLevelType()== Level.LevelType.COLORED_BLOCKS){
-                    for (Map.Entry<Integer, Integer> entry :worldState.getLevel().getColorIntegerMap().entrySet()){
-                        String finishLineText=  String.valueOf(entry.getValue()-worldState.getBlocksDestroyedForColor(entry.getKey()));//String.valueOf(worldState.getBlocksDestroyedForColor());
-                        batch.draw(worldState.getLevelBlocks().get(entry.getKey()),worldState.getScreenWidth()/2-blockWide/2+blockSize*1.8f*i,worldState.getScreenHeight()-120,blockSize,blockSize);
-                        //String finishLineText=  String.valueOf(entry.getValue());//String.valueOf(worldState.getBlocksDestroyedForColor());
-                        bitmapFont.getData().setScale(0.35f);
-                        bitmapFont.setColor(Color.WHITE);
-                        layout.setText(bitmapFont,finishLineText);
-                        //float textY = worldState.getScreenHeight() -110+layout.height;
-                        float textX = worldState.getScreenWidth()/2-blockWide/2+blockSize*1.8f*i - layout.width ;
-                        bitmapFont.draw(batch,finishLineText,textX,textY);
-                        i++;
-                    }
-                }else{
-                    for (Map.Entry<Integer, TextureRegion> entry :worldState.getLevelBlocks().entrySet()){
-                        batch.draw(worldState.getLevelBlocks().get(entry.getKey()),worldState.getScreenWidth()/2-blockWide/2+blockSize*1.5f*i,worldState.getScreenHeight()-120,blockSize,blockSize);
-                        String finishLineText=  String.valueOf(worldState.getLevel().getNoOfBlocks()-worldState.totalBlocksDestroyed());//String.valueOf(worldState.getBlocksDestroyedForColor());
-                        bitmapFont.getData().setScale(0.35f);
-                        bitmapFont.setColor(Color.WHITE);
-                        layout.setText(bitmapFont,finishLineText);
-                        //float textY = worldState.getScreenHeight()-120+layout.height;
-                        float textX = worldState.getScreenWidth()/2-blockWide/2+blockSize*1.5f*i - layout.width ;
-                        bitmapFont.draw(batch,finishLineText,textX,textY);
-                        i++;
-                    }
-                }
-            } else {
-                if(worldState.getLevel().getLevelType() == Level.LevelType.FINISH_LINE){
-                    String finishLineText=  "GET TO THE FINISH LINE";
-                    bitmapFont.getData().setScale(0.25f);
-                    bitmapFont.setColor(Color.WHITE);
-                    layout.setText(bitmapFont,finishLineText);
-                    //float textY = worldState.getScreenHeight() -120;
-                    float textX = worldState.getScreenWidth() / 2f - layout.width / 2f;
-                    bitmapFont.draw(batch,finishLineText,textX,textY);
+    /** Spawns an icon flying from the snake to its HUD spot, shrinking as it goes. */
+    private void spawnCollectFly(TextureRegion icon, float targetX, float targetY, float targetSize){
+        float startSize = worldState.getBlockDimension()*0.9f;
+        flyingCollectIcons.add(new FlyingIcon(
+            icon,
+            snake.getPosition().x + radius, snake.getPosition().y + radius, startSize,
+            targetX, targetY, targetSize
+        ));
+    }
 
-
-                }
-
+    private void renderFlyingCollectIcons(){
+        float dt = Gdx.graphics.getDeltaTime();
+        for(int idx = flyingCollectIcons.size()-1; idx>=0; idx--){
+            if(updateAndDrawFlight(flyingCollectIcons.get(idx), dt)){
+                flyingCollectIcons.remove(idx);
             }
-            bitmapFont.setColor(Color.WHITE);
-
-
         }
     }
+    private void renderTutorialInfo() {
+        // Increment animation time
+        textAnimationTime += Gdx.graphics.getDeltaTime();
+
+        // Get the current tutorial texture
+        TextureRegion[] titles = Assets.getInstance().gameTutorialTitles;
+        int index = Math.min(
+            worldState.getTutorialData().currentStage,
+            titles.length - 1
+        );
+
+        TextureRegion region = titles[index];
+
+        // Pulse animation
+        float scale = 0.95f + 0.05f * (float) Math.sin(textAnimationTime * 3f);
+
+        float width = region.getRegionWidth() * scale;
+        float height = region.getRegionHeight() * scale;
+
+        // Position at the top center
+        float x = (worldState.getScreenWidth() - width) * 0.5f;
+        float y = worldState.getScreenHeight() * 0.8f;
+
+        batch.draw(
+            region,
+            x,
+            y,
+            width,
+            height
+        );
+    }
+
     public void dispose() {
         batch.dispose();
         bloodEffect.dispose();
-        //font.dispose();
-        //snakeTexture.dispose();
         lineTexture.dispose();
         blockTexture.dispose();
     }
 
-
     @Override
     public void onHit() {
         bloodEffect.start();
-
     }
 
     @Override

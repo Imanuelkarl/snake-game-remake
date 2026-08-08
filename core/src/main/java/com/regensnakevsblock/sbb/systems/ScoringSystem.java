@@ -21,6 +21,7 @@ public class ScoringSystem extends GlobalSystems{
         if(worldState.getGameMode()== WorldState.GameMode.LEVELS) {
             if (worldState.getLevel().getLevelType() == Level.LevelType.BLOCKS) {
                 if (worldState.totalBlocksDestroyed() >= worldState.getLevel().getNoOfBlocks()) {
+                    System.out.println("No of blocks to destroy are "+worldState.getLevel().getNoOfBlocks() +"and number of blocks destroyed so far are "+worldState.totalBlocksDestroyed());
                     worldState.setPaused(true);
                     worldState.setLevelCleared();
                     System.out.println("Victory !!!.\n\n total blocks destroyed " + worldState.totalBlocksDestroyed());

@@ -2,8 +2,7 @@ package com.regensnakevsblock.sbb.systems;
 
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.math.Rectangle;
-import com.regensnakevsblock.sbb.assets.Assets2;
-import com.regensnakevsblock.sbb.config.GameInstance;
+import com.regensnakevsblock.sbb.assets.Assets;
 import com.regensnakevsblock.sbb.entities.*;
 import com.regensnakevsblock.sbb.enumaretors.PowerUp;
 import com.regensnakevsblock.sbb.service.SaveService;
@@ -31,9 +30,9 @@ public class CollisionSystem extends GlobalSystems {
         super(worldState);
         saveService =new SaveService();
         finishLine=new Rectangle(0,0,worldState.getScreenWidth(),worldState.getBlockDimension());
-        winItem=Assets2.getInstance().winObjectSound;
-        hitBlock=Assets2.getInstance().collisionSound;
-        winPowerUp= Assets2.getInstance().powerUpSound;
+        winItem= Assets.getInstance().winObjectSound;
+        hitBlock= Assets.getInstance().collisionSound;
+        winPowerUp= Assets.getInstance().powerUpSound;
     }
 
     @Override
@@ -125,6 +124,7 @@ public class CollisionSystem extends GlobalSystems {
                             hitBlock.play(volume);
                             if(worldState.isPowerUpActive()&&worldState.getPowerUp().equals(PowerUp.HAMMER)){
                                 block.setValue(0);
+                                worldState.setScore(worldState.getScore() + block.getValue());
                                 break;
                             }
                             worldState.getHitListener().onHit();
