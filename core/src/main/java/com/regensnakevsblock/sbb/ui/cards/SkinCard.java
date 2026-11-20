@@ -7,12 +7,13 @@ import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.regensnakevsblock.sbb.assets.Assets;
+import com.regensnakevsblock.sbb.config.GameInstance;
 import com.regensnakevsblock.sbb.ui.core.BaseView;
 import com.regensnakevsblock.sbb.ui.core.ListItemView;
 import com.regensnakevsblock.sbb.ui.data.SkinData;
 import com.regensnakevsblock.sbb.utils.ActorFactory;
 
-public class SkinCard extends Group implements ListItemView<SkinData>, BaseView {
+public class SkinCard extends Group implements ListItemView<SkinData>, BaseView<SkinData> {
     private Image background;
     private Image coins;
     public ImageButton actionButton;
@@ -61,7 +62,7 @@ public class SkinCard extends Group implements ListItemView<SkinData>, BaseView 
         this.currentPosition = position;
 
         //nameLabel.setText(skin.name);
-        snakePreview.setSkin(skin.thumbnail);
+        snakePreview.setSkin(GameInstance.getInstance().getSkinImage(position));
         if(!skin.currency.equals("coins")){
             coins.setDrawable(new TextureRegionDrawable(Assets.getInstance().diamondTexture));
         }
@@ -108,6 +109,11 @@ public class SkinCard extends Group implements ListItemView<SkinData>, BaseView 
     @Override
     public void update(float delta) {
         // Any animations or updates
+    }
+
+    @Override
+    public void updateData(SkinData data, int position) {
+
     }
 
     @Override

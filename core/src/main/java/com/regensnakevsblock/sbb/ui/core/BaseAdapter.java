@@ -56,13 +56,14 @@ public abstract class BaseAdapter<T, V extends BaseView> {
             V view = this.createView(i);
             bindView(view, i); // bind initial data
             views.add(view);
-
-            // Track creation (logging, analytics, etc.)
-            System.out.println("Created view for item " + i);
         }
 
         // Notify listener
         if (dataChangeListener != null) dataChangeListener.onDataChanged();
+    }
+    public void updateData(T newData,int position){
+        items.set(position,newData);
+        notifyDataSetChanged();
     }
 
     public void addItem(T item) {

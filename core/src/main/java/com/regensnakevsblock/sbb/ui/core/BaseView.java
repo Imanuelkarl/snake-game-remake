@@ -2,7 +2,7 @@ package com.regensnakevsblock.sbb.ui.core;
 
 import com.badlogic.gdx.scenes.scene2d.Group;
 
-public interface BaseView {
+public interface BaseView<T> {
     Group getRoot();
     void onShow();
     void onHide();
@@ -10,6 +10,9 @@ public interface BaseView {
     void onResume();
     void onDestroy();
     void update(float delta);
+
+    void updateData(T data,int position);
+
     void resize(float width, float height);
 
     boolean backPressed();

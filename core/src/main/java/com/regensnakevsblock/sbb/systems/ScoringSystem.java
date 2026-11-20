@@ -15,14 +15,14 @@ public class ScoringSystem extends GlobalSystems{
 
     @Override
     public void update(float deltaTime) {
-        if(worldState.isPaused() || worldState.isGameOver()){
+        if(worldState.isPaused() || worldState.isGameOver()|| worldState.isGameWon()){
             return;
         }
         if(worldState.getGameMode()== WorldState.GameMode.LEVELS) {
             if (worldState.getLevel().getLevelType() == Level.LevelType.BLOCKS) {
                 if (worldState.totalBlocksDestroyed() >= worldState.getLevel().getNoOfBlocks()) {
                     System.out.println("No of blocks to destroy are "+worldState.getLevel().getNoOfBlocks() +"and number of blocks destroyed so far are "+worldState.totalBlocksDestroyed());
-                    worldState.setPaused(true);
+                    worldState.setGameWon(true);
                     worldState.setLevelCleared();
                     System.out.println("Victory !!!.\n\n total blocks destroyed " + worldState.totalBlocksDestroyed());
                     return;
@@ -47,7 +47,7 @@ public class ScoringSystem extends GlobalSystems{
                 }
 
                 if (allMet) {
-                    worldState.setPaused(true);
+                    worldState.setGameWon(true);
                     worldState.setLevelCleared();
                     System.out.println("Victory !!! (Colored Blocks)");
                 }

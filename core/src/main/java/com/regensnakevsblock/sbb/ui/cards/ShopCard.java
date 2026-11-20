@@ -13,7 +13,7 @@ import com.regensnakevsblock.sbb.ui.data.ShopItemData;
 import com.regensnakevsblock.sbb.utils.ActorFactory;
 import com.regensnakevsblock.sbb.utils.CurrencyResolver;
 
-public class ShopCard extends Group implements ListItemView<ShopItemData>, BaseView {
+public class ShopCard extends Group implements ListItemView<ShopItemData>, BaseView<ShopItemData> {
     private Image background;
     private Image icon;
     private Label nameLabel;
@@ -148,6 +148,11 @@ public class ShopCard extends Group implements ListItemView<ShopItemData>, BaseV
     @Override
     public void update(float delta) {
         // Animate if needed
+    }
+
+    @Override
+    public void updateData(ShopItemData data, int position) {
+
     }
 
     @Override

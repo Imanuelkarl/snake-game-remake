@@ -18,11 +18,14 @@ import com.regensnakevsblock.sbb.levels.Level;
 import com.regensnakevsblock.sbb.screens.GameOverScreen;
 import com.regensnakevsblock.sbb.service.SaveService;
 import com.regensnakevsblock.sbb.systems.TutorialData;
+import com.regensnakevsblock.sbb.ui.data.Ach;
 import com.regensnakevsblock.sbb.utils.TextureTools;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Stack;
 
 public class WorldState {
 
@@ -72,7 +75,95 @@ public class WorldState {
     float powerUpLifeTime = 3000;
     private HashMap<Integer, TextureRegion> levelBlocks;
     private int healthScore=1;
+    private boolean showTaskIntro;
+    private float taskIntroTime;
 
+    private TutorialData tutorialData;
+    private boolean gameWon;
+    private int clearedRows=0;
+    private int largeBlockDestroyed=0;
+    private int blocksInARow=0;
+    private int winBodyInARow=0;
+    private Stack<Ach> newAchievements = new Stack<>();
+    public boolean canShowAds() {
+        return (saveService.getPlayCount()>5)&&
+            (game.getAdsService()!=null)&&
+                (game.getAdsService().isInterstitialLoaded());
+    }
+    public void setClearedRows(int rows){
+        this.clearedRows=rows;
+    }
+    public int getClearedRows() {
+        return clearedRows;
+    }
+
+    public int getLifetimeCoins() {
+        return (int)saveService.getLifeTimeCoins();
+    }
+    public void setLargeBlockDestroyed(int block){
+        largeBlockDestroyed=block;
+    }
+
+    public int getLargestBlockSizeDestroyed() {
+        return largeBlockDestroyed;
+    }
+    public void setBlocksStreak(int blocksInARow){
+        this.blocksInARow=blocksInARow;
+    }
+    public int getCurrentBlockStreak() {
+        return blocksInARow;
+    }
+    public void setWinBodyStreak(int blocksInARow){
+        this.winBodyInARow=blocksInARow;
+    }
+    public int getWinBodyStreak() {
+        return winBodyInARow;
+    }
+
+    public Stack<Ach> getNewAchievements() {
+        return newAchievements;
+    }
+    public void addNewAchievements(Ach ach){
+
+        newAchievements.add(ach);
+    }
+
+    public enum GameMode{
+        ENDLESS,
+        TUTORIAL, LEVELS
+    }
+    public WorldState(OrthographicCamera camera,MyGame game,GameMode gameMode){
+        this.game=game;
+        this.camera=camera;
+        this.isPaused=false;
+        this.isGameOver=false;
+        //this.isVictory=false;
+        this.moving=true;
+        this.moveFactor=1;
+        this.gameSpeed=5.0f;
+        rows= new ArrayList<>();
+        tutorialData=new TutorialData();
+        blockDimension=camera.viewportWidth/5;
+        snakeRadius=blockDimension/7;
+        snake = new Snake(camera.viewportWidth / 2-snakeRadius, camera.viewportHeight / 2);
+        snake.addSegments(5);
+        this.blocksDestroyedColor=new HashMap<>();
+        this.gameMode =gameMode;
+        saveService = new SaveService();
+        if(gameMode==GameMode.LEVELS){
+            level = GameInstance.getInstance().getById(saveService.getSelectedLevel());//TestLevelProvider.createTestLevels().get(1);
+            buildLevel();
+        }else{
+            startGame=true;
+        }
+        if(this.gameMode==GameMode.TUTORIAL){
+
+            initializeTutorialData();
+        }
+
+
+        nextRowY=camera.viewportHeight+blockDimension ;
+    }
     public boolean isFinishLineSpawned() {
         return finishLineSpawned;
     }
@@ -99,11 +190,12 @@ public class WorldState {
     public void setPowerUpTimeRemaining(float remaining) {
         powerUpTimeRemaining=remaining;
     }
-
-    private boolean showTaskIntro;
-    private float taskIntroTime;
-
-    private TutorialData tutorialData;
+    public void setGameWon(boolean b) {
+        this.gameWon=b;
+    }
+    public boolean isGameWon() {
+        return gameWon;
+    }
 
     public TutorialData getTutorialData() {
         return tutorialData;
@@ -141,12 +233,21 @@ public class WorldState {
     public void setLevelCleared() {
         if(saveService.getSelectedLevel()==saveService.getMaxLevel()){
             saveService.setMaxLevel(saveService.getMaxLevel()+1);
-            saveService.saveSelectedLevel(saveService.getSelectedLevel()+1);
+            saveService.saveSelectedLevel(level.getLevelId()+1);
             GameInstance.getInstance().getLevelData().get(level.getLevelId()).setCanSelect(true);
+            GameInstance.getInstance().getLevelData().get(level.getLevelId()-1).setSelected(false);
+            GameInstance.getInstance().getLevelData().get(level.getLevelId()-1).setCleared(true);
+            GameInstance.getInstance().getLevelData().get(level.getLevelId()).setSelected(true);
+
         }
         level.setCleared(true);
-        GameInstance.getInstance().clearLevelId(level.getLevelId());
-        GameInstance.getInstance().levelsView.rebindView();
+        GameInstance.getInstance().levelsView.updateData(GameInstance.getInstance().getLevelData().get(level.getLevelId()),level.getLevelId());
+
+    }
+    public void moveToNextScreen(){
+        if(this.canShowAds()){
+            game.getAdsService().showInterstitial();
+        }
         GameOverScreen gameOverScreen =new GameOverScreen(game,true);
         gameOverScreen.setScore(score);
         gameOverScreen.setCoins(coins);
@@ -159,48 +260,11 @@ public class WorldState {
 
     public void reviveWithHealth() {
         reviveSnake(10);
+        gameSpeed=gameSpeed>6?6:gameSpeed;
         this.healthScore*=2;
     }
     public int getHealthScore(){
         return healthScore;
-    }
-
-    public enum GameMode{
-        ENDLESS,
-        TUTORIAL, LEVELS
-    }
-
-    public WorldState(OrthographicCamera camera,MyGame game,GameMode gameMode){
-        this.game=game;
-        this.camera=camera;
-        this.isPaused=false;
-        this.isGameOver=false;
-        //this.isVictory=false;
-        this.moving=true;
-        this.moveFactor=1;
-        this.gameSpeed=5.0f;
-        rows= new ArrayList<>();
-        tutorialData=new TutorialData();
-        blockDimension=camera.viewportWidth/5;
-        snakeRadius=blockDimension/7;
-        snake = new Snake(camera.viewportWidth / 2-snakeRadius, camera.viewportHeight / 2);
-        snake.addSegments(5);
-        this.blocksDestroyedColor=new HashMap<>();
-        this.gameMode =gameMode;
-        saveService = new SaveService();
-        if(gameMode==GameMode.LEVELS){
-            level = GameInstance.getInstance().getById(saveService.getSelectedLevel());//TestLevelProvider.createTestLevels().get(1);
-            buildLevel();
-        }else{
-            startGame=true;
-        }
-        if(this.gameMode==GameMode.TUTORIAL){
-
-            initializeTutorialData();
-        }
-
-
-        nextRowY=camera.viewportHeight+blockDimension ;
     }
     public void initializeTutorialData(){
         tutorialData.currentStage=0;
@@ -270,23 +334,8 @@ public class WorldState {
     public void setAwake(boolean awake) {
         this.awake = awake;
     }
-
-    public void setSoundEnabled(boolean soundEnabled){
-        this.soundEnabled=soundEnabled;
-    }
-    public void setMusicEnabled(boolean musicEnabled){
-        this.musicEnabled=musicEnabled;
-    }
-
-    public boolean isMusicEnabled() {
-        return musicEnabled;
-    }
     public int getMaxScore() {
         return maxScore;
-    }
-
-    public void setMaxScore(int maxScore) {
-        this.maxScore = maxScore;
     }
 
     public int getMinScore() {
@@ -306,7 +355,6 @@ public class WorldState {
 
     public void setPowerUp(PowerUp powerUp) {
         powerUpLifeTime = Constants.calculatePowerUpTime(saveService.getUpgradeLevel(powerUp.name()));
-        System.out.println("The power up name is "+powerUp.name() +" and the time is "+powerUpLifeTime);
         powerUpTimeRemaining = powerUpLifeTime;
         this.powerUp = powerUp;
     }
@@ -324,6 +372,7 @@ public class WorldState {
     public void reviveSnake(int length) {
         isGameOver=false;
         isPaused=false;
+        gameSpeed=gameSpeed>10?6:gameSpeed;
         this.setBreakingBlock(null);
         this.setMoving(false);
         this.setAwake(false);
@@ -401,6 +450,7 @@ public class WorldState {
     }
 
     public void addRows(Row row){
+        row.setId(totalRowsCreated);
         this.rows.add(row);
         totalRowsCreated++;
     }

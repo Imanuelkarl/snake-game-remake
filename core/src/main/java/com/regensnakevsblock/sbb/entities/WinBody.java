@@ -1,6 +1,5 @@
 package com.regensnakevsblock.sbb.entities;
 
-import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
@@ -23,6 +22,7 @@ public class WinBody {
     private int value;
     private boolean adjust =false;
     private Type type;
+    private int rowId;
     public enum Type{
         BODY,COIN
     }
@@ -123,5 +123,12 @@ public class WinBody {
 
     public boolean isAdjust() {
         return adjust;
+    }
+    public void setRowId(int rowId) {
+        this.rowId = rowId;
+    }
+
+    public int getRowId() {
+        return rowId;
     }
 }

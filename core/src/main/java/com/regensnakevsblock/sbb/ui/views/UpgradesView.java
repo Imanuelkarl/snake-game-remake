@@ -16,7 +16,7 @@ import com.regensnakevsblock.sbb.ui.core.ListManager;
 import com.regensnakevsblock.sbb.ui.data.UpgradeData;
 import com.regensnakevsblock.sbb.utils.ActorFactory;
 
-public class UpgradesView extends BaseActorView {
+public class UpgradesView extends BaseActorView<UpgradeData> {
     private ListManager<UpgradeData, UpgradeCard> listManager;
     private UpgradeAdapter adapter;
     private Label titleLabel;
@@ -29,7 +29,7 @@ public class UpgradesView extends BaseActorView {
     public UpgradesView(Group group) {
         super(group);
         setSize(group.getWidth(),group.getHeight());
-        //setPosition(group.getX(),group.getY());
+        setPosition(group.getX(),group.getY());
         this.width=group.getWidth();
         this.height=group.getHeight();
         setupUI();
@@ -38,6 +38,12 @@ public class UpgradesView extends BaseActorView {
 
         Gdx.app.postRunnable(this::loadData);
     }
+
+    @Override
+    public void updateData(UpgradeData data, int position) {
+        adapter.updateData(data,position);
+    }
+
     private Group loadingGroup;
 
     private void showLoading() {
@@ -119,16 +125,20 @@ public class UpgradesView extends BaseActorView {
             }}
     }
     void upgrade(UpgradeData upgrade){
+            // Charge the price of the CURRENT level, in the currency shown on the card
+            int cost = upgrade.upgradeCost;
+            if (upgrade.upgradeItem.equals("coins")) {
+                GameInstance.getSaveService().saveCoins(GameInstance.getSaveService().getCoins() - cost);
+            } else {
+                GameInstance.getSaveService().saveDiamonds(GameInstance.getSaveService().getDiamonds() - cost);
+            }
+
+            // Then move to the next level and compute its price/currency
             upgrade.currentLevel++;
             upgrade.currentValue = Constants.calculatePowerUpTime(upgrade.currentLevel);
             upgrade.upgradeCost = (int)Constants.calculatePowerUpPrice(upgrade.currentLevel);
-            upgrade.upgradeItem =upgrade.currentLevel>=8?"diamonds":"coins";
+            upgrade.upgradeItem = Constants.getUpgradeItem(upgrade.currentLevel);
             GameInstance.getSaveService().saveUpgrade(upgrade.name,upgrade.currentLevel);
-            if (upgrade.upgradeItem.equals("coins")) {
-                GameInstance.getSaveService().saveCoins(GameInstance.getSaveService().getCoins() - upgrade.upgradeCost);
-            } else {
-                GameInstance.getSaveService().saveCoins(GameInstance.getSaveService().getDiamonds() - upgrade.upgradeCost);
-            };
     }
 
     private void loadData() {

@@ -12,7 +12,7 @@ import com.regensnakevsblock.sbb.ui.data.ShopCategory;
 import com.regensnakevsblock.sbb.ui.data.ShopItemData;
 import com.regensnakevsblock.sbb.utils.TextureTools;
 
-public class ShopView extends BaseActorView {
+public class ShopView extends BaseActorView<ShopItemData> {
     private ListManager<ShopItemData, ShopCard> listManager;
     private ShopAdapter adapter;
     private Label titleLabel;
@@ -31,6 +31,11 @@ public class ShopView extends BaseActorView {
         setupList();
         setupTransform();
         loadData();
+    }
+
+    @Override
+    public void updateData(ShopItemData data, int position) {
+        adapter.updateData(data,position);
     }
 
     private void setupUI() {

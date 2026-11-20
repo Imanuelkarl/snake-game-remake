@@ -4,7 +4,9 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.regensnakevsblock.sbb.MyGame;
+import com.regensnakevsblock.sbb.assets.Assets;
 import com.regensnakevsblock.sbb.config.GameInstance;
+import com.regensnakevsblock.sbb.levels.Level;
 import com.regensnakevsblock.sbb.ui.GameOverUi;
 import com.regensnakevsblock.sbb.uiactions.GameOverListener;
 
@@ -60,6 +62,7 @@ public class GameOverScreen implements Screen, GameOverListener {
     @Override
     public void restartButtonClicked() {
         game.setScreen(new MainGame(game,MainGame.gameMode));
+        Assets.getInstance().backgroundMusic.play();
     }
 
     @Override
@@ -79,7 +82,11 @@ public class GameOverScreen implements Screen, GameOverListener {
 
     @Override
     public void nextLevelButtonClicked() {
-        GameInstance.getSaveService().saveSelectedLevel(GameInstance.getSaveService().getSelectedLevel() + 1);
+        if(GameInstance.getSaveService().getMaxLevel()>GameInstance.getSaveService().getSelectedLevel()){
+            Level level= GameInstance.getInstance().getById(GameInstance.getSaveService().getSelectedLevel());
+            GameInstance.getSaveService().saveSelectedLevel(GameInstance.getSaveService().getSelectedLevel() + 1);
+            GameInstance.getInstance().levelsView.updateData(GameInstance.getInstance().getLevelData().get(level.getLevelId()),level.getLevelId());
+        }
         game.setScreen(new MainGame(game,MainGame.gameMode));
     }
 

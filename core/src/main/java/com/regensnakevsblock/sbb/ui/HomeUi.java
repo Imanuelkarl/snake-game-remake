@@ -296,5 +296,6 @@ public class HomeUi {
 
     public void dispose() {
         stage.dispose();
+        homeUiFactory.dispose();
     }
 }

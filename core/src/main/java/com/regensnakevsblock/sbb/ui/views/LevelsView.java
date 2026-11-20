@@ -14,7 +14,7 @@ import com.regensnakevsblock.sbb.utils.ActorFactory;
 import java.util.ArrayList;
 import java.util.List;
 
-public class LevelsView extends BaseActorView {
+public class LevelsView extends BaseActorView<LevelData> {
     private ListManager<LevelData, LevelCard> listManager;
     private LevelAdapter adapter;
     private float width;
@@ -69,6 +69,11 @@ public class LevelsView extends BaseActorView {
     public void rebindView(){
         adapter.setData(GameInstance.getInstance().getLevelData());
         listManager.onResize(width, height);
+    }
+
+    @Override
+    public void updateData(LevelData data,int position){
+        adapter.updateData(data,position);
     }
     @Override
     public void update(float delta) {

@@ -15,6 +15,11 @@ public class Row {
     private float y;
 
     private boolean empty;
+    private int id;
+
+
+
+    private boolean cleared;
 
     public Row() {
         this.blocks= new ArrayList<>();
@@ -26,6 +31,20 @@ public class Row {
         this.lines = new ArrayList<>();
         this.winBodies = new ArrayList<>();
         this.finishLine=finishLine;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+        for(Block block: blocks){
+            block.setRowId(id);
+        }
+        for(WinBody winBody:winBodies){
+            winBody.setRowId(id);
+        }
+    }
+
+    public int getId() {
+        return id;
     }
 
     public boolean isFinishLine() {
@@ -52,13 +71,22 @@ public class Row {
         return winBodies;
     }
     public void addWinBody(WinBody winBody){
+        winBody.setRowId(id);
         winBodies.add(winBody);
     }
     public void addLine(Line line){
         lines.add(line);
     }
     public void addBlock(Block block){
+        block.setRowId(id);
         blocks.add(block);
+    }
+    public boolean isCleared() {
+        return cleared;
+    }
+
+    public void setCleared(boolean cleared) {
+        this.cleared = cleared;
     }
 
     public void dispose(){

@@ -16,6 +16,8 @@ import com.regensnakevsblock.sbb.service.purchase.PurchaseItem;
 import com.regensnakevsblock.sbb.service.purchase.PurchaseService;
 import com.regensnakevsblock.sbb.ui.core.ViewManager;
 import com.regensnakevsblock.sbb.ui.core.ViewPagerAdapter;
+import com.regensnakevsblock.sbb.ui.data.AchievementData;
+import com.regensnakevsblock.sbb.ui.data.AchievementList;
 import com.regensnakevsblock.sbb.ui.data.LevelData;
 import com.regensnakevsblock.sbb.ui.data.ShopCategory;
 import com.regensnakevsblock.sbb.ui.data.ShopItemData;
@@ -62,13 +64,17 @@ public class GameInstance {
 
     public void clearLevelId(int levelId) {
         int i=levelId-1;
+        if(levelsData==null || i<0 || i>=levelsData.size()) return;
         for (int j = 0; j < levelsData.size(); j++) {
             levelsData.get(j).setSelected(false);
         }
-        levelsData.get(levelId).setCanSelect(true);
-        levelsData.get(levelId).setSelected(true);
         levelsData.get(i).setCleared(true);
-        this.levelsView.rebindView();
+        // Unlock the next level only if there is one (last level has no next)
+        if(levelId<levelsData.size()){
+            levelsData.get(levelId).setCanSelect(true);
+            levelsData.get(levelId).setSelected(true);
+        }
+        //this.levelsView.rebindView();
 
     }
 
@@ -94,6 +100,7 @@ public class GameInstance {
     // ===== ASSETS =====
     public ViewManager menuViewManager;
     public ViewPagerAdapter menuViewManagerAdapter;
+    public List<AchievementData> achievements;
 
     // ===== SINGLETON =====
     private GameInstance() {}
@@ -104,6 +111,11 @@ public class GameInstance {
             saveService = new SaveService();
         }
         return instance;
+    }
+    public void resetInstance(){
+        levelsView=null;
+        menuViewManager=null;
+
     }
 
     public List<UpgradeData> getUpgradeDataList() {
@@ -312,7 +324,7 @@ public class GameInstance {
             int col = i % columns;
             int row = i / columns;
 
-            TextureRegion region = TextureTools.resolveRegion(texture,rows,columns,col,row,12);
+            TextureRegion region = getSkinImage(i);
             saveService.saveSkinAsPurchased("skin_"+0);
             boolean isOwned = saveService.getSkinIsPurchased(i);
             int price = i<30?(i+1)*1000+(i+1)*50:(i+1)*5+(10*(i-30));
@@ -336,6 +348,80 @@ public class GameInstance {
     // =====================================================
     public void dispose() {
 
+    }
+    public TextureRegion getSkinImage(int i){
+        int columns = 6;
+        int rows = 8;
+
+            int col = i % columns;
+            int row = i / columns;
+
+        return TextureTools.resolveRegion(Assets.getInstance().snakeSkins,rows,columns,col,row,12);
+
+    }
+    private void activateClaimAndCompleted(List<AchievementData> achievements) {
+
+        achievements.clear();
+
+        for (AchievementData achievement : AchievementList.ACHIEVEMENTS) {
+
+            if (GameInstance.getSaveService().getAchievementIsClaimed(achievement.id)) {
+                achievement.claimed = true;
+                achievement.completed = true;
+
+            } else if (GameInstance.getSaveService().getAchievementIsCompleted(achievement.id)) {
+                achievement.completed = true;
+                achievement.claimed = false;
+            }
+
+            achievements.add(achievement);
+        }
+
+        achievements.sort((a, b) -> {
+            int priorityA = getAchievementPriority(a);
+            int priorityB = getAchievementPriority(b);
+
+            return Integer.compare(priorityA, priorityB);
+        });
+    }
+
+    private int getAchievementPriority(AchievementData achievement) {
+
+        // Completed but not claimed → TOP
+        if (achievement.completed && !achievement.claimed) {
+            return 0;
+        }
+
+        // Not completed and not claimed → MIDDLE
+        if (!achievement.completed && !achievement.claimed) {
+            return 1;
+        }
+
+        // Completed and claimed → BOTTOM
+        if (achievement.completed && achievement.claimed) {
+            return 2;
+        }
+
+        return 1;
+    }
+
+    public List<AchievementData> getAchievements() {
+        if(achievements==null){
+            achievements=new ArrayList<>();
+            activateClaimAndCompleted(achievements);
+            return achievements;
+        }
+        return achievements;
+    }
+    public AchievementData getAchievementDataById(String id){
+        for (AchievementData a :
+            achievements) {
+            if(a.id.equals(id)){
+                return a;
+            }
+
+        }
+        return null;
     }
 
     private final List<Level> levels = new ArrayList<>();
@@ -393,7 +479,7 @@ public class GameInstance {
         }
         return null;
     }
-    private TextureRegion getPowerUpRegion(String name){
+    public TextureRegion getPowerUpRegion(String name){
         TextureRegion powerUps= Assets.getInstance().powerUpTexture;;
         switch (name.toLowerCase()) {
             case "magnet":

@@ -14,6 +14,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
+import com.badlogic.gdx.utils.Array;
 import com.regensnakevsblock.sbb.assets.Assets;
 import com.regensnakevsblock.sbb.elements.GameDialog;
 import com.regensnakevsblock.sbb.elements.ImageCheckBoxGroup;
@@ -39,6 +40,8 @@ public class HomeUiFactory {
     private float bottomRowRejectStartX;
     private GlyphLayout layout;
     private BitmapFont font;
+    // Darkened "pressed" textures are created at runtime, so we must dispose them ourselves
+    private final Array<Texture> generatedTextures = new Array<>();
 
     public HomeUiFactory(Stage stage) {
 
@@ -168,6 +171,7 @@ public class HomeUiFactory {
     private ImageButton createButton(Texture texture, float x, float y, float width, float height) {
 
         Texture darkTexture = createDarkenedTexture(texture);
+        generatedTextures.add(darkTexture);
 
         Drawable up = new TextureRegionDrawable(new TextureRegion(texture));
         Drawable down = new TextureRegionDrawable(new TextureRegion(darkTexture));
@@ -355,5 +359,9 @@ public class HomeUiFactory {
     }
     public void dispose(){
         font.dispose();
+        for (int i = 0; i < generatedTextures.size; i++) {
+            generatedTextures.get(i).dispose();
+        }
+        generatedTextures.clear();
     }
 }

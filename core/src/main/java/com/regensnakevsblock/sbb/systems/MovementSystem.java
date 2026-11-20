@@ -16,7 +16,7 @@ public class MovementSystem extends GlobalSystems {
     }
 
     public void update(float deltaTime) {
-        if (worldState.isPaused() || worldState.isGameOver()) {
+        if (worldState.isPaused() || worldState.isGameOver()|| worldState.isGameWon()) {
             return;
         }
 

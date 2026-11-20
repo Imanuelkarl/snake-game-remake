@@ -6,105 +6,126 @@ filter: Linear, Linear
 repeat: none
 buyButton
   rotate: false
-  xy: 259, 648
+  xy: 259, 678
   size: 256, 111
   orig: 256, 111
   offset: 0, 0
   index: -1
 cardBackground
   rotate: false
-  xy: 259, 117
+  xy: 806, 829
   size: 128, 164
   orig: 128, 164
   offset: 0, 0
   index: -1
+claimBtn
+  rotate: false
+  xy: 259, 574
+  size: 256, 102
+  orig: 256, 102
+  offset: 0, 0
+  index: -1
+claimedBtn
+  rotate: false
+  xy: 259, 470
+  size: 256, 102
+  orig: 256, 102
+  offset: 0, 0
+  index: -1
 coinPiles
   rotate: false
-  xy: 1, 115
+  xy: 1, 145
   size: 256, 242
   orig: 256, 242
   offset: 0, 0
   index: -1
 diamondPiles
   rotate: false
-  xy: 1, 617
+  xy: 1, 647
   size: 256, 256
   orig: 256, 256
   offset: 0, 0
   index: -1
 equippedBorderBg
   rotate: false
-  xy: 389, 119
+  xy: 517, 665
   size: 128, 162
   orig: 128, 162
   offset: 0, 0
   index: -1
+goBtn
+  rotate: false
+  xy: 259, 366
+  size: 256, 102
+  orig: 256, 102
+  offset: 0, 0
+  index: -1
 portionPiles
   rotate: false
-  xy: 1, 359
+  xy: 1, 389
   size: 256, 256
   orig: 256, 256
   offset: 0, 0
   index: -1
 priceBar
   rotate: false
-  xy: 259, 283
+  xy: 259, 1
   size: 256, 84
   orig: 256, 84
   offset: 0, 0
   index: -1
 scoreBoard
   rotate: false
-  xy: 515, 876
+  xy: 515, 906
   size: 289, 87
   orig: 289, 87
   offset: 0, 0
   index: -1
 selectButton
   rotate: false
-  xy: 1, 1
+  xy: 1, 31
   size: 256, 112
   orig: 256, 112
   offset: 0, 0
   index: -1
 selectedButton
   rotate: false
-  xy: 259, 761
+  xy: 259, 791
   size: 256, 112
   orig: 256, 112
   offset: 0, 0
   index: -1
 upgradeCardBg
   rotate: false
-  xy: 259, 369
+  xy: 259, 87
   size: 256, 88
   orig: 256, 88
   offset: 0, 0
   index: -1
 upgradeCardShadowedBg
   rotate: false
-  xy: 259, 552
+  xy: 259, 270
   size: 256, 94
   orig: 256, 94
   offset: 0, 0
   index: -1
 upgradeItemBtn
   rotate: false
-  xy: 259, 459
+  xy: 259, 177
   size: 256, 91
   orig: 256, 91
   offset: 0, 0
   index: -1
 upgradeProgressBG
   rotate: false
-  xy: 1, 920
+  xy: 1, 950
   size: 512, 43
   orig: 512, 43
   offset: 0, 0
   index: -1
 upgradeProgressFill
   rotate: false
-  xy: 1, 875
+  xy: 1, 905
   size: 512, 43
   orig: 512, 43
   offset: 0, 0

@@ -10,7 +10,7 @@ import com.regensnakevsblock.sbb.ui.core.ListItemView;
 import com.regensnakevsblock.sbb.ui.data.LevelData;
 import com.regensnakevsblock.sbb.utils.ActorFactory;
 
-public class LevelCard extends Group implements ListItemView<LevelData>, BaseView {
+public class LevelCard extends Group implements ListItemView<LevelData>, BaseView<LevelData> {
     private ImageButton background;
     private Label index;
     private Image locked;
@@ -105,21 +105,24 @@ public class LevelCard extends Group implements ListItemView<LevelData>, BaseVie
         String text =String.valueOf(levelData.getLevelIndex());
         index.setPosition(-20 *text.length()+100,80);
         index.setText(levelData.getLevelIndex());
-        if(levelData.isCleared()){
-            index.remove();
-        }else{
-            cleared.remove();
-        }
+
+        index.remove();
+        cleared.remove();
+        locked.remove();
         if(!levelData.isSelected()){
             selectedBg.remove();
         }else{
             addActor(selectedBg);
         }
         if(levelData.isCanSelect()){
-            locked.remove();
+            if(levelData.isCleared()){
+                addActor(cleared);
+            }else{
+                addActor(index);
+            }
         }
         else{
-            index.remove();
+            addActor(locked);
         }
 
     }
@@ -146,6 +149,11 @@ public class LevelCard extends Group implements ListItemView<LevelData>, BaseVie
 
     @Override
     public void update(float delta) {
+
+    }
+
+    @Override
+    public void updateData(LevelData data, int position) {
 
     }
 

@@ -30,6 +30,7 @@ public class MyGame extends Game {
     private SaveService saveService;
     private AdsService adsService;
     private PurchaseService purchaseService;
+    public boolean loaded=false;
 
 
     @Override
@@ -46,6 +47,10 @@ public class MyGame extends Game {
         // Start with loading screen
         setScreen(new SplashScreen(this));
     }
+    public void setIsLoaded(boolean loaded){
+        this.loaded=loaded;
+    }
+
     public Screen getFormerScreen(Screen screen) {
 
         if(screen instanceof HomeScreen){
@@ -72,9 +77,13 @@ public class MyGame extends Game {
         saveService.saveGameData();
     }
 
+
     @Override
     public void setScreen(Screen screen) {
-
+        // Home is the root screen: once we're back on it, back should exit the app
+        if(screen instanceof HomeScreen){
+            screenStack.clear();
+        }
         super.setScreen(screen);
     }
     public void addToScreenStack(Screen screen){
@@ -119,13 +128,24 @@ public class MyGame extends Game {
         return purchaseService;
     }
     public void backPressed(){
+        // Called from the Android UI thread -> switch screens on the render thread
+        Gdx.app.postRunnable(() -> {
+            if(!screenStack.isEmpty()){
+                // Former screens were disposed on hide(), so rebuild a fresh instance
+                Screen previous = getFormerScreen(screenStack.pop());
+                if(previous!=null){
+                    setScreen(previous);
+                }
+            }else{
+                Gdx.app.exit();
+            }
+            System.out.println("Back was pressed");
+        });
+    }
 
-        if(!screenStack.isEmpty()){
-            screenStack.pop();
-
-        }else{
-            Gdx.app.exit();
-        }
-        System.out.println("Back was pressed");
+    @Override
+    public void resume() {
+        if(!loaded)Assets.getInstance().reloadOnResume();
+        super.resume();
     }
 }

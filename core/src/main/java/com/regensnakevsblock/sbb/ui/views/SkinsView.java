@@ -15,7 +15,7 @@ import com.regensnakevsblock.sbb.ui.core.ListManager;
 import com.regensnakevsblock.sbb.ui.data.SkinData;
 import com.regensnakevsblock.sbb.utils.ActorFactory;
 
-public class SkinsView extends BaseActorView {
+public class SkinsView extends BaseActorView<SkinData> {
     private ListManager<SkinData, SkinCard> listManager;
     private SkinAdapter adapter;
     private Label titleLabel;
@@ -35,6 +35,12 @@ public class SkinsView extends BaseActorView {
         setupUI();
         buildIfNeeded();
     }
+
+    @Override
+    public void updateData(SkinData data, int position) {
+        adapter.updateData(data,position);
+    }
+
     private Group loadingGroup;
 
     private void showLoading() {

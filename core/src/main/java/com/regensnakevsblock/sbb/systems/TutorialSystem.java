@@ -15,7 +15,7 @@ import com.regensnakevsblock.sbb.world.WorldState;
 public class TutorialSystem extends GlobalSystems {
     private EntityFactory entityFactory;
     private TutorialData data;
-    private final int delay =500;
+    private final int delay =100;
     private boolean increase = false;
 
     private final String[] tutorialInstructions ={
@@ -43,7 +43,7 @@ public class TutorialSystem extends GlobalSystems {
 
     @Override
     public void update(float deltaTime) {
-        if (worldState.isPaused() || worldState.isGameOver()) return;
+        if (worldState.isPaused() || worldState.isGameOver()|| worldState.isGameWon()) return;
 
         if(worldState.getGameMode()!= WorldState.GameMode.TUTORIAL) return;
 

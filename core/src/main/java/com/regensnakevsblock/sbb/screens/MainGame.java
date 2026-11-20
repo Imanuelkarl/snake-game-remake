@@ -13,6 +13,7 @@ import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.regensnakevsblock.sbb.MyGame;
 import com.regensnakevsblock.sbb.config.Constants;
+import com.regensnakevsblock.sbb.config.GameInstance;
 import com.regensnakevsblock.sbb.inputs.InputController;
 import com.regensnakevsblock.sbb.ui.UIRenderer;
 import com.regensnakevsblock.sbb.utils.ActorFactory;
@@ -47,7 +48,12 @@ public class MainGame implements Screen {
         camera.setToOrtho(false,  (float) (gameSize * Gdx.graphics.getWidth()) /Gdx.graphics.getHeight(),gameSize);
         // Initialize game world
         MainGame.gameMode =gameMode;
-        initializeWorld(gameMode);
+        if(!GameInstance.getSaveService().getTutorialIsPlayed()){
+            initializeWorld(WorldState.GameMode.TUTORIAL);
+        }else {
+            initializeWorld(gameMode);
+        }
+
     }
 
     private void initializeWorld(WorldState.GameMode gameMode) {
@@ -105,6 +111,7 @@ public class MainGame implements Screen {
 
     public void pauseGame() {
         isPaused = true;
+        worldState.setPaused(true);
     }
 
     public void resumeGame() {

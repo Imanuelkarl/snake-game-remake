@@ -16,7 +16,7 @@ import com.regensnakevsblock.sbb.ui.core.ListItemView;
 import com.regensnakevsblock.sbb.ui.data.AchievementData;
 import com.regensnakevsblock.sbb.utils.ActorFactory;
 
-public class AchievementCard extends Group implements ListItemView<AchievementData>, BaseView {
+public class AchievementCard extends Group implements ListItemView<AchievementData>, BaseView<AchievementData> {
     private Label titleLabel;
     private Label descriptionLabel;
     private ProgressBar progressBar;
@@ -25,11 +25,11 @@ public class AchievementCard extends Group implements ListItemView<AchievementDa
     private Label nameLabel;
     private Label progressLabel;
     private Label rewardLabel;
-    public ImageButton claimButton;
+    public ImageButton actionButton;
     private Image currencyIcon;
     private Group buttonGroup;
     private float width =700;
-    private float height=300;
+    private float height=200;
     private int currentPosition;
 
     private AchievementData currentData;
@@ -39,33 +39,34 @@ public class AchievementCard extends Group implements ListItemView<AchievementDa
     }
 
     private void setupUI() {
+        float widthRatio = (float) (Constants.SCREEN_SIZE * Gdx.graphics.getWidth()) /Gdx.graphics.getHeight();
+        width = widthRatio-20;
+        background = new Image(new TextureRegionDrawable(Assets.getInstance().upgradeCardBG));
+        background.setSize(width-40, 180);
+        background.setPosition(20,0);
+        addActor(background);
         // Title
         Label.LabelStyle titleStyle = new Label.LabelStyle();
-        titleStyle.fontColor = Color.WHITE;
-        titleLabel = ActorFactory.createTextLabel("", titleStyle);
-        titleLabel.setPosition(10, 70);
+        titleStyle.fontColor = Color.GREEN;//new Color(0.5f,0.8f,0.9f,1);
+        titleLabel = ActorFactory.createTextLabel("",44, titleStyle);
+        titleLabel.setPosition(36, 130);
         addActor(titleLabel);
 
         // Description
         Label.LabelStyle descStyle = new Label.LabelStyle();
-        descStyle.fontColor = Color.LIGHT_GRAY;
-        descriptionLabel = ActorFactory.createTextLabel("", descStyle);
-        descriptionLabel.setPosition(10, 50);
+        descStyle.fontColor = Color.WHITE;
+        descriptionLabel = ActorFactory.createTextLabel("", 27,descStyle);
+        descriptionLabel.setPosition(40, 90);
         addActor(descriptionLabel);
 
 
-        float widthRatio = (float) (Constants.SCREEN_SIZE * Gdx.graphics.getWidth()) /Gdx.graphics.getHeight();
-        width = widthRatio-20;
-        background = new Image(new TextureRegionDrawable(Assets.getInstance().upgradeCardBG));
-        background.setSize(width-40, 260);
-        background.setPosition(20,20);
-        addActor(background);
 
 
-        Image icon = new Image(new TextureRegionDrawable(Assets.getInstance().coinTexture));
+
+        Image icon = new Image(new TextureRegionDrawable(Assets.getInstance().diamondTexture));
         icon.setSize(height-100, height-100);
         icon.setPosition(20,20);
-        addActor(icon);
+        //addActor(icon);
         // Name
         nameLabel = ActorFactory.createTextLabel(36, 280, 80);
         nameLabel.setPosition(55, height-60);
@@ -74,33 +75,33 @@ public class AchievementCard extends Group implements ListItemView<AchievementDa
 
 
         //Upgrade button
-        claimButton = ActorFactory.createButton(Assets.getInstance().defaultButton, 0,0,230,90);
+        actionButton = ActorFactory.createButton(Assets.getInstance().goButtonTexture, 110,0,200,90);
 
         //Currency to purchase with
-        currencyIcon = ActorFactory.createUiImage(Assets.getInstance().coinTexture, 50,5,30,30);
+        currencyIcon = ActorFactory.createUiImage(Assets.getInstance().diamondTexture, 0,20,30,30);
 
-        // Cost
-        rewardLabel =  ActorFactory.createTextLabel(30, 110, 20);
+        // Reward
+        rewardLabel =  ActorFactory.createTextLabel(30, 60, 35);
         rewardLabel.setAlignment(Align.center);
 
 
         buttonGroup=new Group();
-        buttonGroup.addActor(claimButton);
+        buttonGroup.addActor(actionButton);
         buttonGroup.addActor(currencyIcon);
         buttonGroup.addActor(rewardLabel);
-        buttonGroup.setPosition((width-40)-220,180);
+        buttonGroup.setPosition((width-40)-300,60);
         addActor(buttonGroup);
-        float progressStartX = (width-80)/3;
+        float progressStartX = 30;
 
         // Progress bar
         progressBar =ActorFactory.createProgressBar(Assets.getInstance().upgradeProgressBG, Assets.getInstance().upgradeProgressFill,250,40);
-        progressBar.setSize(width-width/3, 15);
-        progressBar.setPosition(progressStartX, 50);
-        addActor(progressBar);
+        progressBar.setSize(width-60 , 15);
+        progressBar.setPosition(progressStartX, 20);
+        //addActor(progressBar);
 
         progressLabel =  ActorFactory.createTextLabel(24, 280, 80);
-        progressLabel.setPosition((width-80)/3 *2, 55);
-        addActor(progressLabel);
+        progressLabel.setPosition((width-60)/3 *1.5f, 25);
+        //addActor(progressLabel);
     }
 
     @Override
@@ -116,14 +117,12 @@ public class AchievementCard extends Group implements ListItemView<AchievementDa
         rewardLabel.setText("+" + achievement.reward);
         progressBar.setValue(percentage);
 
-        if (achievement.isCompleted && !achievement.isClaimed) {
-            claimButton.setVisible(true);
-            claimButton.setColor(Color.GREEN);
-        } else if (achievement.isClaimed) {
-            claimButton.setVisible(true);
-            claimButton.setColor(Color.GRAY);
-        } else {
-            claimButton.setVisible(false);
+        if (achievement.completed && !achievement.claimed) {
+
+            ActorFactory.updateButtonStyle(actionButton,Assets.getInstance().claimButtonTexture);
+
+        } else if (achievement.claimed) {
+            ActorFactory.updateButtonStyle(actionButton,Assets.getInstance().claimedButtonTexture) ;
         }
     }
 
@@ -139,7 +138,7 @@ public class AchievementCard extends Group implements ListItemView<AchievementDa
 
     @Override
     public void onClick() {
-        if (currentData.isCompleted && !currentData.isClaimed) {
+        if (currentData.completed && !currentData.claimed) {
             // Claim reward
         }
     }
@@ -152,6 +151,11 @@ public class AchievementCard extends Group implements ListItemView<AchievementDa
     @Override
     public void update(float delta) {
         // Update progress animations
+    }
+
+    @Override
+    public void updateData(AchievementData data, int position) {
+
     }
 
     @Override

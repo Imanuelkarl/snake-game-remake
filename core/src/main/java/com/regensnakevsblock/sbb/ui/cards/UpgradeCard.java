@@ -11,12 +11,13 @@ import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
 import com.regensnakevsblock.sbb.assets.Assets;
 import com.regensnakevsblock.sbb.config.Constants;
+import com.regensnakevsblock.sbb.config.GameInstance;
 import com.regensnakevsblock.sbb.ui.core.BaseView;
 import com.regensnakevsblock.sbb.ui.core.ListItemView;
 import com.regensnakevsblock.sbb.ui.data.UpgradeData;
 import com.regensnakevsblock.sbb.utils.ActorFactory;
 
-public class UpgradeCard extends Group implements ListItemView<UpgradeData>, BaseView {
+public class UpgradeCard extends Group implements ListItemView<UpgradeData>, BaseView<UpgradeData> {
 
     private Image background;
 
@@ -95,13 +96,13 @@ public class UpgradeCard extends Group implements ListItemView<UpgradeData>, Bas
         nameLabel.setText(upgrade.name);
         levelLabel.setText("Lv." + upgrade.currentLevel + "/" + upgrade.maxLevel);
         levelLabel.setColor(Color.WHITE);
-        icon.setDrawable(new TextureRegionDrawable(upgrade.item));
+        icon.setDrawable(new TextureRegionDrawable(GameInstance.getInstance().getPowerUpRegion(upgrade.name)));
         if(upgrade.currentLevel>=8){
             currencyIcon.setDrawable(new TextureRegionDrawable(Assets.getInstance().diamondTexture));
         }
         if (upgrade.currentLevel < upgrade.maxLevel) {
             costLabel.setText(upgrade.upgradeCost);
-            costLabel.setColor(Color.BLACK);
+            costLabel.setColor(Color.DARK_GRAY);
         } else {
             currencyIcon.remove();
             costLabel.setText("MAXED");
@@ -134,6 +135,11 @@ public class UpgradeCard extends Group implements ListItemView<UpgradeData>, Bas
     @Override
     public void update(float delta) {
         // Animate progress bar or value changes
+    }
+
+    @Override
+    public void updateData(UpgradeData data, int position) {
+
     }
 
     @Override

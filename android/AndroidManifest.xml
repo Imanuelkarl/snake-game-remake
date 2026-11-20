@@ -29,9 +29,33 @@
         <category android:name="android.intent.category.LAUNCHER"/>
       </intent-filter>
     </activity>
+      <activity
+          android:name="com.ironsource.sdk.controller.ControllerActivity"
+          android:configChanges="orientation|screenSize"
+          android:hardwareAccelerated="true"
+          android:theme="@android:style/Theme.NoTitleBar" />
+      <activity
+          android:name="com.ironsource.sdk.controller.InterstitialActivity"
+          android:configChanges="orientation|screenSize"
+          android:hardwareAccelerated="true"
+          android:theme="@android:style/Theme.Translucent.NoTitleBar" />
+      <activity
+          android:name="com.ironsource.sdk.controller.OpenUrlActivity"
+          android:configChanges="orientation|screenSize"
+          android:hardwareAccelerated="true"
+          android:theme="@android:style/Theme.Translucent.NoTitleBar" />
+      <activity
+          android:name="com.ironsource.mediationsdk.testSuite.TestSuiteActivity"
+          android:configChanges="orientation|screenSize"
+          android:hardwareAccelerated="true"
+          android:theme="@android:style/Theme.NoTitleBar" />
+      <provider
+          android:name="com.ironsource.lifecycle.IronsourceLifecycleProvider"
+          android:authorities="${applicationId}.IronsourceLifecycleProvider" />
+
       <meta-data
           android:name="com.google.android.gms.ads.APPLICATION_ID"
-          android:value="ca-app-pub-3940256099942544~3347511713"/>
+          android:value="ca-app-pub-8197203208180280~3877399319"/>
   </application>
 
 </manifest>

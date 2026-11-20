@@ -4,13 +4,19 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.utils.Align;
+import com.regensnakevsblock.sbb.config.GameInstance;
+import com.regensnakevsblock.sbb.service.SaveService;
+import com.regensnakevsblock.sbb.systems.AchievementSystem;
 import com.regensnakevsblock.sbb.ui.adapters.AchievementAdapter;
 import com.regensnakevsblock.sbb.ui.cards.AchievementCard;
 import com.regensnakevsblock.sbb.ui.core.ListManager;
 import com.regensnakevsblock.sbb.ui.data.AchievementData;
+import com.regensnakevsblock.sbb.ui.data.AchievementList;
 import com.regensnakevsblock.sbb.utils.ActorFactory;
 
-public class AchievementsView extends BaseActorView {
+import java.util.List;
+
+public class AchievementsView extends BaseActorView<AchievementData> implements AchievementSystem.AchievementListener {
     private ListManager<AchievementData, AchievementCard> listManager;
     private AchievementAdapter adapter;
     private Label loadingText;
@@ -27,6 +33,12 @@ public class AchievementsView extends BaseActorView {
         setupTransform();
         Gdx.app.postRunnable(this::loadData);
     }
+
+    @Override
+    public void updateData(AchievementData data, int position) {
+        adapter.updateData(data,position);
+    }
+
     private void setupUI() {
         // Title
 
@@ -34,7 +46,7 @@ public class AchievementsView extends BaseActorView {
         loadingText.setText("Achievement View Is In Development \\:) ");
         loadingText.setPosition(50, height / 2f, Align.center);
 
-        addActor(loadingText);
+        //addActor(loadingText);
     }
 
     private void setupList() {
@@ -49,54 +61,44 @@ public class AchievementsView extends BaseActorView {
 
         addActor(listManager);
 
-        adapter.setOnItemClickListener((achievement, position) -> {
-            if (achievement.isCompleted && !achievement.isClaimed) {
+        adapter.setOnClaimRewardListener(new AchievementAdapter.OnClaimRewardListener() {
+            @Override
+            public void onClaimReward(AchievementData achievement, int position) {
                 claimReward(achievement, position);
             }
         });
     }
 
     private void loadData() {
-        java.util.List<AchievementData> achievements = new java.util.ArrayList<>();
-//        achievements.add(new AchievementData("ach_1", "First Blood", "Kill 10 enemies",
-//            7, 10, 500, false, false));
-//        achievements.add(new AchievementData("ach_2", "Rich Player", "Collect 10,000 coins",
-//            2500, 10000, 2000, false, false));
-//        achievements.add(new AchievementData("ach_3", "Master Swordsman", "Reach level 10",
-//            5, 10, 1000, false, false));
-//        achievements.add(new AchievementData("ach_4", "Explorer", "Visit 5 different locations",
-//            3, 5, 1500, false, false));
-
-        adapter.setData(achievements);
+        adapter.setData(GameInstance.getInstance().getAchievements());
         updateTotalRewards();
     }
     private void setupTransform(){
         loadingText.setPosition(50, height / 2f, Align.center);
         listManager.setSize(width,height);
         listManager.setPosition(0, 0);
-        listManager.setLayout( 1, 300);
+        listManager.setLayout( 1, 200);
     }
+
 
 
     private void claimReward(AchievementData achievement, int position) {
-        if (achievement.isCompleted && !achievement.isClaimed) {
-            achievement.isClaimed = true;
+        if (achievement.completed && !achievement.claimed) {
+            achievement.claimed = true;
+            SaveService saveService= GameInstance.getSaveService();
+            saveService.saveAchievementIsClaimed(achievement.id,true);
             // Add reward to player
-            addPlayerCoins(achievement.reward);
-
+           saveService.saveDiamonds(saveService.getDiamonds()+achievement.reward);
             adapter.notifyDataSetChanged();
-            updateTotalRewards();
         }
     }
 
-    private void addPlayerCoins(int amount) {
-        // Add to game state
-    }
+
 
     private void updateTotalRewards() {
         int total = 0;
         for (int i = 0; i < adapter.getCount(); i++) {
-            if (adapter.getItem(i).isClaimed) {
+            if (adapter.getItem(i).claimed) {
                 total += adapter.getItem(i).reward;
             }
         }
@@ -124,5 +126,20 @@ public class AchievementsView extends BaseActorView {
     @Override
     public void buildIfNeeded() {
 
+    }
+
+    @Override
+    public void onAchievementUnlocked(AchievementSystem.Achievement achievement) {
+        for (int i = 0; i < GameInstance.getInstance().getAchievements().size(); i++) {
+            AchievementData data = GameInstance.getInstance().getAchievements().get(i);
+            if (data.id.equals(achievement.id)) {
+                updateData(data, i);
+                break;
+            }
+        }
+    }
+
+    public void registerWithAchievementSystem(AchievementSystem achievementSystem) {
+        achievementSystem.setAchievementListener(this);
     }
 }

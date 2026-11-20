@@ -112,6 +112,8 @@ public class LoadingScreen extends InputAdapter implements Screen {
         batch.end();
         // When loading is complete, switch to menu screen
         if (Assets.getInstance().isLoaded()) {
+            game.setIsLoaded(true);
+
             Assets.getInstance().assignAssets(); // REQUIRED
             GameInstance.getInstance().loadSkinData(game);
             GameInstance.getInstance().load();

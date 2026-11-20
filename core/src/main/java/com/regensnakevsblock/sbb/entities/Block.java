@@ -14,7 +14,44 @@ public class Block {
     private Rectangle leftCollision;
     private boolean powerUp =false;
     private PowerUp powerUpType;
+    private int rowId;
     private String color;
+    private Rectangle rightCollision;
+    private int value;
+    public int ogValue;
+    private boolean active;
+    private TextureRegion region;
+    private int colorId;
+    private int position;
+    private boolean destroyed;
+    private boolean justDied;
+
+    public Block(Texture texture,float x, float y, float width, float height, int value) {
+        this.bounds = new Rectangle(x, y, width, height);
+        this.leftCollision= new Rectangle(x-width/2,y,width/2,height);
+        this.rightCollision=new Rectangle(x+width,y,width/2,height);
+        this.value = value;
+        ogValue=value;
+        this.active = true;
+        colorId = getRandom(0,8);
+        int cols = 5;
+        int rows = 2;
+        int posX=(int)getBlockPosition(colorId).x;
+        int posY= (int)getBlockPosition(colorId).y;
+        int tileWidth  = texture.getWidth() / cols;
+        int tileHeight = texture.getHeight() / rows;
+        texture.setFilter(Texture.TextureFilter.Nearest, Texture.TextureFilter.Nearest);
+        this.region = new TextureRegion(
+            texture,
+            posY * tileWidth + 1,
+            posX * tileHeight + 1,
+            tileWidth - 2,
+            tileHeight - 2
+        );
+    }
+    public Block() {
+
+    }
 
     public void setPowerUp(boolean yes, PowerUp powerUpType){
         powerUp=yes;
@@ -37,12 +74,6 @@ public class Block {
         this.bounds = bounds;
     }
 
-    private Rectangle rightCollision;
-    private int value;
-    private boolean active;
-    private TextureRegion region;
-    private int colorId;
-
 
     public int getPosition() {
         return position;
@@ -51,13 +82,6 @@ public class Block {
     public void setPosition(int position) {
         this.position = position;
     }
-
-    private int position;
-
-    public Block() {
-
-    }
-
 
     public boolean hasPowerUp() {
         return powerUp;
@@ -69,29 +93,6 @@ public class Block {
 
     public Rectangle getLeft() {
         return leftCollision;
-    }
-
-    public Block(Texture texture,float x, float y, float width, float height, int value) {
-        this.bounds = new Rectangle(x, y, width, height);
-        this.leftCollision= new Rectangle(x-width/2,y,width/2,height);
-        this.rightCollision=new Rectangle(x+width,y,width/2,height);
-        this.value = value;
-        this.active = true;
-        colorId = getRandom(0,8);
-        int cols = 5;
-        int rows = 2;
-        int posX=(int)getBlockPosition(colorId).x;
-        int posY= (int)getBlockPosition(colorId).y;
-        int tileWidth  = texture.getWidth() / cols;
-        int tileHeight = texture.getHeight() / rows;
-        texture.setFilter(Texture.TextureFilter.Nearest, Texture.TextureFilter.Nearest);
-        this.region = new TextureRegion(
-            texture,
-            posY * tileWidth + 1,
-            posX * tileHeight + 1,
-            tileWidth - 2,
-            tileHeight - 2
-        );
     }
 
     public int getColor(){
@@ -113,9 +114,36 @@ public class Block {
 
     public void setValue(int value) {
         this.value=value;
+        ogValue=value;
     }
 
     public TextureRegion getRegion() {
         return region;
+    }
+
+    public void setRowId(int rowId) {
+        this.rowId = rowId;
+    }
+
+    public int getRowId() {
+        return rowId;
+    }
+
+    public boolean isDestroyed() {
+        return destroyed;
+    }
+    public void setDestroyed(boolean destroyed){
+        this.destroyed=destroyed;
+    }
+    public void setJustDied(boolean justDied){
+        this.justDied=justDied;
+    }
+
+    public boolean justDied() {
+        return this.justDied;
+    }
+
+    public void setDeadValue(int i) {
+        value=0;
     }
 }

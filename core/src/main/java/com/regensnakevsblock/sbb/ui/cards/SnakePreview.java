@@ -4,6 +4,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 
 public class SnakePreview extends Group {
 
@@ -33,7 +34,7 @@ public class SnakePreview extends Group {
     // 🔹 Assign skin
     public void setSkin(TextureRegion region) {
         for (Image part : parts) {
-            part.setDrawable(new com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable(region));
+            part.setDrawable(new TextureRegionDrawable(region));
         }
     }
 

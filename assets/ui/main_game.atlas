@@ -4,9 +4,23 @@ size: 1024, 1024
 format: RGBA8888
 filter: Linear, Linear
 repeat: none
+SkipButton
+  rotate: false
+  xy: 259, 619
+  size: 256, 120
+  orig: 256, 120
+  offset: 0, 0
+  index: -1
+achievementPopUp
+  rotate: false
+  xy: 517, 769
+  size: 256, 66
+  orig: 256, 66
+  offset: 0, 0
+  index: -1
 continueText
   rotate: false
-  xy: 517, 937
+  xy: 517, 919
   size: 363, 78
   orig: 363, 78
   offset: 0, 0
@@ -20,71 +34,57 @@ defaultBlock
   index: -1
 failText
   rotate: false
-  xy: 882, 945
+  xy: 882, 927
   size: 140, 70
   orig: 140, 70
   offset: 0, 0
   index: -1
 giveUpText
   rotate: false
-  xy: 517, 855
+  xy: 517, 837
   size: 312, 80
   orig: 312, 80
   offset: 0, 0
   index: -1
 homePIcon
   rotate: false
-  xy: 1, 759
+  xy: 1, 741
   size: 256, 256
   orig: 256, 256
   offset: 0, 0
   index: -1
 levelTaskBg
   rotate: false
-  xy: 517, 761
+  xy: 1, 131
   size: 256, 92
   orig: 256, 92
   offset: 0, 0
   index: -1
 pauseIconNew
   rotate: false
-  xy: 1, 501
+  xy: 1, 483
   size: 256, 256
   orig: 256, 256
   offset: 0, 0
   index: -1
 playPIcon
   rotate: false
-  xy: 259, 759
+  xy: 259, 741
   size: 256, 256
   orig: 256, 256
   offset: 0, 0
   index: -1
 restartPIcon
   rotate: false
-  xy: 1, 243
+  xy: 1, 225
   size: 256, 256
   orig: 256, 256
   offset: 0, 0
   index: -1
-reviveWithHealth
-  rotate: false
-  xy: 1, 131
-  size: 256, 110
-  orig: 256, 110
-  offset: 0, 0
-  index: -1
 tapToContinue
   rotate: false
-  xy: 259, 613
+  xy: 259, 589
   size: 256, 28
   orig: 256, 28
-  offset: 0, 0
-  index: -1
-watchAds
-  rotate: false
-  xy: 259, 643
-  size: 256, 114
-  orig: 256, 114
   offset: 0, 0
   index: -1

@@ -3,6 +3,7 @@ package com.regensnakevsblock.sbb.world;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
@@ -11,6 +12,7 @@ import com.badlogic.gdx.graphics.g2d.ParticleEffect;
 import com.badlogic.gdx.graphics.g2d.ParticleEmitter;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
@@ -23,12 +25,17 @@ import com.regensnakevsblock.sbb.entities.Snake;
 import com.regensnakevsblock.sbb.entities.SnakeSection;
 import com.regensnakevsblock.sbb.entities.WinBody;
 import com.regensnakevsblock.sbb.levels.Level;
+import com.regensnakevsblock.sbb.ui.data.Ach;
+import com.regensnakevsblock.sbb.ui.data.AchievementList;
+import com.regensnakevsblock.sbb.utils.ColorResolver;
 import com.regensnakevsblock.sbb.utils.FontFactory;
 import com.regensnakevsblock.sbb.utils.TextureTools;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
+import java.util.Stack;
 
 public class WorldRenderer implements HitListener {
     public OrthographicCamera camera;
@@ -47,6 +54,8 @@ public class WorldRenderer implements HitListener {
     private BitmapFont smallFont;
 
     private final ParticleEffect bloodEffect;
+    private final ParticleEffect blockDestroy;
+    private final ParticleEmitter blockEmitter;
 
     private final GlyphLayout layout = new GlyphLayout();
     private final TextureRegion magnetPowerUp;
@@ -60,6 +69,9 @@ public class WorldRenderer implements HitListener {
     // objective card reuses the same easedLerp() tween for its fly-to-HUD move.
     private static final float COLLECT_FLY_DURATION = 0.5f;
     private final ArrayList<FlyingIcon> flyingCollectIcons = new ArrayList<>();
+    ShapeRenderer renderer = new ShapeRenderer();
+    BitmapFont achievementFont;
+    Texture whiteTex;
 
     private static final class FlyingIcon {
         final TextureRegion region;
@@ -80,12 +92,25 @@ public class WorldRenderer implements HitListener {
     private final Map<Integer, Integer> previousColorRemaining = new HashMap<>();
     private int previousBlocksRemaining = -1;
     private boolean blocksDecreased = false;
+    // --- Victory animation ---
+    private float victoryAnimationTime = 0f;
+    private boolean victoryAnimationStarted = false;
+
+    private ParticleEffect victoryConfettiLeft;
+    private ParticleEffect victoryConfettiRight;
+
+    private static final float VICTORY_POP_DURATION = 0.65f;
+    private static final float VICTORY_TEXT_Y = 0.12f;
+
+    private Ach currentAchievement;
+    private float achievementDisplayTime = 0f;
+    private static final float ACH_SLIDE_DURATION = 0.3f;
+    private static final float ACH_HOLD_DURATION = 2.5f;
 
     public WorldRenderer(WorldState worldState) {
         this.camera= worldState.getCamera();
         this.worldState = worldState;
         this.batch = new SpriteBatch();
-
         this.blockTexture= Assets.getInstance().blockTexture;
         this.lineTexture= Assets.getInstance().lineTexture;
         radius= worldState.getBlockDimension()/7;
@@ -107,11 +132,33 @@ public class WorldRenderer implements HitListener {
         this.multiplierPowerUp=TextureTools.resolveRegion(powerUps,2,2,0,1,0);
 
         this.bloodEffect = Assets.getInstance().bloodEffect;
+        // Create independent copies so both cannons can animate separately.
+        this.victoryConfettiLeft =
+            new ParticleEffect(Assets.getInstance().confettiCanon);
+
+        //Achievement Fonts definition
+        achievementFont = FontFactory.getRoboto(23,false);
+
+        this.victoryConfettiRight =
+            new ParticleEffect(Assets.getInstance().confettiCanon);
+        blockDestroy =Assets.getInstance().blockDestroy;
+        blockEmitter=blockDestroy.findEmitter(blockDestroy.getEmitters().get(0).getName());
         ParticleEmitter emitter=bloodEffect.findEmitter(bloodEffect.getEmitters().get(0).getName());
         emitter.getTint().setColors(Constants.Snake_Texture_Colors[snakeSkinId]);;
         bloodEffect.setDuration(3000);
+        blockDestroy.reset();
+        Assets.getInstance().loadUIGroup("game");
         worldState.startTaskIntro();
         worldState.setOnHitListener(this);
+        whiteTex = createWhiteTexture();
+    }
+    private Texture createWhiteTexture() {
+        Pixmap pixmap = new Pixmap(1, 1, Pixmap.Format.RGBA8888);
+        pixmap.setColor(0,0,0,0.75f);
+        pixmap.fill();
+        Texture texture = new Texture(pixmap);
+        pixmap.dispose();
+        return texture;
     }
 
     /** Eased lerp shared by the intro card's fly-to-HUD move and the collected-icon flight. */
@@ -190,6 +237,7 @@ public class WorldRenderer implements HitListener {
 
         bitmapFont.getData().setScale(1f);
         bitmapFont.setColor(Color.WHITE);
+
     }
 
     private void renderObjectiveContent(float x, float y, float scale, float cardWidth, boolean isIntro) {
@@ -198,7 +246,7 @@ public class WorldRenderer implements HitListener {
 
         if (levelType == Level.LevelType.FINISH_LINE) {
             // Finish line always shows the text, regardless of intro/live state
-            bitmapFont.getData().setScale(0.20f * scale);
+            bitmapFont.getData().setScale(0.18f * scale);
             String text = "GET TO THE FINISH LINE";
             layout.setText(bitmapFont, text);
             bitmapFont.draw(batch, text, centerX - layout.width/2f, y + 80 * scale);
@@ -277,11 +325,15 @@ public class WorldRenderer implements HitListener {
         renderBloodParticles();
         renderPowerUp();
         renderObjectiveHud();
+        renderAchievementUnlocked();
         if(!worldState.isShowTaskIntro()){
             renderFlyingCollectIcons();
         }
         if(worldState.getGameMode()== WorldState.GameMode.TUTORIAL){
            renderTutorialInfo();
+        }
+        if(worldState.getGameMode()== WorldState.GameMode.LEVELS&&worldState.isGameWon()){
+            renderVictoryAnimation();
         }
         batch.end();
     }
@@ -348,6 +400,7 @@ public class WorldRenderer implements HitListener {
                             (worldState.getBlockDimension()) - 10,
                             (worldState.getBlockDimension()) - 10
                         );
+
                         String value = String.valueOf(block.getValue());
 
                         //font.setScale(0.55f, 0.47f);
@@ -385,6 +438,21 @@ public class WorldRenderer implements HitListener {
                             }
                         }
                         //testFont.draw(batch, String.valueOf(block.getValue()), textX, textY);
+                    }else if(!block.isDestroyed()){
+                        if (block.justDied()) {
+
+                        }
+                        blockDestroy.setPosition(blockX+blockSize/2,row.getY());
+                        block.setJustDied(false);
+                        blockEmitter.getTint().setColors(ColorResolver.getColor(block.getColor()));
+                        blockDestroy.draw(batch,Gdx.graphics.getDeltaTime());
+
+                        // Check if particle effect has finished
+                        if (blockDestroy.isComplete()) {
+                            blockDestroy.reset();  // Reset or dispose if no longer needed
+                            block.setDestroyed(true);
+                        }
+
                     }
                     //System.out.println("Drawing block at position: " + ((camera.viewportWidth/5)*block.getPosition()) + ", " + row.getY());
                 }
@@ -508,12 +576,218 @@ public class WorldRenderer implements HitListener {
             height
         );
     }
+    private void renderVictoryAnimation() {
+
+        float dt = Gdx.graphics.getDeltaTime();
+        victoryAnimationTime += dt;
+
+        float screenWidth = worldState.getScreenWidth();
+        float screenHeight = worldState.getScreenHeight();
+
+        // ---------------------------------------------------------
+        // Start the animation only once
+        // ---------------------------------------------------------
+        if (!victoryAnimationStarted) {
+
+            victoryAnimationStarted = true;
+            victoryAnimationTime = 0f;
+
+            // Position the two confetti cannons.
+            float cannonY = screenHeight * 0.55f;
+
+            victoryConfettiLeft.setPosition(
+                screenWidth * 0.08f,
+                cannonY
+            );
+
+            victoryConfettiRight.setPosition(
+                screenWidth * 0.92f,
+                cannonY
+            );
+
+            // Start both explosions.
+            victoryConfettiLeft.start();
+            victoryConfettiRight.start();
+        }
+
+        // ---------------------------------------------------------
+        // LEVEL COMPLETED IMAGE
+        // ---------------------------------------------------------
+
+        TextureRegion levelCleared =
+            Assets.getInstance().levelClearedMessage;
+
+        float imageWidth = levelCleared.getRegionWidth();
+        float imageHeight = levelCleared.getRegionHeight();
+
+        // Desired final size.
+        float targetWidth = screenWidth * 0.75f;
+        float targetHeight =
+            targetWidth * imageHeight / imageWidth;
+
+        float centerX = screenWidth / 2f;
+        float centerY = screenHeight * 0.57f;
+
+        // Pop-in animation.
+        float popProgress =
+            Math.min(victoryAnimationTime / VICTORY_POP_DURATION, 1f);
+
+        float scale;
+
+        if (popProgress < 1f) {
+            // Gives the image a little overshoot before settling.
+            scale = Interpolation.swingOut.apply(popProgress);
+        } else {
+            // Very subtle breathing after appearing.
+            float idleTime = victoryAnimationTime - VICTORY_POP_DURATION;
+
+            scale = 1f +
+                0.015f * (float) Math.sin(idleTime * 3f);
+        }
+
+        float drawWidth = targetWidth * scale;
+        float drawHeight = targetHeight * scale;
+        batch.draw(
+            whiteTex,
+            0,
+            0,
+            screenWidth,
+            screenHeight
+        );
+        batch.draw(
+            levelCleared,
+            centerX - drawWidth / 2f,
+            centerY - drawHeight / 2f,
+            drawWidth,
+            drawHeight*1.2f
+        );
+
+        // ---------------------------------------------------------
+        // CONFETTI
+        // ---------------------------------------------------------
+        // Position the two confetti cannons.
+        float cannonY = screenHeight * 0.55f;
+
+        victoryConfettiLeft.setPosition(
+            screenWidth * 0.08f,
+            cannonY
+        );
+
+        victoryConfettiRight.setPosition(
+            screenWidth * 0.92f,
+            cannonY
+        );
+
+        victoryConfettiLeft.draw(batch, dt);
+        victoryConfettiRight.draw(batch, dt);
+
+        // Reset them when finished so they don't keep restarting.
+        if (victoryConfettiLeft.isComplete()) {
+            victoryConfettiLeft.reset();
+        }
+
+        if (victoryConfettiRight.isComplete()) {
+            victoryConfettiRight.reset();
+        }
+
+        // ---------------------------------------------------------
+        // TAP TO CONTINUE
+        // ---------------------------------------------------------
+
+        // Delay the instruction slightly so it doesn't appear
+        // at exactly the same time as the level-completed graphic.
+        if (victoryAnimationTime > 0.8f) {
+
+            float textAnimationTime =
+                victoryAnimationTime - 0.8f;
+
+            float pulse =
+                0.95f +
+                    0.05f * (float) Math.sin(textAnimationTime * 4f);
+
+            String text = "TAP TO CONTINUE";
+
+            bitmapFont.getData().setScale(0.42f * pulse);
+
+            bitmapFont.setColor(Color.WHITE);
+
+            layout.setText(bitmapFont, text);
+
+            float textX =
+                screenWidth / 2f -
+                    layout.width / 2f;
+
+            float textY =
+                screenHeight * VICTORY_TEXT_Y;
+
+            bitmapFont.draw(
+                batch,
+                layout,
+                textX,
+                textY
+            );
+
+            // Restore the font scale.
+            bitmapFont.getData().setScale(1f);
+        }
+    }
+    private void renderAchievementUnlocked() {
+        if (currentAchievement == null) {
+            Stack<Ach> newAchievements = worldState.getNewAchievements();
+            if (newAchievements.isEmpty()) return;
+            currentAchievement = newAchievements.pop();
+            achievementDisplayTime = 0f;
+        }
+
+        achievementDisplayTime += Gdx.graphics.getDeltaTime();
+
+        TextureRegion achievementBack = Assets.getInstance().achievementBackground;
+        float cardWidth = worldState.getScreenWidth() * 0.7f;
+        float cardHeight = cardWidth * achievementBack.getRegionHeight() / achievementBack.getRegionWidth();
+
+        float x = worldState.getScreenWidth() / 2f - cardWidth / 2f;
+        float hiddenY = worldState.getScreenHeight();
+        float shownY = worldState.getScreenHeight() - cardHeight - 20;
+
+        float slideIn = ACH_SLIDE_DURATION;
+        float holdEnd = slideIn + ACH_HOLD_DURATION;
+        float slideOutEnd = holdEnd + ACH_SLIDE_DURATION;
+
+        float y;
+        if (achievementDisplayTime < slideIn) {
+            float t = achievementDisplayTime / slideIn;
+            y = MathUtils.lerp(hiddenY, shownY, Interpolation.swingOut.apply(t));
+        } else if (achievementDisplayTime < holdEnd) {
+            y = shownY;
+        } else if (achievementDisplayTime < slideOutEnd) {
+            float t = (achievementDisplayTime - holdEnd) / ACH_SLIDE_DURATION;
+            y = MathUtils.lerp(shownY, hiddenY, Interpolation.fastSlow.apply(t));
+        } else {
+            currentAchievement.setDisplayed(true);
+            worldState.getNewAchievements().remove(currentAchievement);
+            currentAchievement = null;
+            return;
+        }
+
+        batch.draw(achievementBack, x, y, cardWidth, cardHeight);
+
+        achievementFont.getData().setScale(0.5f);
+        achievementFont.setColor(Color.FIREBRICK);
+        layout.setText(achievementFont, currentAchievement.getTitle().toUpperCase(Locale.ROOT));
+        achievementFont.draw(batch, layout,
+            x + cardWidth / 2f - layout.width / 2f+cardWidth*0.12f,
+            y + cardHeight / 2f + layout.height / 2f-20);
+        achievementFont.getData().setScale(1f);
+    }
 
     public void dispose() {
         batch.dispose();
+        whiteTex.dispose();
         bloodEffect.dispose();
         lineTexture.dispose();
         blockTexture.dispose();
+        victoryConfettiLeft.dispose();
+        victoryConfettiRight.dispose();
     }
 
     @Override

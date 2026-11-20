@@ -68,16 +68,18 @@ public class HomeScreen implements Screen, HomeUiListener {
     @Override
     public void dispose() {
         homeUi.dispose();
+        if(batch!=null){
+            batch.dispose();
+            batch=null;
+        }
     }
 
     @Override
     public void onPlayClicked() {
         game.addToScreenStack(this);
-        if(!GameInstance.getSaveService().getTutorialIsPlayed()){
-            game.setScreen(new MainGame(game, WorldState.GameMode.TUTORIAL));
-        }else {
-            game.setScreen(new MainGame(game, WorldState.GameMode.ENDLESS));
-        }
+
+        game.setScreen(new MainGame(game, WorldState.GameMode.ENDLESS));
+
     }
 
     @Override
@@ -97,6 +99,7 @@ public class HomeScreen implements Screen, HomeUiListener {
 
     @Override
     public void onSkinClicked() {
+        game.addToScreenStack(this);
         game.setScreen(new MenuScreen(game));
     }
 
@@ -132,6 +135,7 @@ public class HomeScreen implements Screen, HomeUiListener {
 
     @Override
     public void onLevelsClicked() {
+        game.addToScreenStack(this);
         game.setScreen(new LevelsScreen(game));
     }
 }

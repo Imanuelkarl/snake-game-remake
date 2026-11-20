@@ -25,7 +25,6 @@ public class LevelAdapter extends BaseAdapter<LevelData, LevelCard> {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 if(level.isCanSelect()){
-                    System.out.println("Level card clicked");
                     for (LevelData levelData : getItems()) {
                         levelData.setSelected(false);
                     }

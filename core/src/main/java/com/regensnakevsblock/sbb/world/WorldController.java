@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.regensnakevsblock.sbb.config.GameInstance;
 import com.regensnakevsblock.sbb.entities.Block;
 import com.regensnakevsblock.sbb.entities.Snake;
+import com.regensnakevsblock.sbb.systems.AchievementSystem;
 import com.regensnakevsblock.sbb.systems.CollisionSystem;
 import com.regensnakevsblock.sbb.systems.DifficultySystem;
 import com.regensnakevsblock.sbb.systems.MovementSystem;
@@ -24,6 +25,7 @@ public class WorldController  {
     private ScoringSystem scoringSystem;
     private TutorialSystem tutorialSystem;
     private DifficultySystem difficultySystem;
+    private AchievementSystem achievementSystem;
 
     private OrthographicCamera camera;
     float speed = 3f;
@@ -60,6 +62,7 @@ public class WorldController  {
         this.scoringSystem = new ScoringSystem(worldState);
         this.difficultySystem = new DifficultySystem(worldState);
         this.tutorialSystem = new TutorialSystem(worldState);
+        this.achievementSystem = new AchievementSystem(worldState);
         setup();
         increaseRate = (maxSpeed - startSpeed) / timeToMax;
     }
@@ -72,6 +75,7 @@ public class WorldController  {
         powerUpSystem.update(deltaTime);
         scoringSystem.update(deltaTime);
         tutorialSystem.update(deltaTime);
+        achievementSystem.update(deltaTime);
         //difficultySystem.update(deltaTime);
         // Keyboard snake movement
         initialXValue=keyboardMoveSnakePosition();
@@ -85,11 +89,11 @@ public class WorldController  {
             if(speed<maxSpeed){
                 speed += increaseRate * deltaTime *worldState.getMoveFactor();
                 if(speed>=maxSpeed){
-                    speed += maxSpeed;
+                    speed = maxSpeed;
                 }
             }
         } else {
-            speed=3;
+            speed=4;
         }
 
 
@@ -102,12 +106,12 @@ public class WorldController  {
         if(worldState.getGameMode()== WorldState.GameMode.ENDLESS){
             switch (GameInstance.getSaveService().getDifficulty()){
                 case 1:
-                    speed = 5f;
-                    maxSpeed =25f;
+                    speed = 6f;
+                    maxSpeed =35f;
                     break;
                 case 2:
-                    speed =7;
-                    maxSpeed =32f;
+                    speed =9;
+                    maxSpeed =50f;
                     break;
                 default:
                     speed =3f;
@@ -116,9 +120,9 @@ public class WorldController  {
 
             }
         }else{
-            speed = 5f;
+            speed = 4f;
             maxSpeed =30;
-            timeToMax= 200;
+            timeToMax= 250;
         }
 
     }
@@ -186,6 +190,10 @@ public class WorldController  {
     }
 
     public void wake() {
+        if(worldState.isGameWon()){
+            worldState.moveToNextScreen();
+            return;
+        }
         worldState.setAwake(true);
     }
 }

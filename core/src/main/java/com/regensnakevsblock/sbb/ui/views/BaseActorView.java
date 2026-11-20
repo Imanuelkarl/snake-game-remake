@@ -3,7 +3,7 @@ package com.regensnakevsblock.sbb.ui.views;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.regensnakevsblock.sbb.ui.core.BaseView;
 
-public abstract class BaseActorView extends Group implements BaseView {
+public abstract class BaseActorView<T> extends Group implements BaseView<T> {
     protected ViewState state = ViewState.CREATED;
     private Group parent;
     protected boolean isVisible = false;
@@ -52,11 +52,16 @@ public abstract class BaseActorView extends Group implements BaseView {
         state = ViewState.DESTROYED;
         clear();
     }
+    @Override
+    public void updateData(T data, int position){
+
+    }
 
     @Override
     public ViewState getState() {
         return state;
     }
+
 
 
     @Override

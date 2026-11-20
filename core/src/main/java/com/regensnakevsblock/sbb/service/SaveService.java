@@ -76,6 +76,7 @@ public class SaveService {
 
     public void saveCoins(Long coins) {
         saveIntegerData("coins", coins);
+
         this.coins = coins;
     }
 
@@ -145,6 +146,10 @@ public class SaveService {
     }
     private void saveIntegerData(String key, Long value) {
         myPreferences.putLong(key,value);
+        myPreferences.flush();
+    }
+    private void saveInteger(String key,int value){
+        myPreferences.putInteger(key,value);
         myPreferences.flush();
     }
     private Long getNumberValue(String key){
@@ -221,5 +226,26 @@ public class SaveService {
     }
     public boolean getTutorialIsPlayed(){
         return getBooleanValue("tutorialIsPlayed",false);
+    }
+
+    public void saveLifeTimeCoins(long coins){
+        saveIntegerData("lifeTimeCoins",coins);
+    }
+    public long getLifeTimeCoins() {
+        return myPreferences.getLong("lifeTimeCoins",0);
+    }
+
+    public void saveAchievementIsClaimed(String id,boolean claimed) {
+        saveBooleanData(id+"claim",claimed);
+    }
+    public void saveAchievementIsCompleted(String id,boolean completed){
+        saveBooleanData(id+"complete",completed);
+    }
+    public boolean getAchievementIsClaimed(String id) {
+        return myPreferences.getBoolean(id+"claim",false);
+    }
+
+    public boolean getAchievementIsCompleted(String id) {
+        return myPreferences.getBoolean(id+"complete",false);
     }
 }

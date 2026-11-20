@@ -20,6 +20,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.regensnakevsblock.sbb.assets.Assets;
+import com.regensnakevsblock.sbb.config.GameInstance;
 import com.regensnakevsblock.sbb.elements.GameDialog;
 import com.regensnakevsblock.sbb.screens.GameOverScreen;
 import com.regensnakevsblock.sbb.screens.HomeScreen;
@@ -42,6 +43,8 @@ public class UIRenderer implements RewardListener {
     private final Group gameOverGroup;
     private Label scoreLabel;
     private Label highScoreLabel;
+    private boolean pauseIsOpen=false;
+    private Image skipButton;
 
 
     private GameDialog dialog;
@@ -80,6 +83,13 @@ public class UIRenderer implements RewardListener {
         if(worldState.isGameOver()&&!reviveIsOpen){
             reviveDialog.open();
             reviveIsOpen=true;
+        }
+        if(worldState.isPaused()&&!pauseIsOpen){
+            dialog.open();
+            pauseIsOpen=true;
+        }
+        if(worldState.getGameMode()!= WorldState.GameMode.TUTORIAL){
+            skipButton.remove();
         }
         stage.act(Gdx.graphics.getDeltaTime());
         stage.draw();
@@ -201,7 +211,6 @@ public class UIRenderer implements RewardListener {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 worldState.setPaused(false);
-
                 dialog.close();
             }
         });
@@ -236,12 +245,9 @@ public class UIRenderer implements RewardListener {
             public void clicked(InputEvent event, float x, float y) {
                 if(worldState.getHealthScore()<=saveService.getHealths()){
                     saveService.saveHealths(saveService.getHealths()-(long)worldState.getHealthScore());
-                    reviveDialog.addCloseListener(new GameDialog.CloseListener() {
-                        @Override
-                        public void onPopupClosed() {
-                            worldState.reviveWithHealth();
-                            reviveIsOpen=false;
-                        }
+                    reviveDialog.addCloseListener(() -> {
+                        worldState.reviveWithHealth();
+                        reviveIsOpen=false;
                     });
                 }else{
                     endGame();
@@ -269,10 +275,7 @@ public class UIRenderer implements RewardListener {
                         worldState.getGame().getAdsService().showRewarded();
                     }
                     else{
-                        reviveDialog.addCloseListener(() -> {
-                            endGame();
-                        });
-
+                        reviveDialog.addCloseListener(() -> endGame());
                         reviveDialog.close();
                     }
                 }
@@ -296,6 +299,7 @@ public class UIRenderer implements RewardListener {
             public void clicked(InputEvent event, float x, float y) {
                 worldState.setPaused(true);
                 dialog.open();
+                pauseIsOpen=true;
             }
         });
         restartButton.addListener(new ClickListener(){
@@ -315,18 +319,26 @@ public class UIRenderer implements RewardListener {
         tapToContinueButton.addListener(new ClickListener(){
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                reviveDialog.addCloseListener(new GameDialog.CloseListener() {
-                    @Override
-                    public void onPopupClosed() {
-                        endGame();
-                    }
-                });
-
+                reviveDialog.addCloseListener(() -> endGame());
                 reviveDialog.close();
 
             }
         });
+        float skipBtnHeight =stage.getHeight() *0.08f;
+        skipButton = ActorFactory.createUiImage(Assets.getInstance().skipTutorialButton,stage.getWidth()/24,
+              stage.getHeight()/32,stage.getWidth()/3,
+            skipBtnHeight);
 
+        skipButton.addListener(new ClickListener(){
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                super.clicked(event, x, y);
+                //worldState.getRows().add(generateRandomBlocks());
+                worldState.setGameMode(WorldState.GameMode.ENDLESS);
+                worldState.getSnake().addSegments(5);
+                GameInstance.getSaveService().saveTutorialIsPlayed(true);
+            }
+        });
         //Image boxDialog = createImage(Assets.getInstance().boxDialogTexture,stage.getWidth()/16, stage.getHeight()/3.5f, stage.getWidth() -stage.getWidth()/8, stage.getHeight()/2.3f);
         //Image boxDialogHeader = createImage(Assets.getInstance().pauseHeaderTexture,stage.getWidth()/4, stage.getHeight()/1.55f, stage.getWidth()/2f, stage.getHeight()/10);
 
@@ -367,13 +379,17 @@ public class UIRenderer implements RewardListener {
         stage.addActor(trophy);
         stage.addActor(highScoreLabel);
         stage.addActor(pauseGroup);
+        if(worldState.getGameMode()== WorldState.GameMode.TUTORIAL){
+            stage.addActor(skipButton);
+        }
+
         //stage.addActor(gameOverGroup);
     }
     private void endGame(){
         GameOverScreen gameOverScreen =new GameOverScreen(worldState.getGame(),false);
         gameOverScreen.setScore(worldState.getScore());
         gameOverScreen.setCoins(worldState.getCoins());
-        if(saveService.getPlayCount()>10&&saveService.getPlayCount()%3==0){
+        if(saveService.getPlayCount()>5){
             if(worldState.getGame().getAdsService()!=null){
                 if(worldState.getGame().getAdsService().isInterstitialLoaded()){
                     worldState.getGame().getAdsService().showInterstitial();
@@ -381,9 +397,14 @@ public class UIRenderer implements RewardListener {
             }
 
         }
+        if(worldState.canShowAds()){
+            worldState.getGame().getAdsService().showInterstitial();
+        }
         saveService.savePlayCount();
         worldState.getGame().setScreen(gameOverScreen);
         reviveIsOpen=false;
+
+
     }
 
     private Texture createWhiteTexture() {
@@ -408,19 +429,6 @@ public class UIRenderer implements RewardListener {
             stage.getWidth()/8,
             stage.getWidth()/8
         );
-    }
-    private ImageButton createButton(Texture texture, float x, float y, float width, float height) {
-        Drawable drawable = new TextureRegionDrawable(new TextureRegion(texture));
-
-        ImageButton.ImageButtonStyle style = new ImageButton.ImageButtonStyle();
-        style.up = drawable;
-        style.down = drawable;
-
-        ImageButton button = new ImageButton(style);
-        button.setPosition(x, y);
-        button.setSize(width, height);
-
-        return button;
     }
 
     private Slider createCustomSlider(float x, float y, float width, float height) {
@@ -453,12 +461,6 @@ public class UIRenderer implements RewardListener {
         slider.setWidth(width);
 
         return slider;
-    }
-    private Image createImage(Texture texture, float x, float y, float width, float height) {
-        Image image = new Image(texture);
-        image.setPosition(x, y);
-        image.setSize(width, height);
-        return image;
     }
     public Label createTextLabel(int fontSize, float x, float y) {
         BitmapFont font = FontFactory.getRoboto(fontSize, true);

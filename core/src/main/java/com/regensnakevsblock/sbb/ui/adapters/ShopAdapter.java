@@ -51,6 +51,7 @@ public class ShopAdapter extends BaseAdapter<ShopItemData, ShopCard> implements 
         switch(data.category){
             case COIN:
                 GameInstance.getSaveService().saveCoins(GameInstance.getSaveService().getCoins()+data.itemQuantity);
+                GameInstance.getSaveService().saveLifeTimeCoins((int) (GameInstance.getSaveService().getLifeTimeCoins()+data.itemQuantity));
                 break;
             case DIAMOND:
                 GameInstance.getSaveService().saveDiamonds(GameInstance.getSaveService().getDiamonds()+data.itemQuantity);

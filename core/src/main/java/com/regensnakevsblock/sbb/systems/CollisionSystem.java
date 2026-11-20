@@ -22,6 +22,8 @@ public class CollisionSystem extends GlobalSystems {
     // Fixed timestep for consistent block breaking
     private static final float BLOCK_BREAK_INTERVAL = 0.125f; // 8 times per second
     private float blockBreakTimer = 0;
+    public WinBody lastWinBody=new WinBody();
+    public Block lastBlock= new Block();
 
     // Collision resolution constants
     private static final float POSITION_CORRECTION_FACTOR = 0.001f;
@@ -38,7 +40,9 @@ public class CollisionSystem extends GlobalSystems {
     @Override
     public void update(float deltaTime) {
         float volume =(float)worldState.getSoundVolume()/100;
-        if (worldState.isPaused() || worldState.isGameOver()) return;
+        if (worldState.isPaused() || worldState.isGameOver()|| worldState.isGameWon()) return;
+
+
 
         Snake snake = worldState.getSnake();
 
@@ -61,13 +65,19 @@ public class CollisionSystem extends GlobalSystems {
         for (Row row : worldState.getRows()) {
 
             finishLine.y=row.getY()+worldState.getBlockDimension()*2.7f;
-            if(row.isFinishLine()){
-                if(snake.getBounds().overlaps(finishLine)){
-                    worldState.setPaused(true);
+
+            if(snake.getBounds().overlaps(finishLine)){
+                if(row.isFinishLine()) {
+                    worldState.setGameWon(true);
                     worldState.setLevelCleared();
                     return;
                 }
+                if(!row.isCleared()){
+                    worldState.setClearedRows(worldState.getClearedRows()+1);
+                    row.setCleared(true);
+                }
             }
+
             // Lines (permanent walls)
             for (Line line : row.getLines()) {
                 // Check left wall collision
@@ -123,7 +133,7 @@ public class CollisionSystem extends GlobalSystems {
                         while (blockBreakTimer >= BLOCK_BREAK_INTERVAL) {
                             hitBlock.play(volume);
                             if(worldState.isPowerUpActive()&&worldState.getPowerUp().equals(PowerUp.HAMMER)){
-                                block.setValue(0);
+                                block.setDeadValue(0);
                                 worldState.setScore(worldState.getScore() + block.getValue());
                                 break;
                             }
@@ -138,9 +148,11 @@ public class CollisionSystem extends GlobalSystems {
                             saveService.saveHighScore(worldState.getScore());
                         }
                         saveService.saveCoins(saveService.getCoins()+worldState.getCoins());
+                        ;
                         worldState.setGameOver(true);
                         this.worldState.setMoving(false);
                         block.setActive(false);
+                        block.setJustDied(true);
                         resetCollisionState(); // 🔥 critical
                         return;
                     }
@@ -155,7 +167,17 @@ public class CollisionSystem extends GlobalSystems {
                             worldState.setPowerUp(block.getPowerUp());
                             worldState.setPowerUpActive(true);
                         }
+                        if(block.ogValue>worldState.getLargestBlockSizeDestroyed()){
+                            worldState.setLargeBlockDestroyed(block.ogValue);
+                        }
                         block.setActive(false);
+                        block.setJustDied(true);
+                        if(lastBlock.getRowId()==block.getRowId()){
+                            worldState.setBlocksStreak(worldState.getCurrentBlockStreak()+1);
+                        }else{
+                            worldState.setBlocksStreak(1);
+                        }
+                        lastBlock =block;
 
                     }
                 }
@@ -186,12 +208,19 @@ public class CollisionSystem extends GlobalSystems {
 
                 if (snake.getBounds().overlaps(winBody.getBounds())) {
                     winBody.setActive(false);
+                    if(lastWinBody.getRowId()==winBody.getRowId()){
+                        worldState.setWinBodyStreak(worldState.getWinBodyStreak()+1);
+                    }else{
+                        worldState.setWinBodyStreak(1);
+                    }
+                    lastWinBody =winBody;
                     winItem.play(volume);
                     if(winBody.getType()== WinBody.Type.BODY){
                         snake.addSegments(winBody.getValue()*worldState.getScoreMultiplier());
                     }
                     else{
                         worldState.setCoins(worldState.getCoins()+winBody.getValue()*worldState.getScoreMultiplier());
+                        saveService.saveLifeTimeCoins(saveService.getLifeTimeCoins()+ (long) winBody.getValue() *worldState.getScoreMultiplier());
                     }
                 }
             }

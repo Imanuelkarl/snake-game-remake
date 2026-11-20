@@ -33,10 +33,9 @@ public class Constants {
     public static final String TERMS_OF_SERVICE_URL = "https://snakeblockbreaker.vercel.app/terms";
     public static final String PRIVACY_POLICY_URL = "https://snakeblockbreaker.vercel.app/privacy";
 
-    public static final String googleBannerAdId = "ca-app-pub-3940256099942544/6300978111";
-    public static final String googleInterstitialAdId = "ca-app-pub-3940256099942544/1033173712";
-    public static final String googleRewardedAdId = "ca-app-pub-3940256099942544/5224354917";
-    public static final String googleAdAppId = "";
+    public static final String googleBannerAdId = "ca-app-pub-8197203208180280/7546161528";
+    public static final String googleInterstitialAdId = "ca-app-pub-8197203208180280/8859243197";
+    public static final String googleRewardedAdId = "ca-app-pub-8197203208180280/5391409501";
     public static final String unityGameId= "6156095";
     public static final String unityBannerAdId = "";
     public static final String unityInterstitialAdId = "";
